@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState } from "react"
+import { gsap } from "gsap"
+
 const metrics = [
   {
     title: "MONTHLY REVENUE",
@@ -10,7 +13,7 @@ const metrics = [
     title: "CURRENT LEVERAGE",
     value: "23%",
     note: "Within Acceptable Range",
-    tone: "text-[#1e66f5]",
+    tone: "text-[#3277FF]",
     icon: "https://www.figma.com/api/mcp/asset/713d8352-e35a-4f6e-93c8-c944bf041395",
   },
   {
@@ -36,12 +39,53 @@ const transactions = [
   { date: "Mar 24", description: "Utilities — Electric", credit: false, value: "$412" },
   { date: "Mar 24", description: "Refund — Overpayment", credit: true, value: "$180" },
   { date: "Mar 23", description: "Insurance Premium", credit: false, value: "$928" },
+  { date: "Mar 22", description: "POS Batch Deposit", credit: true, value: "$2,780" },
+  { date: "Mar 22", description: "Fuel Expense", credit: false, value: "$265" },
+  { date: "Mar 21", description: "Card Settlement", credit: true, value: "$1,940" },
+  { date: "Mar 21", description: "Loan Servicing Fee", credit: false, value: "$520" },
+  { date: "Mar 20", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,160" },
+  { date: "Mar 20", description: "Equipment Repair", credit: false, value: "$1,120" },
+  { date: "Mar 19", description: "Online Sales Transfer", credit: true, value: "$2,305" },
+  { date: "Mar 19", description: "Office Supplies", credit: false, value: "$148" },
+  { date: "Mar 18", description: "Customer Wire", credit: true, value: "$5,400" },
+  { date: "Mar 18", description: "Insurance Adjustment", credit: false, value: "$342" },
+  { date: "Mar 17", description: "Marketplace Payout", credit: true, value: "$1,685" },
+  { date: "Mar 17", description: "Vehicle Maintenance", credit: false, value: "$690" },
+  { date: "Mar 16", description: "Weekend Deposit", credit: true, value: "$2,110" },
+  { date: "Mar 16", description: "Tax Withholding Transfer", credit: false, value: "$1,470" },
 ]
 
 function App() {
+  const appRef = useRef(null)
+  const [positionToggles, setPositionToggles] = useState(() =>
+    Object.fromEntries(positions.map((name) => [name, true])),
+  )
+  const handleCardClick = () => null
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from("[data-animate], .card-shadow, .interactive-pop", {
+        opacity: 0,
+        y: 18,
+        duration: 0.55,
+        ease: "power2.out",
+        stagger: 0.03,
+        clearProps: "opacity,transform",
+      })
+    }, appRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <div className="h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif]">
-      <header className="flex h-16 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-6 lg:px-10">
+    <div
+      ref={appRef}
+      className="h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif]"
+    >
+      <header
+        data-animate
+        className="flex h-16 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-6 lg:px-10"
+      >
         <div className="flex items-center gap-2">
           <img
             src="https://www.figma.com/api/mcp/asset/4cfaa8ca-2e26-4a98-ac59-b9f36f00b6e0"
@@ -56,7 +100,7 @@ function App() {
         <div className="hidden items-center gap-1 text-[11px] text-[rgba(76,79,105,0.4)] xl:flex">
           <span>Submitted</span>
           <span>•</span>
-          <span className="font-medium text-[#1e66f5]">Review</span>
+          <span className="font-medium text-[#3277FF]">Review</span>
           <span>•</span>
           <span>Contract Sent</span>
           <span>•</span>
@@ -66,25 +110,28 @@ function App() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
+          <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
             Edit
           </button>
-          <button className="rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
+          <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
             Export
           </button>
         </div>
       </header>
 
       <main className="grid h-[calc(100vh-64px)] gap-0 lg:grid-cols-[370px_1fr]">
-        <aside className="flex h-[calc(100vh-64px)] flex-col border-r border-[#d9d9d9] bg-[#fafafa]">
+        <aside
+          data-animate
+          className="flex h-[calc(100vh-64px)] flex-col border-r border-[#d9d9d9] bg-[#fafafa]"
+        >
           <div className="border-b border-[#d9d9d9] px-5 py-4">
             <div className="flex items-start gap-3">
-              <div className="grid size-10 place-items-center rounded-xl border border-[#1e66f5] bg-[#e2e8f4]">
+              <div className="grid size-10 place-items-center rounded-xl border border-[#3277FF] bg-[#e9f0ff]">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="size-5 text-[#1e66f5]"
+                  className="size-5 text-[#3277FF]"
                   aria-hidden="true"
                 >
                   <path
@@ -107,7 +154,7 @@ function App() {
                   Green Farm Equipment LLC
                 </h2>
                 <div className="mt-1.5 flex items-center gap-2 text-[11px]">
-                  <span className="rounded bg-[#e2e8f4] px-2 py-0.5 font-medium text-[#1e66f5]">
+                  <span className="rounded bg-[#e9f0ff] px-2 py-0.5 font-medium text-[#3277FF]">
                     • Review
                   </span>
                   <span className="text-[#4c4f69]">Judy Green</span>
@@ -122,9 +169,9 @@ function App() {
                 <span>AI DECISION</span>
                 <span className="tracking-normal">Confidence 94%</span>
               </div>
-              <div className="rounded-md border border-[#d9d9d9] bg-[#e2e8f4]/45 p-3">
-                <div className="mb-2 flex items-center gap-2 text-[#1e66f5]">
-                  <span className="grid size-5 place-items-center rounded-full bg-[#1e66f5] text-[11px] text-[#fafafa]">
+              <div className="rounded-md border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
+                <div className="mb-2 flex items-center gap-2 text-[#3277FF]">
+                  <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[11px] text-[#fafafa]">
                     ✓
                   </span>
                   <span className="text-base font-bold leading-none">Approved</span>
@@ -134,10 +181,10 @@ function App() {
                   days flagged for review.
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button className="rounded-md bg-[#1e66f5] py-2 text-[13px] font-semibold text-[#fafafa]">
+                  <button className="interactive-pop rounded-md bg-[#3277FF] py-2 text-[13px] font-semibold text-[#fafafa]">
                     Confirm
                   </button>
-                  <button className="rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
+                  <button className="interactive-pop rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
                     Override
                   </button>
                 </div>
@@ -221,21 +268,27 @@ function App() {
           </div>
 
           <div className="border-t border-[#d9d9d9] bg-[#fafafa] p-4">
-            <div className="mb-3 rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-center text-[12px] font-medium text-[#4c4f69]">
+            <button
+              type="button"
+              className="interactive-pop mb-3 w-full rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-center text-[12px] font-medium text-[#4c4f69]"
+            >
               View Contract &nbsp; <span className="rounded bg-[#efefef] px-1.5 py-0.5 text-[10px]">NOT SENT</span>
-            </div>
+            </button>
             <div className="grid grid-cols-2 gap-2">
-              <button className="rounded-lg bg-[#1e66f5] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
+              <button className="interactive-pop rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                 ✓ Approve
               </button>
-              <button className="rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-[14px] font-semibold text-[#d20f39]">
+              <button className="interactive-pop rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-[14px] font-semibold text-[#d20f39]">
                 ✕ Decline
               </button>
             </div>
           </div>
         </aside>
 
-        <section className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e2e8f4] p-4 sm:p-6 lg:p-8">
+        <section
+          data-animate
+          className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-6 lg:p-8"
+        >
           <div className="w-full space-y-6">
             <section>
               <div className="mb-3 flex items-center justify-between gap-4">
@@ -256,7 +309,8 @@ function App() {
                 {metrics.map((metric) => (
                   <article
                     key={metric.title}
-                    className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                    onClick={handleCardClick}
+                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                   >
                     <p className="text-xs font-normal tracking-wide text-[#4c4f69]">
                       {metric.title}
@@ -287,8 +341,11 @@ function App() {
 
               <div className="grid gap-3 lg:grid-cols-2">
                 <div className="grid gap-3">
-                  <article className="card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4">
-                    <span className="mt-1 size-[9px] rounded-full bg-[#d20f39] shadow-[0_0_0_2px_#e2e8f4]"></span>
+                  <article
+                    onClick={handleCardClick}
+                    className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                  >
+                    <span className="mt-1 size-[9px] rounded-full bg-[#d20f39] shadow-[0_0_0_2px_#e9f0ff]"></span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
                         UniCourt
@@ -307,8 +364,11 @@ function App() {
                       3 open
                     </span>
                   </article>
-                  <article className="card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4">
-                    <span className="mt-1 size-[9px] rounded-full bg-[#1e66f5] shadow-[0_0_0_2px_#e2e8f4]"></span>
+                  <article
+                    onClick={handleCardClick}
+                    className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                  >
+                    <span className="mt-1 size-[9px] rounded-full bg-[#3277FF] shadow-[0_0_0_2px_#e9f0ff]"></span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
                         Datamerch
@@ -323,13 +383,16 @@ function App() {
                         No action required unless new filings appear.
                       </p>
                     </div>
-                    <span className="rounded-full border border-[#c7d7fe] bg-[#eaf1ff] px-2 py-0.5 text-[10px] font-medium text-[#1e66f5]">
+                    <span className="rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
                       clean
                     </span>
                   </article>
                 </div>
 
-                <article className="card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5">
+                <article
+                  onClick={handleCardClick}
+                  className="interactive-pop card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                >
                   <p className="text-xs font-light tracking-wide text-[#4c4f69]">
                     POTENTIAL FRAUD ALERTS
                   </p>
@@ -374,7 +437,7 @@ function App() {
                   <h3 className="text-base font-bold leading-none">Positions</h3>
                   <button
                     type="button"
-                    className="rounded border border-[#4c4f69] px-2 py-0.5 text-[10px] font-medium text-[#4c4f69] transition hover:bg-[#efefef]"
+                    className="interactive-pop rounded border border-[#4c4f69] px-2 py-0.5 text-[10px] font-medium text-[#4c4f69] transition hover:bg-[#efefef]"
                   >
                     Edit
                   </button>
@@ -408,7 +471,7 @@ function App() {
                   </div>
                   <button
                     type="button"
-                    className="shrink-0 text-sm font-normal text-[#1e66f5] transition hover:text-[#1854c7]"
+                    className="interactive-pop shrink-0 text-sm font-normal text-[#3277FF] transition hover:text-[#2566d9]"
                   >
                     View all transactions
                   </button>
@@ -419,15 +482,35 @@ function App() {
                 <div className="card-shadow pointer-events-none absolute inset-0 rounded border border-[#d9d9d9] bg-[#fafafa]/50"></div>
                 <div className="relative z-10 grid gap-4 xl:grid-cols-3">
                   <div className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
-                    <p className="bg-[#e2e8f4] px-4 py-2 text-[11px] text-[#4c4f69]">
-                      currently active positions: 3
+                    <p className="bg-[#e9f0ff] px-4 py-2 text-[11px] text-[#4c4f69]">
+                      Currently active positions: 3
                     </p>
-                    {positions.map((position) => (
+                    {positions.map((position) => {
+                      const on = positionToggles[position]
+                      return (
                       <div key={position} className="border-b border-[#d9d9d9] p-4">
                         <div className="mb-2 flex items-center gap-2">
-                          <span className="h-4 w-7 rounded-full bg-[#1e66f5] p-[2px]">
-                            <span className="block size-3 translate-x-3 rounded-full bg-[#fafafa]"></span>
-                          </span>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={on}
+                            aria-label={`${position} position active`}
+                            onClick={() =>
+                              setPositionToggles((prev) => ({
+                                ...prev,
+                                [position]: !prev[position],
+                              }))
+                            }
+                            className={`interactive-pop relative h-4 w-7 shrink-0 rounded-full p-[2px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3277FF] ${
+                              on ? "bg-[#3277FF]" : "bg-[#4c4f69]/30"
+                            }`}
+                          >
+                            <span
+                              className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
+                                on ? "translate-x-3" : "translate-x-0"
+                              }`}
+                            />
+                          </button>
                           <p className="text-sm font-medium text-[#1c1b1f]">{position}</p>
                         </div>
                         <div className="mb-2 flex gap-1 text-[10px]">
@@ -445,10 +528,10 @@ function App() {
                         <p className="text-[10px] text-[#4c4f69]">Jan 20 | $2,000</p>
                         <p className="text-[10px] text-[#4c4f69]">Mar 20 | $3,400</p>
                       </div>
-                    ))}
+                    )})}
                   </div>
-                  <div className="card-shadow flex min-h-[405px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
-                    <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,1fr)] items-center gap-2 bg-[#e2e8f4] px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
+                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
+                    <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,1fr)] items-center gap-2 bg-[#e9f0ff] px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
                       <span>Date</span>
                       <span>Description</span>
                       <span className="text-right">Amount</span>
@@ -467,7 +550,7 @@ function App() {
                               <td className="px-4 py-2.5 text-xs text-[#1c1b1f]">{row.description}</td>
                               <td
                                 className={`whitespace-nowrap px-4 py-2.5 text-right text-xs font-light tabular-nums ${
-                                  row.credit ? "text-[#1e66f5]" : "text-[#d20f39]"
+                                  row.credit ? "text-[#3277FF]" : "text-[#d20f39]"
                                 }`}
                               >
                                 {row.credit ? "+" : "−"}
