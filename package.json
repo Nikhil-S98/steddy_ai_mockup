@@ -1,0 +1,10 @@
+{
+  "name": "steddy-ai-mockup",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix steddy-react run dev",
+    "build": "npm --prefix steddy-react run build",
+    "preview": "npm --prefix steddy-react run preview",
+    "lint": "npm --prefix steddy-react run lint"
+  }
+}
