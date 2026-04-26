@@ -1,5 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts"
 
 const metrics = [
   {
@@ -53,6 +63,36 @@ const transactions = [
   { date: "Mar 17", description: "Vehicle Maintenance", credit: false, value: "$690" },
   { date: "Mar 16", description: "Weekend Deposit", credit: true, value: "$2,110" },
   { date: "Mar 16", description: "Tax Withholding Transfer", credit: false, value: "$1,470" },
+]
+
+const balanceData = [
+  { date: "Dec 02", current: 72, withOffer: 64 },
+  { date: "Dec 05", current: 38, withOffer: 30 },
+  { date: "Dec 08", current: 4, withOffer: -6 },
+  { date: "Dec 11", current: 56, withOffer: 48 },
+  { date: "Dec 14", current: 70, withOffer: 61 },
+  { date: "Dec 17", current: 31, withOffer: 22 },
+  { date: "Dec 20", current: 8, withOffer: -2 },
+  { date: "Dec 23", current: 94, withOffer: 86 },
+  { date: "Dec 26", current: 101, withOffer: 91 },
+  { date: "Dec 29", current: 78, withOffer: 69 },
+  { date: "Jan 01", current: 83, withOffer: 73 },
+  { date: "Jan 04", current: 62, withOffer: 54 },
+  { date: "Jan 07", current: 68, withOffer: 59 },
+  { date: "Jan 10", current: 73, withOffer: 64 },
+  { date: "Jan 13", current: 49, withOffer: 42 },
+  { date: "Jan 16", current: 61, withOffer: 53 },
+  { date: "Jan 19", current: 66, withOffer: 58 },
+  { date: "Jan 22", current: 74, withOffer: 66 },
+  { date: "Jan 25", current: 70, withOffer: 62 },
+  { date: "Jan 28", current: 56, withOffer: 47 },
+  { date: "Jan 31", current: 40, withOffer: 30 },
+  { date: "Feb 03", current: 48, withOffer: 39 },
+  { date: "Feb 06", current: 66, withOffer: 58 },
+  { date: "Feb 09", current: 70, withOffer: 62 },
+  { date: "Feb 12", current: 57, withOffer: 49 },
+  { date: "Feb 15", current: 59, withOffer: 51 },
+  { date: "Feb 18", current: 56, withOffer: 48 },
 ]
 
 function App() {
@@ -562,6 +602,78 @@ function App() {
                       </table>
                     </div>
                   </div>
+                </div>
+              </div>
+            </section>
+            <section data-animate>
+              <div className="mb-3 flex items-center gap-2">
+                <h3 className="text-base font-bold leading-none text-[#1c1b1f]">
+                  Daily Balances
+                </h3>
+              </div>
+
+              <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
+                <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
+                  <div className="flex items-center gap-2">
+                    <span className="h-[2px] w-4 rounded-full bg-[#3277FF]" />
+                    <span>Current Balance</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-[2px] w-4 rounded-full border-t-2 border-dashed border-[#94a3b8]" />
+                    <span>With Offer</span>
+                  </div>
+                </div>
+
+                <div className="h-[220px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                      <CartesianGrid stroke="#eef2f7" strokeDasharray="0" vertical={false} />
+                      <ReferenceLine y={0} stroke="#fca5a5" strokeDasharray="5 5" />
+                      <XAxis
+                        dataKey="date"
+                        interval="preserveStartEnd"
+                        minTickGap={28}
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "#94a3b8", fontSize: 12 }}
+                      />
+                      <YAxis
+                        domain={[-30, 120]}
+                        ticks={[-30, 0, 30, 60, 90, 120]}
+                        axisLine={false}
+                        tickLine={false}
+                        tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
+                        tick={{ fill: "#94a3b8", fontSize: 12 }}
+                      />
+                      <Tooltip
+                        cursor={{ stroke: "#dbe6ff", strokeWidth: 1 }}
+                        formatter={(value) => `$${value}k`}
+                        labelStyle={{ color: "#4c4f69", fontWeight: 600 }}
+                        contentStyle={{
+                          border: "1px solid #d9d9d9",
+                          borderRadius: "8px",
+                          boxShadow: "0 2px 8px rgba(76, 79, 105, 0.15)",
+                          color: "#1c1b1f",
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="current"
+                        stroke="#3277FF"
+                        strokeWidth={3}
+                        dot={false}
+                        activeDot={{ r: 4 }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="withOffer"
+                        stroke="#94a3b8"
+                        strokeWidth={2}
+                        strokeDasharray="6 6"
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </section>
