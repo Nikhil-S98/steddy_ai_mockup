@@ -1155,7 +1155,7 @@ function App() {
                             </svg>
                           </button>
                         </div>
-                        <div className={`mb-2 flex gap-1 text-[11px] transition-opacity ${on ? "opacity-100" : "opacity-45"}`}>
+                        <div className={`mb-2 flex gap-1 text-[10px] transition-opacity ${on ? "opacity-100" : "opacity-45"}`}>
                           {position.chips.map((chip, chipIndex) => {
                             const chipKey = `${position.id}-${chipIndex}`
                             const isActive = Boolean(activePositionChips[chipKey])
@@ -1445,7 +1445,7 @@ function App() {
                     {draftPosition.chips.map((chip, index) => (
                       <span
                         key={`${chip.amount}-${chip.meta}-${index}`}
-                        className="inline-flex items-center gap-1 rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1"
+                        className="inline-flex items-center gap-1 rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1 text-[#1c1b1f]"
                       >
                         {chip.amount} <span className="text-[rgba(76,79,105,0.6)]">{chip.meta}</span>
                         <button

@@ -137,6 +137,19 @@ button {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
 }
 
+.theme-dark .rounded-full.border.bg-\[\#efefef\].px-2.py-1 {
+  color: #dbe7f5 !important;
+}
+
+.theme-dark .rounded-full.border.bg-\[\#efefef\].px-2.py-1 [class*="text-\\[rgba"] {
+  color: #9fb1c8 !important;
+}
+
+.theme-dark .text-\[rgba\(76\,79\,105\,0\.5\)\],
+.theme-dark .text-\[rgba\(76\,79\,105\,0\.6\)\] {
+  color: #9fb1c8 !important;
+}
+
 .theme-gruvbox {
   background: #282828;
   color: #ebdbb2;
@@ -253,6 +266,19 @@ button {
 .theme-gruvbox .grid.gap-4,
 .theme-gruvbox .grid.gap-3 {
   background: #282828 !important;
+}
+
+.theme-gruvbox .rounded-full.border.bg-\[\#efefef\].px-2.py-1 {
+  color: #d5c4a1 !important;
+}
+
+.theme-gruvbox .rounded-full.border.bg-\[\#efefef\].px-2.py-1 [class*="text-\\[rgba"] {
+  color: #bdae93 !important;
+}
+
+.theme-gruvbox .text-\[rgba\(76\,79\,105\,0\.5\)\],
+.theme-gruvbox .text-\[rgba\(76\,79\,105\,0\.6\)\] {
+  color: #bdae93 !important;
 }
 
 .theme-gruvbox-light {
@@ -598,6 +624,19 @@ button {
   background: #1f2430 !important;
 }
 
+.theme-ayu-mirage .rounded-full.border.bg-\[\#efefef\].px-2.py-1 {
+  color: #cccac2 !important;
+}
+
+.theme-ayu-mirage .rounded-full.border.bg-\[\#efefef\].px-2.py-1 [class*="text-\\[rgba"] {
+  color: #9ea6b7 !important;
+}
+
+.theme-ayu-mirage .text-\[rgba\(76\,79\,105\,0\.5\)\],
+.theme-ayu-mirage .text-\[rgba\(76\,79\,105\,0\.6\)\] {
+  color: #9ea6b7 !important;
+}
+
 .theme-ayu-dark {
   background: #0d1017;
   color: #bfbdb6;
@@ -713,4 +752,17 @@ button {
 .theme-ayu-dark .grid.gap-4,
 .theme-ayu-dark .grid.gap-3 {
   background: #0d1017 !important;
+}
+
+.theme-ayu-dark .rounded-full.border.bg-\[\#efefef\].px-2.py-1 {
+  color: #bfbdb6 !important;
+}
+
+.theme-ayu-dark .rounded-full.border.bg-\[\#efefef\].px-2.py-1 [class*="text-\\[rgba"] {
+  color: #8791a3 !important;
+}
+
+.theme-ayu-dark .text-\[rgba\(76\,79\,105\,0\.5\)\],
+.theme-ayu-dark .text-\[rgba\(76\,79\,105\,0\.6\)\] {
+  color: #8791a3 !important;
 }

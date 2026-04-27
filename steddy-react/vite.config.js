@@ -4,5 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/steddy_ai_mockup/',
   plugins: [react(), tailwindcss()],
 })
