@@ -483,7 +483,12 @@ function App() {
       ref={appRef}
       className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
         colorMode === "dark" ? "theme-dark" : ""
-      } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""}`}
+      } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
+        colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
+      } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
+        colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
+      } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
+      }`}
     >
       <header
         data-animate
@@ -560,6 +565,56 @@ function App() {
             <span
               className={`size-2.5 rounded-full ${
                 colorMode === "gruvbox" ? "bg-[#d79921]" : "bg-[#4c4f69]/45"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setColorMode((prev) => (prev === "gruvboxLight" ? "light" : "gruvboxLight"))
+            }
+            aria-label="Toggle gruvbox light mode"
+            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
+          >
+            <span
+              className={`size-2.5 rounded-full ${
+                colorMode === "gruvboxLight" ? "bg-[#fbf1c7]" : "bg-[#4c4f69]/45"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() => setColorMode((prev) => (prev === "ayuLight" ? "light" : "ayuLight"))}
+            aria-label="Toggle ayu light mode"
+            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
+          >
+            <span
+              className={`size-2.5 rounded-full ${
+                colorMode === "ayuLight" ? "bg-[#f8f9fa]" : "bg-[#4c4f69]/45"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() => setColorMode((prev) => (prev === "ayuMirage" ? "light" : "ayuMirage"))}
+            aria-label="Toggle ayu mirage mode"
+            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
+          >
+            <span
+              className={`size-2.5 rounded-full ${
+                colorMode === "ayuMirage" ? "bg-[#1f2430]" : "bg-[#4c4f69]/45"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() => setColorMode((prev) => (prev === "ayuDark" ? "light" : "ayuDark"))}
+            aria-label="Toggle ayu dark mode"
+            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
+          >
+            <span
+              className={`size-2.5 rounded-full ${
+                colorMode === "ayuDark" ? "bg-[#0d1017]" : "bg-[#4c4f69]/45"
               }`}
             />
           </button>
