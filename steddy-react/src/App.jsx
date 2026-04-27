@@ -34,35 +34,35 @@ const metrics = [
   },
 ]
 
-const positions = ["Advance Syndicate", "EBF Holdings", "CFG Merchant Sol."]
+const positions = ["Advance Syndicate", "EBF Holdings", "CFG Merchant Solutions"]
 
 const transactions = [
-  { date: "Mar 29", description: "Customer Payment — Inv #4521", credit: true, value: "$8,450" },
-  { date: "Mar 28", description: "Rapid Capital ACH", credit: false, value: "$890" },
-  { date: "Mar 28", description: "Payroll — 12 employees", credit: false, value: "$12,400" },
-  { date: "Mar 27", description: "Wire Transfer — Vendor", credit: false, value: "$4,200" },
-  { date: "Mar 27", description: "Deposit — Stripe Payout", credit: true, value: "$3,120" },
-  { date: "Mar 26", description: "Equipment Lease", credit: false, value: "$1,050" },
-  { date: "Mar 26", description: "ACH Return — NSF", credit: false, value: "$275" },
-  { date: "Mar 25", description: "Merchant Cash Advance", credit: false, value: "$2,652" },
-  { date: "Mar 25", description: "Sales Deposit", credit: true, value: "$6,890" },
-  { date: "Mar 24", description: "Utilities — Electric", credit: false, value: "$412" },
-  { date: "Mar 24", description: "Refund — Overpayment", credit: true, value: "$180" },
-  { date: "Mar 23", description: "Insurance Premium", credit: false, value: "$928" },
-  { date: "Mar 22", description: "POS Batch Deposit", credit: true, value: "$2,780" },
-  { date: "Mar 22", description: "Fuel Expense", credit: false, value: "$265" },
-  { date: "Mar 21", description: "Card Settlement", credit: true, value: "$1,940" },
-  { date: "Mar 21", description: "Loan Servicing Fee", credit: false, value: "$520" },
-  { date: "Mar 20", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,160" },
-  { date: "Mar 20", description: "Equipment Repair", credit: false, value: "$1,120" },
-  { date: "Mar 19", description: "Online Sales Transfer", credit: true, value: "$2,305" },
-  { date: "Mar 19", description: "Office Supplies", credit: false, value: "$148" },
-  { date: "Mar 18", description: "Customer Wire", credit: true, value: "$5,400" },
-  { date: "Mar 18", description: "Insurance Adjustment", credit: false, value: "$342" },
-  { date: "Mar 17", description: "Marketplace Payout", credit: true, value: "$1,685" },
-  { date: "Mar 17", description: "Vehicle Maintenance", credit: false, value: "$690" },
-  { date: "Mar 16", description: "Weekend Deposit", credit: true, value: "$2,110" },
-  { date: "Mar 16", description: "Tax Withholding Transfer", credit: false, value: "$1,470" },
+  { date: "Feb 28", description: "Customer Payment — Inv #4521", credit: true, value: "$8,450" },
+  { date: "Feb 28", description: "Rapid Capital ACH", credit: false, value: "$890" },
+  { date: "Feb 28", description: "Payroll — 12 employees", credit: false, value: "$12,400" },
+  { date: "Feb 27", description: "Wire Transfer — Vendor", credit: false, value: "$4,200" },
+  { date: "Feb 27", description: "Deposit — Stripe Payout", credit: true, value: "$3,120" },
+  { date: "Feb 26", description: "Equipment Lease", credit: false, value: "$1,050" },
+  { date: "Feb 26", description: "ACH Return — NSF", credit: false, value: "$275" },
+  { date: "Feb 25", description: "Merchant Cash Advance", credit: false, value: "$2,652" },
+  { date: "Feb 25", description: "Sales Deposit", credit: true, value: "$6,890" },
+  { date: "Feb 24", description: "Utilities — Electric", credit: false, value: "$412" },
+  { date: "Feb 24", description: "Refund — Overpayment", credit: true, value: "$180" },
+  { date: "Feb 23", description: "Insurance Premium", credit: false, value: "$928" },
+  { date: "Feb 22", description: "POS Batch Deposit", credit: true, value: "$2,780" },
+  { date: "Feb 22", description: "Fuel Expense", credit: false, value: "$265" },
+  { date: "Feb 21", description: "Card Settlement", credit: true, value: "$1,940" },
+  { date: "Feb 21", description: "Loan Servicing Fee", credit: false, value: "$520" },
+  { date: "Feb 20", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,160" },
+  { date: "Feb 20", description: "Equipment Repair", credit: false, value: "$1,120" },
+  { date: "Feb 19", description: "Online Sales Transfer", credit: true, value: "$2,305" },
+  { date: "Feb 19", description: "Office Supplies", credit: false, value: "$148" },
+  { date: "Feb 18", description: "Customer Wire", credit: true, value: "$5,400" },
+  { date: "Feb 18", description: "Insurance Adjustment", credit: false, value: "$342" },
+  { date: "Feb 17", description: "Marketplace Payout", credit: true, value: "$1,685" },
+  { date: "Feb 17", description: "Vehicle Maintenance", credit: false, value: "$690" },
+  { date: "Feb 16", description: "Weekend Deposit", credit: true, value: "$2,110" },
+  { date: "Feb 16", description: "Tax Withholding Transfer", credit: false, value: "$1,470" },
 ]
 
 const balanceData = [
@@ -95,16 +95,90 @@ const balanceData = [
   { date: "Feb 18", current: 56, withOffer: 48 },
 ]
 
+const monthlyBalanceSeries = [
+  {
+    month: "December 2025",
+    data: [
+      { day: "1", balance: 68420 }, { day: "2", balance: 72110 }, { day: "3", balance: 69530 },
+      { day: "4", balance: 66200 }, { day: "5", balance: 61980 }, { day: "6", balance: 57840 },
+      { day: "7", balance: 53420 }, { day: "8", balance: 49880 }, { day: "9", balance: 56330 },
+      { day: "10", balance: 60540 }, { day: "11", balance: 64920 }, { day: "12", balance: 67350 },
+      { day: "13", balance: 64410 }, { day: "14", balance: 60120 }, { day: "15", balance: 55670 },
+      { day: "16", balance: 51730 }, { day: "17", balance: 48590 }, { day: "18", balance: 45220 },
+      { day: "19", balance: 43180 }, { day: "20", balance: 40810 }, { day: "21", balance: 72940 },
+      { day: "22", balance: 80120 }, { day: "23", balance: 83570 }, { day: "24", balance: 86140 },
+      { day: "25", balance: 82410 }, { day: "26", balance: 76390 }, { day: "27", balance: 70550 },
+      { day: "28", balance: 66820 }, { day: "29", balance: 64130 }, { day: "30", balance: 60490 },
+      { day: "31", balance: 57660 },
+    ],
+  },
+  {
+    month: "January 2026",
+    data: [
+      { day: "1", balance: 61240 }, { day: "2", balance: 64890 }, { day: "3", balance: 67220 },
+      { day: "4", balance: 65130 }, { day: "5", balance: 62840 }, { day: "6", balance: 60330 },
+      { day: "7", balance: 57410 }, { day: "8", balance: 54820 }, { day: "9", balance: 52660 },
+      { day: "10", balance: 55420 }, { day: "11", balance: 58310 }, { day: "12", balance: 61280 },
+      { day: "13", balance: 59440 }, { day: "14", balance: 57130 }, { day: "15", balance: 55320 },
+      { day: "16", balance: 53210 }, { day: "17", balance: 50980 }, { day: "18", balance: 48650 },
+      { day: "19", balance: 51420 }, { day: "20", balance: 54410 }, { day: "21", balance: 56300 },
+      { day: "22", balance: 58120 }, { day: "23", balance: 59890 }, { day: "24", balance: 61750 },
+      { day: "25", balance: 60340 }, { day: "26", balance: 58420 }, { day: "27", balance: 56210 },
+      { day: "28", balance: 54460 }, { day: "29", balance: 52890 }, { day: "30", balance: 50970 },
+      { day: "31", balance: 49220 },
+    ],
+  },
+  {
+    month: "February 2026",
+    data: [
+      { day: "1", balance: 48110 }, { day: "2", balance: 49980 }, { day: "3", balance: 52140 },
+      { day: "4", balance: 54630 }, { day: "5", balance: 57120 }, { day: "6", balance: 59310 },
+      { day: "7", balance: 61780 }, { day: "8", balance: 63840 }, { day: "9", balance: 65490 },
+      { day: "10", balance: 64720 }, { day: "11", balance: 62450 }, { day: "12", balance: 59810 },
+      { day: "13", balance: 57300 }, { day: "14", balance: 54910 }, { day: "15", balance: 52180 },
+      { day: "16", balance: 49460 }, { day: "17", balance: 47340 }, { day: "18", balance: 45720 },
+      { day: "19", balance: 48210 }, { day: "20", balance: 50940 }, { day: "21", balance: 53320 },
+      { day: "22", balance: 55410 }, { day: "23", balance: 57920 }, { day: "24", balance: 60140 },
+      { day: "25", balance: 61890 }, { day: "26", balance: 60310 }, { day: "27", balance: 58740 },
+      { day: "28", balance: 56820 },
+    ],
+  },
+]
+
+const BASE_LEVERAGE = 23
+const FUNDING_AMOUNT = 29472
+const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+
 function App() {
   const appRef = useRef(null)
   const [positionToggles, setPositionToggles] = useState(() =>
     Object.fromEntries(positions.map((name) => [name, true])),
   )
+  const [calculator, setCalculator] = useState({
+    leverageDelta: 11,
+    termDays: 15,
+    factor: 1.35,
+    frequency: "Daily",
+  })
   const handleCardClick = () => null
+
+  const frequencyDivisor = {
+    Daily: calculator.termDays,
+    Weekly: calculator.termDays / 7,
+    "Bi-Weekly": calculator.termDays / 14,
+    Monthly: calculator.termDays / 30,
+  }[calculator.frequency]
+
+  const paymentAmount = (FUNDING_AMOUNT * calculator.factor) / Math.max(frequencyDivisor, 1)
+  const paybackTotal = FUNDING_AMOUNT * calculator.factor
+  const totalLeverage = BASE_LEVERAGE + calculator.leverageDelta
+
+  const formatCurrency = (value) =>
+    value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from("[data-animate], .card-shadow, .interactive-pop", {
+      gsap.from("[data-animate], .card-shadow", {
         opacity: 0,
         y: 18,
         duration: 0.55,
@@ -243,7 +317,103 @@ function App() {
                   <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FUNDING AMOUNT</p>
                   <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
                     <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">$</span>
-                    <span className="px-2 text-[12px] font-semibold text-[#1c1b1f]">29,472</span>
+                    <span className="px-2 text-[12px] font-medium text-[#1c1b1f]">
+                      {formatCurrency(FUNDING_AMOUNT)}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">LEVERAGE</p>
+                  <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
+                    <button
+                      type="button"
+                      className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                      onClick={() =>
+                        setCalculator((prev) => ({
+                          ...prev,
+                          leverageDelta: Math.max(prev.leverageDelta - 1, 0),
+                        }))
+                      }
+                    >
+                      −
+                    </button>
+                    <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
+                      {BASE_LEVERAGE} + <span className="text-[#3277FF]">{calculator.leverageDelta}</span>
+                    </span>
+                    <button
+                      type="button"
+                      className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                      onClick={() =>
+                        setCalculator((prev) => ({
+                          ...prev,
+                          leverageDelta: Math.min(prev.leverageDelta + 1, 50),
+                        }))
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">TERM (DAYS)</p>
+                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
+                      <button
+                        type="button"
+                        className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                        onClick={() =>
+                          setCalculator((prev) => ({ ...prev, termDays: Math.max(prev.termDays - 1, 1) }))
+                        }
+                      >
+                        −
+                      </button>
+                      <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
+                        {calculator.termDays}
+                      </span>
+                      <button
+                        type="button"
+                        className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                        onClick={() =>
+                          setCalculator((prev) => ({ ...prev, termDays: Math.min(prev.termDays + 1, 120) }))
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FACTOR</p>
+                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
+                      <button
+                        type="button"
+                        className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                        onClick={() =>
+                          setCalculator((prev) => ({
+                            ...prev,
+                            factor: Math.max(Number((prev.factor - 0.01).toFixed(2)), 1),
+                          }))
+                        }
+                      >
+                        −
+                      </button>
+                      <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
+                        {calculator.factor.toFixed(2)}
+                      </span>
+                      <button
+                        type="button"
+                        className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                        onClick={() =>
+                          setCalculator((prev) => ({
+                            ...prev,
+                            factor: Math.min(Number((prev.factor + 0.01).toFixed(2)), 2),
+                          }))
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -252,55 +422,47 @@ function App() {
                     <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">PAYMENT</p>
                     <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
                       <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">$</span>
-                      <span className="px-2 text-[12px] font-semibold text-[#1c1b1f]">2,652</span>
+                      <span className="px-2 text-[12px] font-medium text-[#1c1b1f]">
+                        {formatCurrency(paymentAmount)}
+                      </span>
                     </div>
                   </div>
                   <div>
                     <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FREQUENCY</p>
-                    <div className="flex h-10 items-center justify-between rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2">
-                      <span className="text-[12px] font-semibold text-[#1c1b1f]">Daily</span>
-                      <span className="text-[12px] text-[#4c4f69]">⌄</span>
+                    <div className="relative">
+                      <select
+                        value={calculator.frequency}
+                        onChange={(event) =>
+                          setCalculator((prev) => ({ ...prev, frequency: event.target.value }))
+                        }
+                        className="h-10 w-full appearance-none rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 pr-6 text-[12px] font-medium text-[#1c1b1f]"
+                      >
+                        {FREQUENCIES.map((frequency) => (
+                          <option key={frequency} value={frequency}>
+                            {frequency}
+                          </option>
+                        ))}
+                      </select>
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
+                      >
+                        ⌄
+                      </span>
                     </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">TERM (MO)</p>
-                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                      <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]">−</span>
-                      <span className="flex-1 text-center text-[12px] font-semibold text-[#1c1b1f]">15</span>
-                      <span className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]">+</span>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FACTOR</p>
-                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                      <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]">−</span>
-                      <span className="flex-1 text-center text-[12px] font-semibold text-[#1c1b1f]">1.35</span>
-                      <span className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]">+</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">ADDITIONAL LEVERAGE</p>
-                  <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                    <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]">−</span>
-                    <span className="flex-1 text-center text-[12px] font-semibold text-[#1c1b1f]">11</span>
-                    <span className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">%</span>
-                    <span className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]">+</span>
                   </div>
                 </div>
 
                 <div className="rounded-md border border-[#d9d9d9] bg-[#efefef] px-3 py-2">
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-[#4c4f69]">Payback Total</span>
-                    <span className="text-[12px] font-semibold text-[#1c1b1f]">$39,787</span>
+                    <span className="text-[12px] font-semibold text-[#1c1b1f]">
+                      ${formatCurrency(paybackTotal)}
+                    </span>
                   </div>
                   <div className="mt-1 flex items-center justify-between text-[11px]">
-                    <span className="text-[#4c4f69]">Current Leverage</span>
-                    <span className="text-[12px] font-semibold text-[#1c1b1f]">23%</span>
+                    <span className="text-[#4c4f69]">Total Leverage</span>
+                    <span className="text-[12px] font-semibold text-[#1c1b1f]">{totalLeverage}%</span>
                   </div>
                 </div>
               </div>
@@ -318,7 +480,7 @@ function App() {
               <button className="interactive-pop rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                 ✓ Approve
               </button>
-              <button className="interactive-pop rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-[14px] font-semibold text-[#d20f39]">
+              <button className="interactive-pop rounded-lg border border-[#d20f39] bg-[#d20f39] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                 ✕ Decline
               </button>
             </div>
@@ -553,15 +715,15 @@ function App() {
                           </button>
                           <p className="text-sm font-medium text-[#1c1b1f]">{position}</p>
                         </div>
-                        <div className="mb-2 flex gap-1 text-[10px]">
-                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-1.5 py-0.5">
-                            $182.32 <span className="text-[rgba(76,79,105,0.4)]">weekly x20</span>
+                        <div className="mb-2 flex gap-1 text-[11px]">
+                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1">
+                            $182.32 <span className="text-[rgba(76,79,105,0.5)]">weekly x20</span>
                           </span>
-                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-1.5 py-0.5">
-                            $102.00 <span className="text-[rgba(76,79,105,0.4)]">weekly x20</span>
+                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1">
+                            $102.00 <span className="text-[rgba(76,79,105,0.5)]">weekly x20</span>
                           </span>
-                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-1.5 py-0.5">
-                            $102.00 <span className="text-[rgba(76,79,105,0.4)]">weekly x20</span>
+                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1">
+                            $102.00 <span className="text-[rgba(76,79,105,0.5)]">weekly x20</span>
                           </span>
                         </div>
                         <p className="text-[11px] font-medium text-[#4c4f69]">Deposits</p>
@@ -675,6 +837,43 @@ function App() {
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
+              </div>
+
+              <div className="mt-4 grid gap-4 lg:grid-cols-3">
+                {monthlyBalanceSeries.map((series) => (
+                  <article
+                    key={series.month}
+                    className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]"
+                  >
+                    <div className="flex items-center justify-between border-b border-[#d9d9d9] bg-[#e9f0ff] px-3 py-2">
+                      <h4 className="text-sm font-semibold text-[#1c1b1f]">{series.month}</h4>
+                      <span className="text-xs text-[#4c4f69]">Daily closing balance</span>
+                    </div>
+                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#d9d9d9] bg-[#fafafa] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">
+                      <span>Date</span>
+                      <span className="text-right">Balance</span>
+                    </div>
+                    <div>
+                      {series.data
+                        .filter((entry) => {
+                          const date = new Date(`${series.month} ${entry.day}`)
+                          const dayOfWeek = date.getDay()
+                          return dayOfWeek !== 0 && dayOfWeek !== 6
+                        })
+                        .map((entry, idx) => (
+                        <div
+                          key={`${series.month}-${entry.day}-${idx}`}
+                          className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#efefef] px-3 py-1.5 text-xs last:border-b-0"
+                        >
+                          <span className="text-[#4c4f69]">{series.month.slice(0, 3)} {entry.day}</span>
+                          <span className="text-right tabular-nums text-[#1c1b1f]">
+                            ${entry.balance.toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
               </div>
             </section>
           </div>
