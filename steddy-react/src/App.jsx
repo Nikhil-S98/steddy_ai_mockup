@@ -192,7 +192,7 @@ const COLOR_THEMES = [
   { value: "light", label: "Light" },
   { value: "teal", label: "Teal" },
   { value: "green", label: "Green" },
-  { value: "indigoLight", label: "Indigo Light" },
+  { value: "indigo", label: "Indigo" },
   { value: "tealDark", label: "Teal Dark" },
   { value: "dark", label: "Dark" },
   { value: "gruvboxLight", label: "Gruvbox Light" },
@@ -228,7 +228,7 @@ const CHART_PALETTE_BY_MODE = {
     refLine: "#ef4444",
     axisTick: "#64748b",
   },
-  indigoLight: {
+  indigo: {
     primary: "#4f46e5",
     secondary: "#64748b",
     grid: "#f1f5f9",
@@ -590,7 +590,7 @@ function App() {
       className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
         colorMode === "dark" ? "theme-dark" : ""
       } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
-        colorMode === "indigoLight" ? "theme-indigo-light" : ""
+        colorMode === "indigo" ? "theme-indigo" : ""
       } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
         colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
       } ${

@@ -170,126 +170,126 @@ button {
   color: rgba(21, 128, 61, 0.45) !important;
 }
 
-/* Indigo Light — built from Green theme structure: Slate neutrals, Indigo 600 primary, Cyan 500 accent */
-.theme-indigo-light header {
+/* Indigo — built from Green theme structure: Slate neutrals, Indigo 600 primary, Cyan 500 accent */
+.theme-indigo header {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
 }
 
-.theme-indigo-light main,
-.theme-indigo-light section,
-.theme-indigo-light aside {
+.theme-indigo main,
+.theme-indigo section,
+.theme-indigo aside {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
 }
 
-.theme-indigo-light input,
-.theme-indigo-light select {
+.theme-indigo input,
+.theme-indigo select {
   background: #f1f5f9 !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
 
-.theme-indigo-light input::placeholder {
+.theme-indigo input::placeholder {
   color: #94a3b8 !important;
 }
 
-.theme-indigo-light .bg-\[\#fafafa\],
-.theme-indigo-light .bg-white {
+.theme-indigo .bg-\[\#fafafa\],
+.theme-indigo .bg-white {
   background: #f8fafc !important;
 }
 
-.theme-indigo-light .bg-\[\#efefef\] {
+.theme-indigo .bg-\[\#efefef\] {
   background: #f1f5f9 !important;
 }
 
-.theme-indigo-light .bg-\[\#3277FF\] {
+.theme-indigo .bg-\[\#3277FF\] {
   background-color: #4f46e5 !important;
 }
 
-.theme-indigo-light .text-\[\#3277FF\] {
+.theme-indigo .text-\[\#3277FF\] {
   color: #4338ca !important;
 }
 
-.theme-indigo-light .border-\[\#3277FF\] {
+.theme-indigo .border-\[\#3277FF\] {
   border-color: #4f46e5 !important;
 }
 
-.theme-indigo-light .hover\:text-\[\#3277FF\]:hover {
+.theme-indigo .hover\:text-\[\#3277FF\]:hover {
   color: #4338ca !important;
 }
 
-.theme-indigo-light .hover\:text-\[\#2566d9\]:hover {
+.theme-indigo .hover\:text-\[\#2566d9\]:hover {
   color: #3730a3 !important;
 }
 
-.theme-indigo-light .bg-\[\#3277FF\]\/40 {
+.theme-indigo .bg-\[\#3277FF\]\/40 {
   background-color: rgb(79 70 229 / 0.35) !important;
 }
 
-.theme-indigo-light .bg-\[\#e9f0ff\],
-.theme-indigo-light .bg-\[\#e9f0ff\]\/45,
-.theme-indigo-light .bg-\[\#e9f0ff\]\/50 {
+.theme-indigo .bg-\[\#e9f0ff\],
+.theme-indigo .bg-\[\#e9f0ff\]\/45,
+.theme-indigo .bg-\[\#e9f0ff\]\/50 {
   background: #f8fafc !important;
 }
 
-.theme-indigo-light .border-\[\#b8d4ff\] {
+.theme-indigo .border-\[\#b8d4ff\] {
   border-color: #a5b4fc !important;
 }
 
-.theme-indigo-light .bg-\[\#eaf2ff\] {
+.theme-indigo .bg-\[\#eaf2ff\] {
   background-color: #eef2ff !important;
 }
 
-.theme-indigo-light .border-\[\#d9d9d9\],
-.theme-indigo-light .border-\[\#efefef\] {
+.theme-indigo .border-\[\#d9d9d9\],
+.theme-indigo .border-\[\#efefef\] {
   border-color: #e2e8f0 !important;
 }
 
-.theme-indigo-light .text-\[\#4c4f69\],
-.theme-indigo-light .text-\[\#1c1b1f\] {
+.theme-indigo .text-\[\#4c4f69\],
+.theme-indigo .text-\[\#1c1b1f\] {
   color: #0f172a !important;
 }
 
-.theme-indigo-light [class*="text-\\[rgba"] {
+.theme-indigo [class*="text-\\[rgba"] {
   color: #475569 !important;
 }
 
-.theme-indigo-light .text-amber-500 {
+.theme-indigo .text-amber-500 {
   color: #f59e0b !important;
 }
 
-.theme-indigo-light .text-\[\#d20f39\],
-.theme-indigo-light .text-\[\#b42318\] {
+.theme-indigo .text-\[\#d20f39\],
+.theme-indigo .text-\[\#b42318\] {
   color: #ef4444 !important;
 }
 
-.theme-indigo-light .bg-\[\#d20f39\] {
+.theme-indigo .bg-\[\#d20f39\] {
   background-color: #ef4444 !important;
 }
 
-.theme-indigo-light .border-\[\#d20f39\],
-.theme-indigo-light .border-\[\#f5c2cb\] {
+.theme-indigo .border-\[\#d20f39\],
+.theme-indigo .border-\[\#f5c2cb\] {
   border-color: #ef4444 !important;
 }
 
-.theme-indigo-light .ai-decision-card {
+.theme-indigo .ai-decision-card {
   background: rgb(238 242 255 / 0.72) !important;
   border-color: #c7d2fe !important;
 }
 
-.theme-indigo-light .underwriting-step-inactive {
+.theme-indigo .underwriting-step-inactive {
   color: rgba(71, 85, 105, 0.55) !important;
 }
 
-.theme-indigo-light .flag-chip-open,
-.theme-indigo-light .flag-chip-open.text-\[\#b42318\] {
+.theme-indigo .flag-chip-open,
+.theme-indigo .flag-chip-open.text-\[\#b42318\] {
   background: #ef4444 !important;
   border-color: #ef4444 !important;
   color: #fef2f2 !important;
 }
 
-.theme-indigo-light .flag-chip-clean {
+.theme-indigo .flag-chip-clean {
   background: #06b6d4 !important;
   border-color: #06b6d4 !important;
   color: #f8fafc !important;
