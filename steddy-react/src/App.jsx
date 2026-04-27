@@ -34,7 +34,47 @@ const metrics = [
   },
 ]
 
-const positions = ["Advance Syndicate", "EBF Holdings", "CFG Merchant Solutions"]
+const initialPositions = [
+  {
+    id: "advance-syndicate",
+    title: "Advance Syndicate",
+    chips: [
+      { amount: "$182.32", meta: "weekly pull" },
+      { amount: "$102.00", meta: "weekly pull" },
+      { amount: "$102.00", meta: "weekly pull" },
+    ],
+    deposits: [
+      { date: "Jan 20", amount: "$2,000" },
+      { date: "Mar 20", amount: "$3,400" },
+    ],
+  },
+  {
+    id: "ebf-holdings",
+    title: "EBF Holdings",
+    chips: [
+      { amount: "$182.32", meta: "weekly pull" },
+      { amount: "$102.00", meta: "weekly pull" },
+      { amount: "$102.00", meta: "weekly pull" },
+    ],
+    deposits: [
+      { date: "Jan 20", amount: "$2,000" },
+      { date: "Mar 20", amount: "$3,400" },
+    ],
+  },
+  {
+    id: "cfg-merchant-solutions",
+    title: "CFG Merchant Solutions",
+    chips: [
+      { amount: "$182.32", meta: "weekly pull" },
+      { amount: "$102.00", meta: "weekly pull" },
+      { amount: "$102.00", meta: "weekly pull" },
+    ],
+    deposits: [
+      { date: "Jan 20", amount: "$2,000" },
+      { date: "Mar 20", amount: "$3,400" },
+    ],
+  },
+]
 
 const transactions = [
   { date: "Feb 28", description: "Customer Payment — Inv #4521", credit: true, value: "$8,450" },
@@ -148,20 +188,103 @@ const monthlyBalanceSeries = [
 const BASE_LEVERAGE = 23
 const FUNDING_AMOUNT = 29472
 const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+const underwritingSteps = [
+  "Submitted",
+  "Review",
+  "Contract Sent",
+  "Signed",
+  "Final Underwriting",
+  "Funded",
+]
+const monthlyBreakdownRows = [
+  {
+    month: "December 2025",
+    revenue: "$52,410",
+    leverage: "31%",
+    mcaPayout: "$10,650",
+    note: "Seasonal equipment demand drove higher card deposits.",
+  },
+  {
+    month: "January 2026",
+    revenue: "$61,780",
+    leverage: "28%",
+    mcaPayout: "$11,240",
+    note: "Collections improved while payouts stayed stable.",
+  },
+  {
+    month: "February 2026",
+    revenue: "$60,040",
+    leverage: "23%",
+    mcaPayout: "$10,035",
+    note: "Short month with consistent paydown and fewer reversal days.",
+  },
+]
+const flagDetailPanels = {
+  unicourt: {
+    title: "UniCourt Detail",
+    subtitle: "Litigation docket and case-tracking signal",
+    status: "3 open dockets identified",
+    points: [
+      "Cross-court search returned three active civil matters tied to owner/entity identifiers.",
+      "Latest docket activity is within the last 30 days, so legal exposure is still current.",
+      "One case remains in discovery and another has a pending hearing date on calendar.",
+      "Recommendation: obtain disposition details before final approval decision.",
+    ],
+  },
+  datamerch: {
+    title: "DataMerch Detail",
+    subtitle: "MCA peer-funder repayment and fraud reporting check",
+    status: "No adverse DataMerch hits",
+    points: [
+      "No reported defaults, manipulated statements, or negative funder comments on file.",
+      "Entity lookup matched FEIN/business profile without conflicting merchant records.",
+      "Search count indicates this merchant has been screened repeatedly by market participants.",
+      "Recommendation: continue normal underwriting checks; no DataMerch-only decline trigger.",
+    ],
+  },
+  fraud: {
+    title: "MoneyThumb Fraud Detail",
+    subtitle: "Thumbprint-style PDF authenticity and reconciliation signals",
+    status: "1 high-risk statement integrity flag",
+    points: [
+      "Document structure and metadata pattern do not fully match expected bank template fingerprints.",
+      "Font/position consistency checks indicate probable post-download edits on key transaction lines.",
+      "Arithmetic reconciliation variance found between line activity and reported statement summary totals.",
+      "Recommendation: request direct bank-origin export or login-based verification prior to funding.",
+    ],
+  },
+}
 
 function App() {
   const appRef = useRef(null)
+  const [isContractOpen, setIsContractOpen] = useState(false)
+  const [isMonthlyBreakdownOpen, setIsMonthlyBreakdownOpen] = useState(false)
+  const [isPositionEditorOpen, setIsPositionEditorOpen] = useState(false)
+  const [activeFlagPanel, setActiveFlagPanel] = useState(null)
+  const [activeMetricTitle, setActiveMetricTitle] = useState("MONTHLY REVENUE")
+  const [positionsData, setPositionsData] = useState(initialPositions)
+  const [editingPositionId, setEditingPositionId] = useState(null)
   const [positionToggles, setPositionToggles] = useState(() =>
-    Object.fromEntries(positions.map((name) => [name, true])),
+    Object.fromEntries(initialPositions.map((position) => [position.id, true])),
   )
+  const [activePositionChips, setActivePositionChips] = useState({})
+  const [draftPosition, setDraftPosition] = useState({
+    title: "",
+    paymentAmount: "",
+    paymentCadence: "Weekly pull",
+    depositAmount: "",
+    depositDate: "",
+    chips: [],
+    deposits: [],
+  })
+  const [editingPaymentIndex, setEditingPaymentIndex] = useState(null)
+  const [editingDepositIndex, setEditingDepositIndex] = useState(null)
   const [calculator, setCalculator] = useState({
     leverageDelta: 11,
     termDays: 15,
     factor: 1.35,
     frequency: "Daily",
   })
-  const handleCardClick = () => null
-
   const frequencyDivisor = {
     Daily: calculator.termDays,
     Weekly: calculator.termDays / 7,
@@ -175,6 +298,169 @@ function App() {
 
   const formatCurrency = (value) =>
     value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+  const activeUnderwritingStep = 1
+
+  const resetDraftPosition = () => {
+    setDraftPosition({
+      title: "",
+      paymentAmount: "",
+      paymentCadence: "Weekly pull",
+      depositAmount: "",
+      depositDate: "",
+      chips: [],
+      deposits: [],
+    })
+    setEditingPositionId(null)
+    setEditingPaymentIndex(null)
+    setEditingDepositIndex(null)
+  }
+
+  const openCreatePositionEditor = () => {
+    resetDraftPosition()
+    setIsPositionEditorOpen(true)
+  }
+
+  const openEditPositionEditor = (position) => {
+    setDraftPosition({
+      title: position.title,
+      paymentAmount: "",
+      paymentCadence: "Weekly pull",
+      depositAmount: "",
+      depositDate: "",
+      chips: position.chips,
+      deposits: position.deposits,
+    })
+    setEditingPositionId(position.id)
+    setEditingPaymentIndex(null)
+    setEditingDepositIndex(null)
+    setIsPositionEditorOpen(true)
+  }
+
+  const addOrUpdateDraftPayment = () => {
+    if (!draftPosition.paymentAmount.trim()) return
+    const nextPayment = {
+      amount: draftPosition.paymentAmount.trim(),
+      meta: draftPosition.paymentCadence,
+    }
+    setDraftPosition((prev) => {
+      if (editingPaymentIndex === null) {
+        return { ...prev, chips: [...prev.chips, nextPayment], paymentAmount: "" }
+      }
+      return {
+        ...prev,
+        chips: prev.chips.map((chip, index) => (index === editingPaymentIndex ? nextPayment : chip)),
+        paymentAmount: "",
+      }
+    })
+    setEditingPaymentIndex(null)
+  }
+
+  const editDraftPayment = (index) => {
+    const payment = draftPosition.chips[index]
+    if (!payment) return
+    setDraftPosition((prev) => ({
+      ...prev,
+      paymentAmount: payment.amount,
+      paymentCadence: payment.meta,
+    }))
+    setEditingPaymentIndex(index)
+  }
+
+  const removeDraftPayment = (index) => {
+    setDraftPosition((prev) => ({
+      ...prev,
+      chips: prev.chips.filter((_, chipIndex) => chipIndex !== index),
+    }))
+    if (editingPaymentIndex === index) {
+      setEditingPaymentIndex(null)
+      setDraftPosition((prev) => ({ ...prev, paymentAmount: "", paymentCadence: "Weekly pull" }))
+    }
+  }
+
+  const addOrUpdateDraftDeposit = () => {
+    if (!draftPosition.depositAmount.trim() || !draftPosition.depositDate.trim()) return
+    const nextDeposit = {
+      amount: draftPosition.depositAmount.trim(),
+      date: draftPosition.depositDate.trim(),
+    }
+    setDraftPosition((prev) => {
+      if (editingDepositIndex === null) {
+        return {
+          ...prev,
+          deposits: [...prev.deposits, nextDeposit],
+          depositAmount: "",
+          depositDate: "",
+        }
+      }
+      return {
+        ...prev,
+        deposits: prev.deposits.map((deposit, index) =>
+          index === editingDepositIndex ? nextDeposit : deposit,
+        ),
+        depositAmount: "",
+        depositDate: "",
+      }
+    })
+    setEditingDepositIndex(null)
+  }
+
+  const editDraftDeposit = (index) => {
+    const deposit = draftPosition.deposits[index]
+    if (!deposit) return
+    setDraftPosition((prev) => ({
+      ...prev,
+      depositAmount: deposit.amount,
+      depositDate: deposit.date,
+    }))
+    setEditingDepositIndex(index)
+  }
+
+  const removeDraftDeposit = (index) => {
+    setDraftPosition((prev) => ({
+      ...prev,
+      deposits: prev.deposits.filter((_, depositIndex) => depositIndex !== index),
+    }))
+    if (editingDepositIndex === index) {
+      setEditingDepositIndex(null)
+      setDraftPosition((prev) => ({ ...prev, depositAmount: "", depositDate: "" }))
+    }
+  }
+
+  const savePosition = () => {
+    if (!draftPosition.title.trim()) return
+    const positionPayload = {
+      title: draftPosition.title.trim(),
+      chips: draftPosition.chips,
+      deposits: draftPosition.deposits,
+    }
+    if (editingPositionId) {
+      setPositionsData((prev) =>
+        prev.map((position) =>
+          position.id === editingPositionId ? { ...position, ...positionPayload } : position,
+        ),
+      )
+    } else {
+      const newId = `position-${Date.now()}`
+      const createdPosition = { id: newId, ...positionPayload }
+      setPositionsData((prev) => [...prev, createdPosition])
+      setPositionToggles((prev) => ({ ...prev, [newId]: true }))
+    }
+    resetDraftPosition()
+    setIsPositionEditorOpen(false)
+  }
+
+  const removePosition = (positionId) => {
+    setPositionsData((prev) => prev.filter((position) => position.id !== positionId))
+    setPositionToggles((prev) => {
+      const next = { ...prev }
+      delete next[positionId]
+      return next
+    })
+    if (editingPositionId === positionId) {
+      resetDraftPosition()
+      setIsPositionEditorOpen(false)
+    }
+  }
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -211,16 +497,42 @@ function App() {
           </h1>
         </div>
 
-        <div className="hidden items-center gap-1 text-[11px] text-[rgba(76,79,105,0.4)] xl:flex">
-          <span>Submitted</span>
-          <span>•</span>
-          <span className="font-medium text-[#3277FF]">Review</span>
-          <span>•</span>
-          <span>Contract Sent</span>
-          <span>•</span>
-          <span>Signed</span>
-          <span>•</span>
-          <span>Funded</span>
+        <div className="hidden items-center xl:flex">
+          {underwritingSteps.map((step, index) => {
+            const isCompleted = index < activeUnderwritingStep
+            const isActive = index === activeUnderwritingStep
+            return (
+              <div key={step} className="flex items-center">
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`grid size-3.5 place-items-center rounded-full border text-[9px] leading-none ${
+                      isCompleted
+                        ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                        : isActive
+                          ? "border-[#3277FF] bg-[#fafafa] text-transparent"
+                          : "border-[#c8ced9] bg-[#fafafa] text-transparent"
+                    }`}
+                  >
+                    {isCompleted ? "✓" : ""}
+                  </span>
+                  <span
+                    className={`text-[11px] ${
+                      isCompleted || isActive ? "font-medium text-[#3277FF]" : "text-[rgba(76,79,105,0.55)]"
+                    }`}
+                  >
+                    {step}
+                  </span>
+                </div>
+                {index < underwritingSteps.length - 1 ? (
+                  <span
+                    className={`mx-2 h-[1px] w-6 ${
+                      index < activeUnderwritingStep ? "bg-[#0f9f9a]" : "bg-[#d9d9d9]"
+                    }`}
+                  />
+                ) : null}
+              </div>
+            )
+          })}
         </div>
 
         <div className="flex items-center gap-2">
@@ -472,6 +784,7 @@ function App() {
           <div className="border-t border-[#d9d9d9] bg-[#fafafa] p-4">
             <button
               type="button"
+              onClick={() => setIsContractOpen(true)}
               className="interactive-pop mb-3 w-full rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-center text-[12px] font-medium text-[#4c4f69]"
             >
               View Contract &nbsp; <span className="rounded bg-[#efefef] px-1.5 py-0.5 text-[10px]">NOT SENT</span>
@@ -511,7 +824,10 @@ function App() {
                 {metrics.map((metric) => (
                   <article
                     key={metric.title}
-                    onClick={handleCardClick}
+                    onClick={() => {
+                      setActiveMetricTitle(metric.title)
+                      setIsMonthlyBreakdownOpen(true)
+                    }}
                     className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                   >
                     <p className="text-xs font-normal tracking-wide text-[#4c4f69]">
@@ -544,7 +860,7 @@ function App() {
               <div className="grid gap-3 lg:grid-cols-2">
                 <div className="grid gap-3">
                   <article
-                    onClick={handleCardClick}
+                    onClick={() => setActiveFlagPanel("unicourt")}
                     className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
                   >
                     <span className="mt-1 size-[9px] rounded-full bg-[#d20f39] shadow-[0_0_0_2px_#e9f0ff]"></span>
@@ -553,13 +869,13 @@ function App() {
                         UniCourt
                       </p>
                       <p className="mt-1 text-xs text-[#4c4f69]">
-                        Multiple cases found - 3 are still open
+                        Litigation search returned 3 open dockets
                       </p>
                       <p className="mt-1 text-xs text-[#4c4f69]">
-                        Most recent activity was filed within the last 30 days.
+                        Recent filing activity detected in the last 30 days.
                       </p>
                       <p className="mt-1 text-xs text-[#4c4f69]">
-                        Review recommended before final approval.
+                        Validate dispositions before final approval.
                       </p>
                     </div>
                     <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
@@ -567,22 +883,22 @@ function App() {
                     </span>
                   </article>
                   <article
-                    onClick={handleCardClick}
+                    onClick={() => setActiveFlagPanel("datamerch")}
                     className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
                   >
                     <span className="mt-1 size-[9px] rounded-full bg-[#3277FF] shadow-[0_0_0_2px_#e9f0ff]"></span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
-                        Datamerch
+                        DataMerch
                       </p>
                       <p className="mt-1 text-xs text-[#4c4f69]">
-                        Clean history - Merchant has been searched 23 times
+                        No negative peer-funder repayment or fraud postings
                       </p>
                       <p className="mt-1 text-xs text-[#4c4f69]">
-                        No adverse records returned across recent monitoring windows.
+                        FEIN/profile check returned a clean DataMerch file.
                       </p>
                       <p className="mt-1 text-xs text-[#4c4f69]">
-                        No action required unless new filings appear.
+                        Continue standard monitoring cadence.
                       </p>
                     </div>
                     <span className="rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
@@ -592,7 +908,7 @@ function App() {
                 </div>
 
                 <article
-                  onClick={handleCardClick}
+                  onClick={() => setActiveFlagPanel("fraud")}
                   className="interactive-pop card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                 >
                   <p className="text-xs font-light tracking-wide text-[#4c4f69]">
@@ -607,22 +923,22 @@ function App() {
                       alt=""
                       className="size-2.5"
                     />
-                    Potential bank statement alteration
+                    MoneyThumb-style statement authenticity alert
                   </p>
                   <p className="mt-1.5 text-xs text-[#4c4f69]">
-                    Document metadata and value patterns indicate the statement may have been modified.
+                    PDF fingerprint and metadata checks suggest potential document tampering.
                   </p>
                   <p className="mt-1 text-xs text-[#4c4f69]">
-                    Recommend requesting an original export directly from the issuing bank.
+                    Reconciliation variance detected between transaction detail and statement totals.
                   </p>
                   <p className="mt-1 text-xs text-[#4c4f69]">
-                    Compare against prior months for consistent balances and transaction ordering.
+                    Request direct bank export or login verification before approval.
                   </p>
                   <p className="mt-1 text-xs text-[#4c4f69]">
-                    PDF creation timestamps do not align with the stated statement period end date.
+                    Compare against prior months for continuity in balances and transaction cadence.
                   </p>
                   <p className="mt-1 text-xs text-[#4c4f69]">
-                    Embedded fonts and vector paths differ from typical issuer templates for this bank.
+                    Escalate to manual review if discrepancy persists after source verification.
                   </p>
                 </article>
               </div>
@@ -639,9 +955,10 @@ function App() {
                   <h3 className="text-base font-bold leading-none">Positions</h3>
                   <button
                     type="button"
+                    onClick={openCreatePositionEditor}
                     className="interactive-pop rounded border border-[#4c4f69] px-2 py-0.5 text-[10px] font-medium text-[#4c4f69] transition hover:bg-[#efefef]"
                   >
-                    Edit
+                    Add a Position
                   </button>
                 </div>
                 <div className="flex min-w-0 items-center justify-between gap-3 xl:col-span-2">
@@ -683,24 +1000,25 @@ function App() {
               <div className="relative">
                 <div className="card-shadow pointer-events-none absolute inset-0 rounded border border-[#d9d9d9] bg-[#fafafa]/50"></div>
                 <div className="relative z-10 grid gap-4 xl:grid-cols-3">
-                  <div className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
+                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
                     <p className="bg-[#e9f0ff] px-4 py-2 text-[11px] text-[#4c4f69]">
-                      Currently active positions: 3
+                      Currently active positions: {positionsData.length}
                     </p>
-                    {positions.map((position) => {
-                      const on = positionToggles[position]
+                    <div className="min-h-0 flex-1 overflow-y-auto">
+                    {positionsData.map((position) => {
+                      const on = positionToggles[position.id]
                       return (
-                      <div key={position} className="border-b border-[#d9d9d9] p-4">
+                      <div key={position.id} className="border-b border-[#d9d9d9] p-4">
                         <div className="mb-2 flex items-center gap-2">
                           <button
                             type="button"
                             role="switch"
                             aria-checked={on}
-                            aria-label={`${position} position active`}
+                            aria-label={`${position.title} position active`}
                             onClick={() =>
                               setPositionToggles((prev) => ({
                                 ...prev,
-                                [position]: !prev[position],
+                                [position.id]: !prev[position.id],
                               }))
                             }
                             className={`interactive-pop relative h-4 w-7 shrink-0 rounded-full p-[2px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3277FF] ${
@@ -713,24 +1031,98 @@ function App() {
                               }`}
                             />
                           </button>
-                          <p className="text-sm font-medium text-[#1c1b1f]">{position}</p>
+                          <p className={`flex-1 text-sm font-medium ${on ? "text-[#1c1b1f]" : "text-[#8b8ba0]"}`}>
+                            {position.title}
+                          </p>
+                          <button
+                            type="button"
+                            aria-label={`Edit ${position.title}`}
+                            className="interactive-pop rounded p-1 text-[#4c4f69] transition hover:bg-[#efefef] hover:text-[#3277FF]"
+                            onClick={() => openEditPositionEditor(position)}
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="size-3.5"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="M4 20H8L18 10C18.6 9.4 18.6 8.4 18 7.8L16.2 6C15.6 5.4 14.6 5.4 14 6L4 16V20Z"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            aria-label={`Delete ${position.title}`}
+                            className="interactive-pop rounded p-1 text-[#4c4f69] transition hover:bg-[#efefef] hover:text-[#d20f39]"
+                            onClick={() => removePosition(position.id)}
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="size-3.5"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="M5 7H19M10 11V17M14 11V17M7 7L8 19C8.05 19.55 8.5 20 9.06 20H14.94C15.5 20 15.95 19.55 16 19L17 7M9.5 7V5.5C9.5 4.67 10.17 4 11 4H13C13.83 4 14.5 4.67 14.5 5.5V7"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
                         </div>
-                        <div className="mb-2 flex gap-1 text-[11px]">
-                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1">
-                            $182.32 <span className="text-[rgba(76,79,105,0.5)]">weekly x20</span>
-                          </span>
-                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1">
-                            $102.00 <span className="text-[rgba(76,79,105,0.5)]">weekly x20</span>
-                          </span>
-                          <span className="rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1">
-                            $102.00 <span className="text-[rgba(76,79,105,0.5)]">weekly x20</span>
-                          </span>
+                        <div className={`mb-2 flex gap-1 text-[11px] transition-opacity ${on ? "opacity-100" : "opacity-45"}`}>
+                          {position.chips.map((chip, chipIndex) => {
+                            const chipKey = `${position.id}-${chipIndex}`
+                            const isActive = Boolean(activePositionChips[chipKey])
+                            return (
+                              <button
+                                key={chipKey}
+                                type="button"
+                                onClick={() =>
+                                  setActivePositionChips((prev) => ({
+                                    ...prev,
+                                    [chipKey]: !prev[chipKey],
+                                  }))
+                                }
+                                className={`rounded-full border px-2 py-1 transition-colors ${
+                                  isActive
+                                    ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                                    : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
+                                }`}
+                              >
+                                {chip.amount}{" "}
+                                <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
+                                  {chip.meta}
+                                </span>
+                              </button>
+                            )
+                          })}
                         </div>
-                        <p className="text-[11px] font-medium text-[#4c4f69]">Deposits</p>
-                        <p className="text-[10px] text-[#4c4f69]">Jan 20 | $2,000</p>
-                        <p className="text-[10px] text-[#4c4f69]">Mar 20 | $3,400</p>
+                        <p className={`text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>Deposits</p>
+                        {position.deposits.length ? (
+                          position.deposits.map((deposit) => (
+                            <p
+                              key={`${position.id}-${deposit.date}-${deposit.amount}`}
+                              className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}
+                            >
+                              {deposit.date} | {deposit.amount}
+                            </p>
+                          ))
+                        ) : (
+                          <p className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>No deposits added</p>
+                        )}
                       </div>
                     )})}
+                    </div>
                   </div>
                   <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
                     <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,1fr)] items-center gap-2 bg-[#e9f0ff] px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
@@ -769,6 +1161,21 @@ function App() {
             </section>
             <section data-animate>
               <div className="mb-3 flex items-center gap-2">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-4 text-[#4c4f69]"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 19.5V5.5M4 19.5H20M4 19.5L9.5 13L13.5 16.5L20 9"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
                 <h3 className="text-base font-bold leading-none text-[#1c1b1f]">
                   Daily Balances
                 </h3>
@@ -879,6 +1286,405 @@ function App() {
           </div>
         </section>
       </main>
+
+      <div
+        className={`fixed inset-0 z-[43] transition-opacity duration-300 ${
+          isPositionEditorOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close position editor panel"
+          className="absolute inset-0 bg-[rgba(28,27,31,0.2)]"
+          onClick={() => setIsPositionEditorOpen(false)}
+        />
+        <aside
+          className={`absolute right-0 top-0 h-full w-full max-w-[400px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+            isPositionEditorOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-[#d9d9d9] px-5 py-4">
+              <h3 className="text-base font-semibold text-[#1c1b1f]">
+                {editingPositionId ? "Edit Position" : "Create Position"}
+              </h3>
+              <button
+                type="button"
+                aria-label="Close position editor panel"
+                className="interactive-pop text-lg leading-none text-[#4c4f69]"
+                onClick={() => setIsPositionEditorOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <div className="space-y-3">
+                <div>
+                  <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">TITLE</p>
+                  <input
+                    type="text"
+                    value={draftPosition.title}
+                    onChange={(event) =>
+                      setDraftPosition((prev) => ({ ...prev, title: event.target.value }))
+                    }
+                    placeholder="Enter position title"
+                    className="h-10 w-full rounded-md border border-[#d9d9d9] bg-[#fafafa] px-3 text-[12px] text-[#1c1b1f]"
+                  />
+                </div>
+
+                <div className="rounded-md border border-[#d9d9d9] bg-[#fafafa] p-3">
+                  <p className="mb-2 text-[11px] font-medium text-[#4c4f69]">ADD PAYMENT</p>
+                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
+                    <input
+                      type="text"
+                      value={draftPosition.paymentAmount}
+                      onChange={(event) =>
+                        setDraftPosition((prev) => ({ ...prev, paymentAmount: event.target.value }))
+                      }
+                      placeholder="$120.00"
+                      className="h-9 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 text-[12px]"
+                    />
+                    <select
+                      value={draftPosition.paymentCadence}
+                      onChange={(event) =>
+                        setDraftPosition((prev) => ({ ...prev, paymentCadence: event.target.value }))
+                      }
+                      className="h-9 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 text-[12px]"
+                    >
+                      <option>Daily pull</option>
+                      <option>Weekly pull</option>
+                      <option>Bi-weekly pull</option>
+                      <option>Monthly pull</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={addOrUpdateDraftPayment}
+                      className="interactive-pop rounded-md border border-[#d9d9d9] px-3 text-[12px] font-medium text-[#1c1b1f]"
+                    >
+                      {editingPaymentIndex === null ? "Add" : "Save"}
+                    </button>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1 text-[11px]">
+                    {draftPosition.chips.map((chip, index) => (
+                      <span
+                        key={`${chip.amount}-${chip.meta}-${index}`}
+                        className="inline-flex items-center gap-1 rounded-full border border-[#d9d9d9] bg-[#efefef] px-2 py-1"
+                      >
+                        {chip.amount} <span className="text-[rgba(76,79,105,0.6)]">{chip.meta}</span>
+                        <button
+                          type="button"
+                          className="text-[#4c4f69] hover:text-[#3277FF]"
+                          onClick={() => editDraftPayment(index)}
+                        >
+                          ✎
+                        </button>
+                        <button
+                          type="button"
+                          className="text-[#4c4f69] hover:text-[#d20f39]"
+                          onClick={() => removeDraftPayment(index)}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-md border border-[#d9d9d9] bg-[#fafafa] p-3">
+                  <p className="mb-2 text-[11px] font-medium text-[#4c4f69]">ADD DEPOSIT</p>
+                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
+                    <input
+                      type="text"
+                      value={draftPosition.depositDate}
+                      onChange={(event) =>
+                        setDraftPosition((prev) => ({ ...prev, depositDate: event.target.value }))
+                      }
+                      placeholder="Feb 26"
+                      className="h-9 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 text-[12px]"
+                    />
+                    <input
+                      type="text"
+                      value={draftPosition.depositAmount}
+                      onChange={(event) =>
+                        setDraftPosition((prev) => ({ ...prev, depositAmount: event.target.value }))
+                      }
+                      placeholder="$2,400"
+                      className="h-9 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 text-[12px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={addOrUpdateDraftDeposit}
+                      className="interactive-pop rounded-md border border-[#d9d9d9] px-3 text-[12px] font-medium text-[#1c1b1f]"
+                    >
+                      {editingDepositIndex === null ? "Add" : "Save"}
+                    </button>
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    {draftPosition.deposits.map((deposit, index) => (
+                      <p
+                        key={`${deposit.date}-${deposit.amount}-${index}`}
+                        className="flex items-center justify-between text-[11px] text-[#4c4f69]"
+                      >
+                        <span>
+                          {deposit.date} | {deposit.amount}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            className="text-[#4c4f69] hover:text-[#3277FF]"
+                            onClick={() => editDraftDeposit(index)}
+                          >
+                            ✎
+                          </button>
+                          <button
+                            type="button"
+                            className="text-[#4c4f69] hover:text-[#d20f39]"
+                            onClick={() => removeDraftDeposit(index)}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-[#d9d9d9] p-4">
+              <button
+                type="button"
+                onClick={savePosition}
+                className="interactive-pop w-full rounded-md bg-[#3277FF] py-2.5 text-[12px] font-semibold text-[#fafafa]"
+              >
+                {editingPositionId ? "Save Position" : "Create Position"}
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div
+        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+          isMonthlyBreakdownOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close monthly breakdown panel"
+          className="absolute inset-0 bg-[rgba(28,27,31,0.2)]"
+          onClick={() => setIsMonthlyBreakdownOpen(false)}
+        />
+        <aside
+          className={`absolute right-0 top-0 h-full w-full max-w-[390px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+            isMonthlyBreakdownOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-[#d9d9d9] px-5 py-4">
+              <div>
+                <h3 className="text-base font-semibold text-[#1c1b1f]">Monthly Breakdown</h3>
+                <p className="mt-1 text-[11px] text-[#4c4f69]">{activeMetricTitle}</p>
+              </div>
+              <button
+                type="button"
+                aria-label="Close monthly breakdown panel"
+                className="interactive-pop text-lg leading-none text-[#4c4f69]"
+                onClick={() => setIsMonthlyBreakdownOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <p className="text-[11px] text-[#4c4f69]">
+                Breakdown of monthly revenue, leverage, and MCA payout from the last three
+                statement periods.
+              </p>
+
+              <div className="mt-4 space-y-3">
+                {monthlyBreakdownRows.map((row) => (
+                  <article
+                    key={row.month}
+                    className="rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                  >
+                    <h4 className="text-xs font-semibold tracking-wide text-[#1c1b1f]">{row.month}</h4>
+                    <div className="mt-2 space-y-1 text-[12px]">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#4c4f69]">Revenue</span>
+                        <span className="font-medium text-[#1c1b1f]">{row.revenue}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#4c4f69]">Leverage</span>
+                        <span className="font-medium text-[#1c1b1f]">{row.leverage}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#4c4f69]">MCA Payout</span>
+                        <span className="font-medium text-[#1c1b1f]">{row.mcaPayout}</span>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-[11px] leading-relaxed text-[#4c4f69]">{row.note}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div
+        className={`fixed inset-0 z-[45] transition-opacity duration-300 ${
+          activeFlagPanel ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close flag detail panel"
+          className="absolute inset-0 bg-[rgba(28,27,31,0.2)]"
+          onClick={() => setActiveFlagPanel(null)}
+        />
+        <aside
+          className={`absolute right-0 top-0 h-full w-full max-w-[380px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+            activeFlagPanel ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-[#d9d9d9] px-5 py-4">
+              <div>
+                <h3 className="text-base font-semibold text-[#1c1b1f]">
+                  {activeFlagPanel ? flagDetailPanels[activeFlagPanel].title : "Flag Detail"}
+                </h3>
+                <p className="mt-1 text-[11px] text-[#4c4f69]">
+                  {activeFlagPanel ? flagDetailPanels[activeFlagPanel].subtitle : ""}
+                </p>
+              </div>
+              <button
+                type="button"
+                aria-label="Close flag detail panel"
+                className="interactive-pop text-lg leading-none text-[#4c4f69]"
+                onClick={() => setActiveFlagPanel(null)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <div className="rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                <p className="text-[10px] font-semibold tracking-wide text-[#4c4f69]">STATUS</p>
+                <p className="mt-1 text-[13px] font-medium text-[#1c1b1f]">
+                  {activeFlagPanel ? flagDetailPanels[activeFlagPanel].status : ""}
+                </p>
+              </div>
+
+              <div className="mt-4 space-y-2">
+                {(activeFlagPanel ? flagDetailPanels[activeFlagPanel].points : []).map((point) => (
+                  <div key={point} className="rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                    <p className="text-[12px] leading-relaxed text-[#4c4f69]">{point}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div
+        className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+          isContractOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close contract panel"
+          className="absolute inset-0 bg-[rgba(28,27,31,0.24)]"
+          onClick={() => setIsContractOpen(false)}
+        />
+        <aside
+          className={`absolute right-0 top-0 h-full w-full max-w-[360px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+            isContractOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-[#d9d9d9] px-5 py-4">
+              <h3 className="text-base font-semibold text-[#1c1b1f]">Contract</h3>
+              <button
+                type="button"
+                aria-label="Close contract panel"
+                className="interactive-pop text-lg leading-none text-[#4c4f69]"
+                onClick={() => setIsContractOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <p className="text-[11px] text-[#4c4f69]">
+                Status of the funding contract for this application.
+              </p>
+
+              <div className="mt-4 rounded-md border border-[#d9d9d9] bg-[#fafafa]">
+                <div className="border-b border-[#d9d9d9] px-4 py-2 text-[10px] font-semibold tracking-wide text-[#4c4f69]">
+                  CONTRACT TERMS
+                </div>
+                <div className="space-y-2 px-4 py-3 text-[12px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#4c4f69]">Funding Amount</span>
+                    <span className="font-medium text-[#1c1b1f]">${formatCurrency(FUNDING_AMOUNT)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#4c4f69]">Payback Amount</span>
+                    <span className="font-medium text-[#1c1b1f]">${formatCurrency(paybackTotal)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#4c4f69]">Factor Rate</span>
+                    <span className="font-medium text-[#1c1b1f]">{calculator.factor.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#4c4f69]">Payment</span>
+                    <span className="font-medium text-[#1c1b1f]">
+                      ${formatCurrency(paymentAmount)} / {calculator.frequency}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#4c4f69]">Term</span>
+                    <span className="font-medium text-[#1c1b1f]">{calculator.termDays} days</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-4 text-[11px] leading-relaxed text-[#4c4f69]">
+                Terms reflect the current values from the offer calculator. Return to the
+                calculator to adjust the offer before sending.
+              </p>
+
+              <div className="mt-5">
+                <p className="mb-2 text-[10px] font-semibold tracking-wide text-[#4c4f69]">ACTIONS</p>
+                <button
+                  type="button"
+                  className="interactive-pop w-full rounded-md bg-[#3277FF] px-4 py-2.5 text-[12px] font-semibold text-[#fafafa]"
+                >
+                  Send Contract via DocuSign
+                </button>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    className="interactive-pop rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[11px] font-medium text-[#1c1b1f]"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    type="button"
+                    className="interactive-pop rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[11px] font-medium text-[#1c1b1f]"
+                  >
+                    Download Draft
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   )
 }
