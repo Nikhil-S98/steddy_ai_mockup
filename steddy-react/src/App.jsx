@@ -257,6 +257,7 @@ const flagDetailPanels = {
 
 function App() {
   const appRef = useRef(null)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isMonthlyBreakdownOpen, setIsMonthlyBreakdownOpen] = useState(false)
   const [isPositionEditorOpen, setIsPositionEditorOpen] = useState(false)
@@ -480,7 +481,9 @@ function App() {
   return (
     <div
       ref={appRef}
-      className="h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif]"
+      className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
+        isDarkMode ? "theme-dark" : ""
+      }`}
     >
       <header
         data-animate
@@ -536,6 +539,14 @@ function App() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsDarkMode((prev) => !prev)}
+            aria-label="Toggle dark mode"
+            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
+          >
+            <span className={`size-2.5 rounded-full ${isDarkMode ? "bg-[#3277FF]" : "bg-[#4c4f69]/45"}`} />
+          </button>
           <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
             Edit
           </button>
@@ -811,7 +822,7 @@ function App() {
                   <img
                     src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
                     alt=""
-                    className="size-5"
+                    className="section-icon size-5"
                   />
                   <h3 className="text-base font-bold leading-none">Key Metrics</h3>
                 </div>
@@ -852,7 +863,7 @@ function App() {
                 <img
                   src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
                   alt=""
-                  className="size-5"
+                  className="section-icon size-5"
                 />
                 <h3 className="text-base font-bold leading-none">Flags</h3>
               </div>
@@ -950,7 +961,7 @@ function App() {
                   <img
                     src="https://www.figma.com/api/mcp/asset/cf13024f-3e71-4f25-9938-768089b93a1d"
                     alt=""
-                    className="size-5 shrink-0"
+                    className="section-icon size-5 shrink-0"
                   />
                   <h3 className="text-base font-bold leading-none">Positions</h3>
                   <button
@@ -998,7 +1009,7 @@ function App() {
               </div>
 
               <div className="relative">
-                <div className="card-shadow pointer-events-none absolute inset-0 rounded border border-[#d9d9d9] bg-[#fafafa]/50"></div>
+                <div className="card-shadow pointer-events-none absolute inset-0 rounded border border-[#d9d9d9] bg-[#e9f0ff]/50"></div>
                 <div className="relative z-10 grid gap-4 xl:grid-cols-3">
                   <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
                     <p className="bg-[#e9f0ff] px-4 py-2 text-[11px] text-[#4c4f69]">
@@ -1022,7 +1033,7 @@ function App() {
                               }))
                             }
                             className={`interactive-pop relative h-4 w-7 shrink-0 rounded-full p-[2px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3277FF] ${
-                              on ? "bg-[#3277FF]" : "bg-[#4c4f69]/30"
+                              on ? "bg-[#3277FF]" : "bg-[#3277FF]/40"
                             }`}
                           >
                             <span

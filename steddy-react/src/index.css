@@ -42,3 +42,81 @@ button {
 .interactive-pop:active {
   transform: translateY(0) scale(0.995);
 }
+
+.theme-dark {
+  background: #0b1220;
+  color: #dbe7f5;
+}
+
+.theme-dark header {
+  background: #101a2d !important;
+  border-color: #2a3a54 !important;
+}
+
+.theme-dark main,
+.theme-dark section,
+.theme-dark aside {
+  background: #16233a !important;
+  border-color: #2a3a54 !important;
+}
+
+.theme-dark input,
+.theme-dark select {
+  background: #132138 !important;
+  color: #dbe7f5 !important;
+  border-color: #385173 !important;
+}
+
+.theme-dark input::placeholder {
+  color: #97a9c2 !important;
+}
+
+.theme-dark .bg-\[\#fafafa\] {
+  background: #111b2e !important;
+}
+
+.theme-dark .bg-\[\#efefef\] {
+  background: #16233a !important;
+}
+
+.theme-dark .bg-\[\#e9f0ff\],
+.theme-dark .bg-\[\#e9f0ff\]\/45,
+.theme-dark .bg-\[\#e9f0ff\]\/50 {
+  background: #16233a !important;
+}
+
+.theme-dark .border-\[\#d9d9d9\],
+.theme-dark .border-\[\#efefef\] {
+  border-color: #2d3f5a !important;
+}
+
+.theme-dark .text-\[\#4c4f69\],
+.theme-dark .text-\[\#1c1b1f\] {
+  color: #dbe7f5 !important;
+}
+
+.theme-dark [class*="text-\\[rgba"] {
+  color: #9fb1c8 !important;
+}
+
+.theme-dark .card-shadow {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.theme-dark svg,
+.theme-dark svg * {
+  color: #c8d6ea !important;
+  stroke: currentColor !important;
+}
+
+.theme-dark .section-icon {
+  filter: brightness(0) invert(1);
+}
+
+.theme-dark .opacity-45 {
+  opacity: 0.85 !important;
+}
+
+.theme-dark .interactive-pop:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+}
