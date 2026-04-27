@@ -188,6 +188,17 @@ const monthlyBalanceSeries = [
 const BASE_LEVERAGE = 23
 const FUNDING_AMOUNT = 29472
 const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+const COLOR_THEMES = [
+  { value: "light", label: "Light" },
+  { value: "teal", label: "Teal" },
+  { value: "tealDark", label: "Teal Dark" },
+  { value: "dark", label: "Dark" },
+  { value: "gruvboxLight", label: "Gruvbox Light" },
+  { value: "gruvbox", label: "Gruvbox Dark" },
+  { value: "ayuLight", label: "Ayu Light" },
+  { value: "ayuMirage", label: "Ayu Mirage" },
+  { value: "ayuDark", label: "Ayu Dark" },
+]
 const underwritingSteps = [
   "Submitted",
   "Review",
@@ -483,7 +494,9 @@ function App() {
       ref={appRef}
       className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
         colorMode === "dark" ? "theme-dark" : ""
-      } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
+      } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
+        colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
+      } ${
         colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
       } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
         colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
@@ -525,7 +538,9 @@ function App() {
                   </span>
                   <span
                     className={`text-[11px] ${
-                      isCompleted || isActive ? "font-medium text-[#3277FF]" : "text-[rgba(76,79,105,0.55)]"
+                      isCompleted || isActive
+                        ? "font-medium text-[#3277FF]"
+                        : "underwriting-step-inactive text-[rgba(76,79,105,0.55)]"
                     }`}
                   >
                     {step}
@@ -544,80 +559,26 @@ function App() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setColorMode((prev) => (prev === "dark" ? "light" : "dark"))}
-            aria-label="Toggle dark mode"
-            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
-          >
+          <div className="relative">
+            <select
+              value={colorMode}
+              onChange={(event) => setColorMode(event.target.value)}
+              aria-label="Choose color theme"
+              className="h-8 min-w-[170px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-xs font-medium text-[#4c4f69]"
+            >
+              {COLOR_THEMES.map((themeOption) => (
+                <option key={themeOption.value} value={themeOption.value}>
+                  {themeOption.label}
+                </option>
+              ))}
+            </select>
             <span
-              className={`size-2.5 rounded-full ${
-                colorMode === "dark" ? "bg-[#3277FF]" : "bg-[#4c4f69]/45"
-              }`}
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => setColorMode((prev) => (prev === "gruvbox" ? "light" : "gruvbox"))}
-            aria-label="Toggle gruvbox mode"
-            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
-          >
-            <span
-              className={`size-2.5 rounded-full ${
-                colorMode === "gruvbox" ? "bg-[#d79921]" : "bg-[#4c4f69]/45"
-              }`}
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              setColorMode((prev) => (prev === "gruvboxLight" ? "light" : "gruvboxLight"))
-            }
-            aria-label="Toggle gruvbox light mode"
-            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
-          >
-            <span
-              className={`size-2.5 rounded-full ${
-                colorMode === "gruvboxLight" ? "bg-[#fbf1c7]" : "bg-[#4c4f69]/45"
-              }`}
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => setColorMode((prev) => (prev === "ayuLight" ? "light" : "ayuLight"))}
-            aria-label="Toggle ayu light mode"
-            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
-          >
-            <span
-              className={`size-2.5 rounded-full ${
-                colorMode === "ayuLight" ? "bg-[#f8f9fa]" : "bg-[#4c4f69]/45"
-              }`}
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => setColorMode((prev) => (prev === "ayuMirage" ? "light" : "ayuMirage"))}
-            aria-label="Toggle ayu mirage mode"
-            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
-          >
-            <span
-              className={`size-2.5 rounded-full ${
-                colorMode === "ayuMirage" ? "bg-[#1f2430]" : "bg-[#4c4f69]/45"
-              }`}
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => setColorMode((prev) => (prev === "ayuDark" ? "light" : "ayuDark"))}
-            aria-label="Toggle ayu dark mode"
-            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
-          >
-            <span
-              className={`size-2.5 rounded-full ${
-                colorMode === "ayuDark" ? "bg-[#0d1017]" : "bg-[#4c4f69]/45"
-              }`}
-            />
-          </button>
+              aria-hidden="true"
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
+            >
+              ⌄
+            </span>
+          </div>
           <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
             Edit
           </button>
@@ -677,7 +638,7 @@ function App() {
                 <span>AI DECISION</span>
                 <span className="tracking-normal">Confidence 94%</span>
               </div>
-              <div className="rounded-md border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
+              <div className="ai-decision-card rounded-md border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
                 <div className="mb-2 flex items-center gap-2 text-[#3277FF]">
                   <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[11px] text-[#fafafa]">
                     ✓
@@ -943,7 +904,7 @@ function App() {
                     onClick={() => setActiveFlagPanel("unicourt")}
                     className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
                   >
-                    <span className="mt-1 size-[9px] rounded-full bg-[#d20f39] shadow-[0_0_0_2px_#e9f0ff]"></span>
+                    <span className="mt-1 size-[9px] rounded-full bg-[#d20f39]"></span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
                         UniCourt
@@ -958,7 +919,7 @@ function App() {
                         Validate dispositions before final approval.
                       </p>
                     </div>
-                    <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                    <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
                       3 open
                     </span>
                   </article>
@@ -966,7 +927,7 @@ function App() {
                     onClick={() => setActiveFlagPanel("datamerch")}
                     className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
                   >
-                    <span className="mt-1 size-[9px] rounded-full bg-[#3277FF] shadow-[0_0_0_2px_#e9f0ff]"></span>
+                    <span className="mt-1 size-[9px] rounded-full bg-[#3277FF]"></span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
                         DataMerch
@@ -981,7 +942,7 @@ function App() {
                         Continue standard monitoring cadence.
                       </p>
                     </div>
-                    <span className="rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                    <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
                       clean
                     </span>
                   </article>
@@ -1219,7 +1180,7 @@ function App() {
                               </td>
                               <td className="px-4 py-2.5 text-xs text-[#1c1b1f]">{row.description}</td>
                               <td
-                                className={`whitespace-nowrap px-4 py-2.5 text-right text-xs font-light tabular-nums ${
+                                className={`whitespace-nowrap px-4 py-2.5 text-right text-xs font-normal tabular-nums ${
                                   row.credit ? "text-[#3277FF]" : "text-[#d20f39]"
                                 }`}
                               >
