@@ -257,7 +257,7 @@ const flagDetailPanels = {
 
 function App() {
   const appRef = useRef(null)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [colorMode, setColorMode] = useState("light")
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isMonthlyBreakdownOpen, setIsMonthlyBreakdownOpen] = useState(false)
   const [isPositionEditorOpen, setIsPositionEditorOpen] = useState(false)
@@ -482,8 +482,8 @@ function App() {
     <div
       ref={appRef}
       className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
-        isDarkMode ? "theme-dark" : ""
-      }`}
+        colorMode === "dark" ? "theme-dark" : ""
+      } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""}`}
     >
       <header
         data-animate
@@ -541,11 +541,27 @@ function App() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setIsDarkMode((prev) => !prev)}
+            onClick={() => setColorMode((prev) => (prev === "dark" ? "light" : "dark"))}
             aria-label="Toggle dark mode"
             className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
           >
-            <span className={`size-2.5 rounded-full ${isDarkMode ? "bg-[#3277FF]" : "bg-[#4c4f69]/45"}`} />
+            <span
+              className={`size-2.5 rounded-full ${
+                colorMode === "dark" ? "bg-[#3277FF]" : "bg-[#4c4f69]/45"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() => setColorMode((prev) => (prev === "gruvbox" ? "light" : "gruvbox"))}
+            aria-label="Toggle gruvbox mode"
+            className="interactive-pop grid size-5 place-items-center rounded-full border border-[#d9d9d9] bg-[#fafafa]"
+          >
+            <span
+              className={`size-2.5 rounded-full ${
+                colorMode === "gruvbox" ? "bg-[#d79921]" : "bg-[#4c4f69]/45"
+              }`}
+            />
           </button>
           <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
             Edit
@@ -817,7 +833,7 @@ function App() {
         >
           <div className="w-full space-y-6">
             <section>
-              <div className="mb-3 flex items-center justify-between gap-4">
+              <div className="section-label-row mb-3 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <img
                     src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
@@ -848,9 +864,7 @@ function App() {
                       {metric.value}
                     </p>
                     <p className={`mt-3 flex items-center gap-1 text-xs ${metric.tone}`}>
-                      {metric.icon ? (
-                        <img src={metric.icon} alt="" className="size-2.5" />
-                      ) : null}
+                      {metric.icon ? <span className="inline-block size-2.5 rounded-full bg-current" /> : null}
                       {metric.note}
                     </p>
                   </article>
@@ -859,7 +873,7 @@ function App() {
             </section>
 
             <section>
-              <div className="mb-3 flex items-center gap-2">
+              <div className="section-label-row mb-3 flex items-center gap-2">
                 <img
                   src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
                   alt=""
@@ -929,11 +943,7 @@ function App() {
                     1 Alert
                   </p>
                   <p className="mt-3 flex items-center gap-1 text-xs text-[#d20f39]">
-                    <img
-                      src="https://www.figma.com/api/mcp/asset/51f4a201-10df-4902-8e18-bde6be59991d"
-                      alt=""
-                      className="size-2.5"
-                    />
+                    <span className="inline-block size-2.5 rounded-full bg-current" />
                     MoneyThumb-style statement authenticity alert
                   </p>
                   <p className="mt-1.5 text-xs text-[#4c4f69]">
@@ -956,7 +966,7 @@ function App() {
             </section>
 
             <section>
-              <div className="mb-3 grid grid-cols-1 gap-4 xl:grid-cols-3">
+              <div className="section-label-row mb-3 grid grid-cols-1 gap-4 xl:grid-cols-3">
                 <div className="flex items-center gap-2">
                   <img
                     src="https://www.figma.com/api/mcp/asset/cf13024f-3e71-4f25-9938-768089b93a1d"
@@ -1171,7 +1181,7 @@ function App() {
               </div>
             </section>
             <section data-animate>
-              <div className="mb-3 flex items-center gap-2">
+              <div className="section-label-row mb-3 flex items-center gap-2">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"

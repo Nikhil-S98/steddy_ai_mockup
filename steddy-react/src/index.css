@@ -43,6 +43,22 @@ button {
   transform: translateY(0) scale(0.995);
 }
 
+.rounded {
+  border-radius: 0.5rem !important;
+}
+
+.rounded-md {
+  border-radius: 0.75rem !important;
+}
+
+.rounded-lg {
+  border-radius: 0.95rem !important;
+}
+
+.rounded-xl {
+  border-radius: 1.1rem !important;
+}
+
 .theme-dark {
   background: #0b1220;
   color: #dbe7f5;
@@ -119,4 +135,122 @@ button {
 
 .theme-dark .interactive-pop:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+}
+
+.theme-gruvbox {
+  background: #282828;
+  color: #ebdbb2;
+}
+
+.theme-gruvbox header {
+  background: #1d2021 !important;
+  border-color: #3c3836 !important;
+}
+
+.theme-gruvbox main,
+.theme-gruvbox section,
+.theme-gruvbox aside {
+  background: #282828 !important;
+  border-color: #3c3836 !important;
+}
+
+.theme-gruvbox input,
+.theme-gruvbox select {
+  background: #32302f !important;
+  color: #ebdbb2 !important;
+  border-color: #665c54 !important;
+}
+
+.theme-gruvbox input::placeholder {
+  color: #a89984 !important;
+}
+
+.theme-gruvbox .bg-\[\#fafafa\] {
+  background: #1d2021 !important;
+}
+
+.theme-gruvbox .bg-\[\#efefef\] {
+  background: #32302f !important;
+}
+
+.theme-gruvbox .bg-\[\#e9f0ff\],
+.theme-gruvbox .bg-\[\#e9f0ff\]\/45,
+.theme-gruvbox .bg-\[\#e9f0ff\]\/50 {
+  background: #282828 !important;
+}
+
+.theme-gruvbox .border-\[\#d9d9d9\],
+.theme-gruvbox .border-\[\#efefef\] {
+  border-color: #504945 !important;
+}
+
+.theme-gruvbox .text-\[\#4c4f69\],
+.theme-gruvbox .text-\[\#1c1b1f\] {
+  color: #ebdbb2 !important;
+}
+
+.theme-gruvbox [class*="text-\\[rgba"] {
+  color: #a89984 !important;
+}
+
+.theme-gruvbox .bg-\[\#3277FF\] {
+  background-color: #458588 !important;
+}
+
+.theme-gruvbox .text-\[\#3277FF\] {
+  color: #83a598 !important;
+}
+
+.theme-gruvbox .text-amber-500 {
+  color: #d79921 !important;
+}
+
+.theme-gruvbox .border-\[\#3277FF\] {
+  border-color: #458588 !important;
+}
+
+.theme-gruvbox .text-\[\#d20f39\],
+.theme-gruvbox .text-\[\#b42318\] {
+  color: #fb4934 !important;
+}
+
+.theme-gruvbox .bg-\[\#d20f39\] {
+  background-color: #cc241d !important;
+}
+
+.theme-gruvbox .bg-\[\#eaf2ff\] {
+  background-color: #3c3836 !important;
+}
+
+.theme-gruvbox .border-\[\#b8d4ff\] {
+  border-color: #458588 !important;
+}
+
+.theme-gruvbox .border-\[\#d20f39\],
+.theme-gruvbox .border-\[\#f5c2cb\] {
+  border-color: #cc241d !important;
+}
+
+.theme-gruvbox .card-shadow {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.theme-gruvbox svg,
+.theme-gruvbox svg * {
+  color: #d5c4a1 !important;
+  stroke: currentColor !important;
+}
+
+.theme-gruvbox .section-icon {
+  filter: brightness(0) saturate(100%) invert(86%) sepia(16%) saturate(412%) hue-rotate(350deg) brightness(94%) contrast(88%);
+}
+
+.theme-gruvbox .section-label-row {
+  background: transparent !important;
+}
+
+.theme-gruvbox .space-y-6,
+.theme-gruvbox .grid.gap-4,
+.theme-gruvbox .grid.gap-3 {
+  background: #282828 !important;
 }
