@@ -39,9 +39,9 @@ const initialPositions = [
     id: "advance-syndicate",
     title: "Advance Syndicate",
     chips: [
-      { amount: "$182.32", meta: "weekly pull" },
-      { amount: "$102.00", meta: "weekly pull" },
-      { amount: "$102.00", meta: "weekly pull" },
+      { amount: "$182.32", meta: "weekly" },
+      { amount: "$102.00", meta: "weekly" },
+      { amount: "$102.00", meta: "weekly" },
     ],
     deposits: [
       { date: "Jan 20", amount: "$2,000" },
@@ -52,9 +52,9 @@ const initialPositions = [
     id: "ebf-holdings",
     title: "EBF Holdings",
     chips: [
-      { amount: "$182.32", meta: "weekly pull" },
-      { amount: "$102.00", meta: "weekly pull" },
-      { amount: "$102.00", meta: "weekly pull" },
+      { amount: "$182.32", meta: "weekly" },
+      { amount: "$102.00", meta: "weekly" },
+      { amount: "$102.00", meta: "weekly" },
     ],
     deposits: [
       { date: "Jan 20", amount: "$2,000" },
@@ -65,9 +65,9 @@ const initialPositions = [
     id: "cfg-merchant-solutions",
     title: "CFG Merchant Solutions",
     chips: [
-      { amount: "$182.32", meta: "weekly pull" },
-      { amount: "$102.00", meta: "weekly pull" },
-      { amount: "$102.00", meta: "weekly pull" },
+      { amount: "$182.32", meta: "weekly" },
+      { amount: "$102.00", meta: "weekly" },
+      { amount: "$102.00", meta: "weekly" },
     ],
     deposits: [
       { date: "Jan 20", amount: "$2,000" },
@@ -272,7 +272,7 @@ function App() {
   const [draftPosition, setDraftPosition] = useState({
     title: "",
     paymentAmount: "",
-    paymentCadence: "Weekly pull",
+    paymentCadence: "Weekly",
     depositAmount: "",
     depositDate: "",
     chips: [],
@@ -305,7 +305,7 @@ function App() {
     setDraftPosition({
       title: "",
       paymentAmount: "",
-      paymentCadence: "Weekly pull",
+      paymentCadence: "Weekly",
       depositAmount: "",
       depositDate: "",
       chips: [],
@@ -325,7 +325,7 @@ function App() {
     setDraftPosition({
       title: position.title,
       paymentAmount: "",
-      paymentCadence: "Weekly pull",
+      paymentCadence: "Weekly",
       depositAmount: "",
       depositDate: "",
       chips: position.chips,
@@ -374,7 +374,7 @@ function App() {
     }))
     if (editingPaymentIndex === index) {
       setEditingPaymentIndex(null)
-      setDraftPosition((prev) => ({ ...prev, paymentAmount: "", paymentCadence: "Weekly pull" }))
+      setDraftPosition((prev) => ({ ...prev, paymentAmount: "", paymentCadence: "Weekly" }))
     }
   }
 
@@ -1428,10 +1428,10 @@ function App() {
                       }
                       className="h-9 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 text-[12px]"
                     >
-                      <option>Daily pull</option>
-                      <option>Weekly pull</option>
-                      <option>Bi-weekly pull</option>
-                      <option>Monthly pull</option>
+                      <option>Daily</option>
+                      <option>Weekly</option>
+                      <option>Bi-weekly</option>
+                      <option>Monthly</option>
                     </select>
                     <button
                       type="button"
