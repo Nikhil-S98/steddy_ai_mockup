@@ -101,6 +101,200 @@ button {
   background: rgb(230 244 243 / 0.45) !important;
 }
 
+/* Green — same layout as Teal: grey surfaces (#f3f4f6), green-600 primary */
+.theme-green .bg-\[\#3277FF\] {
+  background-color: #16a34a !important;
+}
+
+.theme-green .text-\[\#3277FF\] {
+  color: #15803d !important;
+}
+
+.theme-green .border-\[\#3277FF\] {
+  border-color: #16a34a !important;
+}
+
+.theme-green .hover\:text-\[\#3277FF\]:hover {
+  color: #15803d !important;
+}
+
+.theme-green .hover\:text-\[\#2566d9\]:hover {
+  color: #166534 !important;
+}
+
+.theme-green .bg-\[\#3277FF\]\/40 {
+  background-color: rgb(22 163 74 / 0.4) !important;
+}
+
+.theme-green .bg-\[\#e9f0ff\],
+.theme-green .bg-\[\#e9f0ff\]\/45,
+.theme-green .bg-\[\#e9f0ff\]\/50 {
+  background: #f3f4f6 !important;
+}
+
+.theme-green .border-\[\#b8d4ff\] {
+  border-color: #bbf7d0 !important;
+}
+
+.theme-green .bg-\[\#eaf2ff\] {
+  background-color: #ecfdf5 !important;
+}
+
+.theme-green .ai-decision-card {
+  background: rgb(236 253 245 / 0.55) !important;
+}
+
+.theme-green .text-amber-500 {
+  color: #f59e0b !important;
+}
+
+.theme-green .text-\[\#d20f39\],
+.theme-green .text-\[\#b42318\] {
+  color: #ef4444 !important;
+}
+
+.theme-green .flag-chip-open,
+.theme-green .flag-chip-open.text-\[\#b42318\] {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: #fafafa !important;
+}
+
+.theme-green .flag-chip-clean {
+  background: #22c55e !important;
+  border-color: #22c55e !important;
+  color: #fafafa !important;
+}
+
+.theme-green .underwriting-step-inactive {
+  color: rgba(21, 128, 61, 0.45) !important;
+}
+
+/* Indigo Light — built from Green theme structure: Slate neutrals, Indigo 600 primary, Cyan 500 accent */
+.theme-indigo-light header {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-indigo-light main,
+.theme-indigo-light section,
+.theme-indigo-light aside {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-indigo-light input,
+.theme-indigo-light select {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.theme-indigo-light input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.theme-indigo-light .bg-\[\#fafafa\],
+.theme-indigo-light .bg-white {
+  background: #f8fafc !important;
+}
+
+.theme-indigo-light .bg-\[\#efefef\] {
+  background: #f1f5f9 !important;
+}
+
+.theme-indigo-light .bg-\[\#3277FF\] {
+  background-color: #4f46e5 !important;
+}
+
+.theme-indigo-light .text-\[\#3277FF\] {
+  color: #4338ca !important;
+}
+
+.theme-indigo-light .border-\[\#3277FF\] {
+  border-color: #4f46e5 !important;
+}
+
+.theme-indigo-light .hover\:text-\[\#3277FF\]:hover {
+  color: #4338ca !important;
+}
+
+.theme-indigo-light .hover\:text-\[\#2566d9\]:hover {
+  color: #3730a3 !important;
+}
+
+.theme-indigo-light .bg-\[\#3277FF\]\/40 {
+  background-color: rgb(79 70 229 / 0.35) !important;
+}
+
+.theme-indigo-light .bg-\[\#e9f0ff\],
+.theme-indigo-light .bg-\[\#e9f0ff\]\/45,
+.theme-indigo-light .bg-\[\#e9f0ff\]\/50 {
+  background: #f8fafc !important;
+}
+
+.theme-indigo-light .border-\[\#b8d4ff\] {
+  border-color: #a5b4fc !important;
+}
+
+.theme-indigo-light .bg-\[\#eaf2ff\] {
+  background-color: #eef2ff !important;
+}
+
+.theme-indigo-light .border-\[\#d9d9d9\],
+.theme-indigo-light .border-\[\#efefef\] {
+  border-color: #e2e8f0 !important;
+}
+
+.theme-indigo-light .text-\[\#4c4f69\],
+.theme-indigo-light .text-\[\#1c1b1f\] {
+  color: #0f172a !important;
+}
+
+.theme-indigo-light [class*="text-\\[rgba"] {
+  color: #475569 !important;
+}
+
+.theme-indigo-light .text-amber-500 {
+  color: #f59e0b !important;
+}
+
+.theme-indigo-light .text-\[\#d20f39\],
+.theme-indigo-light .text-\[\#b42318\] {
+  color: #ef4444 !important;
+}
+
+.theme-indigo-light .bg-\[\#d20f39\] {
+  background-color: #ef4444 !important;
+}
+
+.theme-indigo-light .border-\[\#d20f39\],
+.theme-indigo-light .border-\[\#f5c2cb\] {
+  border-color: #ef4444 !important;
+}
+
+.theme-indigo-light .ai-decision-card {
+  background: rgb(238 242 255 / 0.72) !important;
+  border-color: #c7d2fe !important;
+}
+
+.theme-indigo-light .underwriting-step-inactive {
+  color: rgba(71, 85, 105, 0.55) !important;
+}
+
+.theme-indigo-light .flag-chip-open,
+.theme-indigo-light .flag-chip-open.text-\[\#b42318\] {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: #fef2f2 !important;
+}
+
+.theme-indigo-light .flag-chip-clean {
+  background: #06b6d4 !important;
+  border-color: #06b6d4 !important;
+  color: #f8fafc !important;
+}
+
 .theme-teal-dark .bg-\[\#e9f0ff\],
 .theme-teal-dark .bg-\[\#e9f0ff\]\/45,
 .theme-teal-dark .bg-\[\#e9f0ff\]\/50 {

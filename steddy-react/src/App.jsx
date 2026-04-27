@@ -191,6 +191,8 @@ const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
 const COLOR_THEMES = [
   { value: "light", label: "Light" },
   { value: "teal", label: "Teal" },
+  { value: "green", label: "Green" },
+  { value: "indigoLight", label: "Indigo Light" },
   { value: "tealDark", label: "Teal Dark" },
   { value: "dark", label: "Dark" },
   { value: "gruvboxLight", label: "Gruvbox Light" },
@@ -199,6 +201,98 @@ const COLOR_THEMES = [
   { value: "ayuMirage", label: "Ayu Mirage" },
   { value: "ayuDark", label: "Ayu Dark" },
 ]
+
+/** Daily balance chart — keyed by nav theme */
+const CHART_PALETTE_BY_MODE = {
+  light: {
+    primary: "#3277FF",
+    secondary: "#94a3b8",
+    grid: "#eef2f7",
+    tooltipCursor: "#dbe6ff",
+    refLine: "#fca5a5",
+    axisTick: "#94a3b8",
+  },
+  teal: {
+    primary: "#1a8f88",
+    secondary: "#64748b",
+    grid: "#e2e8f0",
+    tooltipCursor: "rgba(26, 143, 136, 0.28)",
+    refLine: "#fca5a5",
+    axisTick: "#64748b",
+  },
+  green: {
+    primary: "#16a34a",
+    secondary: "#64748b",
+    grid: "#f1f5f9",
+    tooltipCursor: "rgba(22, 163, 74, 0.28)",
+    refLine: "#ef4444",
+    axisTick: "#64748b",
+  },
+  indigoLight: {
+    primary: "#4f46e5",
+    secondary: "#64748b",
+    grid: "#f1f5f9",
+    tooltipCursor: "rgba(79, 70, 229, 0.22)",
+    refLine: "#ef4444",
+    axisTick: "#64748b",
+  },
+  tealDark: {
+    primary: "#2dd4bf",
+    secondary: "#94a3b8",
+    grid: "#1e293b",
+    tooltipCursor: "rgba(45, 212, 191, 0.35)",
+    refLine: "#fb7185",
+    axisTick: "#94a3b8",
+  },
+  dark: {
+    primary: "#6ea8ff",
+    secondary: "#94a3b8",
+    grid: "#2a3f5c",
+    tooltipCursor: "rgba(110, 168, 255, 0.35)",
+    refLine: "#fb7185",
+    axisTick: "#94a3b8",
+  },
+  gruvboxLight: {
+    primary: "#458588",
+    secondary: "#665c54",
+    grid: "#ebdbb2",
+    tooltipCursor: "rgba(69, 133, 136, 0.28)",
+    refLine: "#cc241d",
+    axisTick: "#665c54",
+  },
+  gruvbox: {
+    primary: "#83a598",
+    secondary: "#a89984",
+    grid: "#3c3836",
+    tooltipCursor: "rgba(131, 165, 152, 0.35)",
+    refLine: "#fb4934",
+    axisTick: "#a89984",
+  },
+  ayuLight: {
+    primary: "#399ee6",
+    secondary: "#8a9199",
+    grid: "#e8ecf0",
+    tooltipCursor: "rgba(57, 158, 230, 0.28)",
+    refLine: "#e5474f",
+    axisTick: "#8a9199",
+  },
+  ayuMirage: {
+    primary: "#73d0ff",
+    secondary: "#9ea6b7",
+    grid: "#2a3142",
+    tooltipCursor: "rgba(115, 208, 255, 0.35)",
+    refLine: "#f28779",
+    axisTick: "#9ea6b7",
+  },
+  ayuDark: {
+    primary: "#59c2ff",
+    secondary: "#8791a3",
+    grid: "#1b2230",
+    tooltipCursor: "rgba(89, 194, 255, 0.35)",
+    refLine: "#f26d78",
+    axisTick: "#8791a3",
+  },
+}
 const underwritingSteps = [
   "Submitted",
   "Review",
@@ -310,6 +404,7 @@ function App() {
 
   const formatCurrency = (value) =>
     value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+  const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
 
   const resetDraftPosition = () => {
@@ -494,7 +589,9 @@ function App() {
       ref={appRef}
       className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
         colorMode === "dark" ? "theme-dark" : ""
-      } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
+      } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
+        colorMode === "indigoLight" ? "theme-indigo-light" : ""
+      } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
         colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
       } ${
         colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
@@ -1221,11 +1318,17 @@ function App() {
               <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
                 <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
                   <div className="flex items-center gap-2">
-                    <span className="h-[2px] w-4 rounded-full bg-[#3277FF]" />
+                    <span
+                      className="h-[2px] w-4 rounded-full"
+                      style={{ backgroundColor: balanceChart.primary }}
+                    />
                     <span>Current Balance</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="h-[2px] w-4 rounded-full border-t-2 border-dashed border-[#94a3b8]" />
+                    <span
+                      className="h-[2px] w-4 rounded-full border-t-2 border-dashed border-transparent"
+                      style={{ borderColor: balanceChart.secondary }}
+                    />
                     <span>With Offer</span>
                   </div>
                 </div>
@@ -1233,15 +1336,15 @@ function App() {
                 <div className="h-[220px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                      <CartesianGrid stroke="#eef2f7" strokeDasharray="0" vertical={false} />
-                      <ReferenceLine y={0} stroke="#fca5a5" strokeDasharray="5 5" />
+                      <CartesianGrid stroke={balanceChart.grid} strokeDasharray="0" vertical={false} />
+                      <ReferenceLine y={0} stroke={balanceChart.refLine} strokeDasharray="5 5" />
                       <XAxis
                         dataKey="date"
                         interval="preserveStartEnd"
                         minTickGap={28}
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: "#94a3b8", fontSize: 12 }}
+                        tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
                       />
                       <YAxis
                         domain={[-30, 120]}
@@ -1249,10 +1352,10 @@ function App() {
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
-                        tick={{ fill: "#94a3b8", fontSize: 12 }}
+                        tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
                       />
                       <Tooltip
-                        cursor={{ stroke: "#dbe6ff", strokeWidth: 1 }}
+                        cursor={{ stroke: balanceChart.tooltipCursor, strokeWidth: 1 }}
                         formatter={(value) => `$${value}k`}
                         labelStyle={{ color: "#4c4f69", fontWeight: 600 }}
                         contentStyle={{
@@ -1265,7 +1368,7 @@ function App() {
                       <Line
                         type="monotone"
                         dataKey="current"
-                        stroke="#3277FF"
+                        stroke={balanceChart.primary}
                         strokeWidth={3}
                         dot={false}
                         activeDot={{ r: 4 }}
@@ -1273,7 +1376,7 @@ function App() {
                       <Line
                         type="monotone"
                         dataKey="withOffer"
-                        stroke="#94a3b8"
+                        stroke={balanceChart.secondary}
                         strokeWidth={2}
                         strokeDasharray="6 6"
                         dot={false}
