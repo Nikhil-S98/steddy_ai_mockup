@@ -22,7 +22,7 @@ const metrics = [
   {
     title: "CURRENT LEVERAGE",
     value: "23%",
-    note: "Within Acceptable Range",
+    note: "Acceptable Range",
     tone: "text-[#3277FF]",
     icon: "https://www.figma.com/api/mcp/asset/713d8352-e35a-4f6e-93c8-c944bf041395",
   },
@@ -305,36 +305,41 @@ const monthlyBreakdownRows = [
   {
     month: "December 2025",
     revenue: "$52,410",
-    leverage: "31%",
+    leverage: "5%",
     mcaPayout: "$10,650",
     note: "Seasonal equipment demand drove higher card deposits.",
   },
   {
     month: "January 2026",
     revenue: "$61,780",
-    leverage: "28%",
+    leverage: "10%",
     mcaPayout: "$11,240",
     note: "Collections improved while payouts stayed stable.",
   },
   {
     month: "February 2026",
     revenue: "$60,040",
-    leverage: "23%",
+    leverage: "8%",
     mcaPayout: "$10,035",
     note: "Short month with consistent paydown and fewer reversal days.",
   },
 ]
 const keyMetricCompanyRows = [
-  { company: "Advance Syndicate", leverage: "28%", payout: "$1,125" },
-  { company: "EBF Holdings", leverage: "23%", payout: "$1,050" },
-  { company: "CFG Merchant Solutions", leverage: "18%", payout: "$1,170" },
+  { company: "Advance Syndicate", leverage: "10%", payout: "$1,125" },
+  { company: "EBF Holdings", leverage: "8%", payout: "$1,050" },
+  { company: "CFG Merchant Solutions", leverage: "5%", payout: "$1,170" },
 ]
 const VERSION_OPTIONS = [
   { value: "v1", label: "v1" },
   { value: "v2", label: "v2" },
+  { value: "v3", label: "v3" },
 ]
 
-const getVersionFromPath = (pathname) => (pathname === "/v2" ? "v2" : "v1")
+const getVersionFromPath = (pathname) => {
+  if (pathname === "/v2") return "v2"
+  if (pathname === "/v3") return "v3"
+  return "v1"
+}
 const flagDetailPanels = {
   unicourt: {
     title: "UniCourt Detail",
@@ -598,15 +603,114 @@ function App() {
 
   useEffect(() => {
     const handlePopState = () => {
-      setActiveVersion(getVersionFromPath(window.location.pathname))
+      const parsedVersion = getVersionFromPath(window.location.pathname)
+      setActiveVersion(parsedVersion)
     }
     window.addEventListener("popstate", handlePopState)
     return () => window.removeEventListener("popstate", handlePopState)
   }, [])
 
+  // #region agent log
+  useEffect(() => {
+    fetch("http://127.0.0.1:7553/ingest/c17d0c4e-1a62-4256-9037-9623f9b46a5d", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "52d38b" },
+      body: JSON.stringify({
+        sessionId: "52d38b",
+        runId: "run-layout",
+        hypothesisId: "H0",
+        location: "App.jsx:useEffect:mount",
+        message: "Browser executed mount effect",
+        data: { pathname: window.location.pathname, activeVersion },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+  }, [])
+  // #endregion
+
+  // #region agent log
+  useEffect(() => {
+    if (activeVersion !== "v3") return
+    const keyCard = document.querySelector('[data-v3-card="key-metrics"]')
+    const flagsCard = document.querySelector('[data-v3-card="flags"]')
+    const miniGrid = document.querySelector('[data-v3-key-grid="true"]')
+    const miniCards = Array.from(document.querySelectorAll('[data-v3-mini-card="true"]'))
+    const keyRect = keyCard?.getBoundingClientRect()
+    const flagsRect = flagsCard?.getBoundingClientRect()
+    const miniGridRect = miniGrid?.getBoundingClientRect()
+    const miniRects = miniCards.map((node) => node.getBoundingClientRect())
+    fetch("http://127.0.0.1:7553/ingest/c17d0c4e-1a62-4256-9037-9623f9b46a5d", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "52d38b" },
+      body: JSON.stringify({
+        sessionId: "52d38b",
+        runId: "run-layout",
+        hypothesisId: "H1",
+        location: "App.jsx:useEffect:v3-layout-metrics",
+        message: "Measured v3 card and mini-card geometry",
+        data: {
+          viewportWidth: window.innerWidth,
+          keyCard: keyRect
+            ? { top: keyRect.top, bottom: keyRect.bottom, height: keyRect.height }
+            : null,
+          flagsCard: flagsRect
+            ? { top: flagsRect.top, bottom: flagsRect.bottom, height: flagsRect.height }
+            : null,
+          bottomsDelta: keyRect && flagsRect ? keyRect.bottom - flagsRect.bottom : null,
+          miniGrid: miniGridRect
+            ? { top: miniGridRect.top, bottom: miniGridRect.bottom, height: miniGridRect.height }
+            : null,
+          miniCards: miniRects.map((r) => ({ top: r.top, bottom: r.bottom, height: r.height })),
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+  }, [activeVersion])
+  // #endregion
+
+  // #region agent log
+  useEffect(() => {
+    if (activeVersion !== "v3") return
+    const keyCard = document.querySelector('[data-v3-card="key-metrics"]')
+    const flagsCard = document.querySelector('[data-v3-card="flags"]')
+    const keyStyle = keyCard ? window.getComputedStyle(keyCard) : null
+    const flagsStyle = flagsCard ? window.getComputedStyle(flagsCard) : null
+    fetch("http://127.0.0.1:7553/ingest/c17d0c4e-1a62-4256-9037-9623f9b46a5d", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "52d38b" },
+      body: JSON.stringify({
+        sessionId: "52d38b",
+        runId: "run-layout",
+        hypothesisId: "H2",
+        location: "App.jsx:useEffect:v3-card-styles",
+        message: "Measured computed padding/margins for v3 cards",
+        data: {
+          keyCard: keyStyle
+            ? {
+                paddingTop: keyStyle.paddingTop,
+                paddingBottom: keyStyle.paddingBottom,
+                marginTop: keyStyle.marginTop,
+                marginBottom: keyStyle.marginBottom,
+              }
+            : null,
+          flagsCard: flagsStyle
+            ? {
+                paddingTop: flagsStyle.paddingTop,
+                paddingBottom: flagsStyle.paddingBottom,
+                marginTop: flagsStyle.marginTop,
+                marginBottom: flagsStyle.marginBottom,
+              }
+            : null,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+  }, [activeVersion])
+  // #endregion
+
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
-    const nextPath = nextVersion === "v2" ? "/v2" : "/"
+    const nextPath = nextVersion === "v2" ? "/v2" : nextVersion === "v3" ? "/v3" : "/"
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, "", nextPath)
     }
@@ -994,262 +1098,427 @@ function App() {
           className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-6 lg:p-8"
         >
           <div className="w-full space-y-6">
-            <section>
-              <div className="section-label-row mb-3 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
-                    alt=""
-                    className="section-icon size-5"
-                  />
-                  <h3 className="text-base font-bold leading-none">Key Metrics</h3>
-                </div>
-                <p className="text-xs text-[#4c4f69]">
-                  AI Analysis - 3 months of bank data
-                </p>
-              </div>
-
-              {activeVersion === "v2" ? (
-                <div className="grid gap-4 md:grid-cols-3">
+            {activeVersion === "v3" ? (
+              <section>
+                <div className="grid items-stretch gap-4 xl:grid-cols-2">
                   <article
-                    onClick={() => {
-                      setActiveMetricTitle("MONTHLY REVENUE")
-                      setIsMonthlyBreakdownOpen(true)
-                    }}
-                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                    data-v3-card="key-metrics"
+                    className="card-shadow flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                   >
-                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
-                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
-                    <div className="mt-4 space-y-3">
-                      {monthlyBreakdownRows.map((row) => (
-                        <div key={`revenue-${row.month}`} className="flex items-center justify-between text-xs">
-                          <span className="text-[#4c4f69]">{row.month}</span>
-                          <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="mt-5 flex items-center gap-1.5 text-xs text-amber-500">
-                      <span className="inline-block size-2 rounded-full bg-current" />
-                      Low Revenue
-                    </p>
-                  </article>
-
-                  <article
-                    onClick={() => {
-                      setActiveMetricTitle("CURRENT LEVERAGE")
-                      setIsMonthlyBreakdownOpen(true)
-                    }}
-                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                  >
-                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
-                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">23%</p>
-                    <div className="mt-4 space-y-3">
-                      {keyMetricCompanyRows.map((row) => (
-                        <div key={`leverage-${row.company}`} className="flex items-center justify-between text-xs">
-                          <span className="text-[#4c4f69]">{row.company}</span>
-                          <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="mt-5 flex items-center gap-1.5 text-xs text-[#3277FF]">
-                      <span className="inline-block size-2 rounded-full bg-current" />
-                      Within Acceptable Range
-                    </p>
-                  </article>
-
-                  <article
-                    onClick={() => {
-                      setActiveMetricTitle("MONTHLY MCA PAYOUT")
-                      setIsMonthlyBreakdownOpen(true)
-                    }}
-                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                  >
-                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
-                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
-                    <div className="mt-4 space-y-3">
-                      {keyMetricCompanyRows.map((row) => (
-                        <div key={`payout-${row.company}`} className="flex items-center justify-between text-xs">
-                          <span className="text-[#4c4f69]">{row.company}</span>
-                          <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="mt-5 text-xs text-[#4c4f69]">Paying $167.25 daily</p>
-                  </article>
-                </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-3">
-                  {metrics.map((metric) => (
-                    <article
-                      key={metric.title}
-                      onClick={() => {
-                        setActiveMetricTitle(metric.title)
-                        setIsMonthlyBreakdownOpen(true)
-                      }}
-                      className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                    >
-                      <p className="text-xs font-normal tracking-wide text-[#4c4f69]">
-                        {metric.title}
-                      </p>
-                      <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
-                        {metric.value}
-                      </p>
-                      <p className={`mt-3 flex items-center gap-1 text-xs ${metric.tone}`}>
-                        {metric.icon ? <span className="inline-block size-2.5 rounded-full bg-current" /> : null}
-                        {metric.note}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section>
-              <div className="section-label-row mb-3 flex items-center gap-2">
-                <img
-                  src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
-                  alt=""
-                  className="section-icon size-5"
-                />
-                <h3 className="text-base font-bold leading-none">Flags</h3>
-              </div>
-
-              {activeVersion === "v2" ? (
-                <div className="grid gap-3 xl:grid-cols-3">
-                  <article
-                    onClick={() => setActiveFlagPanel("unicourt")}
-                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
-                      <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                        3 open
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs text-[#4c4f69]">
-                      Litigation search returned active dockets with recent filing activity.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">Review disposition details before funding.</p>
-                  </article>
-                  <article
-                    onClick={() => setActiveFlagPanel("datamerch")}
-                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
-                      <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
-                        clean
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs text-[#4c4f69]">
-                      No adverse peer-funder repayment or fraud postings were returned.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">Continue normal underwriting checks.</p>
-                  </article>
-                  <article
-                    onClick={() => setActiveFlagPanel("fraud")}
-                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
-                        Potential Fraud Alerts
-                      </p>
-                      <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                        1 alert
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs text-[#d20f39]">
-                      MoneyThumb-style statement authenticity mismatch detected.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">
-                      Request source-bank export or login verification before approval.
-                    </p>
-                  </article>
-                </div>
-              ) : (
-                <div className="grid gap-3 lg:grid-cols-2">
-                  <div className="grid gap-3">
-                    <article
-                      onClick={() => setActiveFlagPanel("unicourt")}
-                      className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
-                    >
-                      <span className="mt-1 size-[9px] rounded-full bg-[#d20f39]"></span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
-                          UniCourt
-                        </p>
-                        <p className="mt-1 text-xs text-[#4c4f69]">
-                          Litigation search returned 3 open dockets
-                        </p>
-                        <p className="mt-1 text-xs text-[#4c4f69]">
-                          Recent filing activity detected in the last 30 days.
-                        </p>
-                        <p className="mt-1 text-xs text-[#4c4f69]">
-                          Validate dispositions before final approval.
-                        </p>
+                    <div className="mb-4 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
+                          alt=""
+                          className="section-icon size-5"
+                        />
+                        <h3 className="text-base font-bold leading-none">Key Metrics</h3>
                       </div>
-                      <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                        3 open
-                      </span>
-                    </article>
-                    <article
-                      onClick={() => setActiveFlagPanel("datamerch")}
-                      className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
-                    >
-                      <span className="mt-1 size-[9px] rounded-full bg-[#3277FF]"></span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
-                          DataMerch
+                      <p className="text-xs text-[#4c4f69]">AI Analysis - 3 months of bank data</p>
+                    </div>
+                    <div data-v3-key-grid="true" className="grid flex-1 items-stretch gap-3 md:grid-cols-3">
+                      <article
+                        data-v3-mini-card="true"
+                        onClick={() => {
+                          setActiveMetricTitle("MONTHLY REVENUE")
+                          setIsMonthlyBreakdownOpen(true)
+                        }}
+                        className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+                      >
+                        <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
+                        <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
+                        <div className="mt-3 space-y-2.5">
+                          {monthlyBreakdownRows.map((row) => (
+                            <div
+                              key={`v3-revenue-${row.month}`}
+                              className="flex items-center justify-between text-[11px]"
+                            >
+                              <span className="text-[#4c4f69]">{row.month}</span>
+                              <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-amber-500">
+                          <span className="inline-block size-2 rounded-full bg-current" />
+                          Low Revenue
                         </p>
-                        <p className="mt-1 text-xs text-[#4c4f69]">
-                          No negative peer-funder repayment or fraud postings
+                      </article>
+                      <article
+                        data-v3-mini-card="true"
+                        onClick={() => {
+                          setActiveMetricTitle("CURRENT LEVERAGE")
+                          setIsMonthlyBreakdownOpen(true)
+                        }}
+                        className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+                      >
+                        <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
+                        <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                        <div className="mt-3 space-y-2.5">
+                          {keyMetricCompanyRows.map((row) => (
+                            <div
+                              key={`v3-leverage-${row.company}`}
+                              className="flex items-center justify-between text-[11px]"
+                            >
+                              <span className="text-[#4c4f69]">{row.company}</span>
+                              <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#3277FF]">
+                          <span className="inline-block size-2 rounded-full bg-current" />
+                          Acceptable Range
                         </p>
-                        <p className="mt-1 text-xs text-[#4c4f69]">
-                          FEIN/profile check returned a clean DataMerch file.
+                      </article>
+                      <article
+                        data-v3-mini-card="true"
+                        onClick={() => {
+                          setActiveMetricTitle("MONTHLY MCA PAYOUT")
+                          setIsMonthlyBreakdownOpen(true)
+                        }}
+                        className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+                      >
+                        <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
+                        <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                        <div className="mt-3 space-y-2.5">
+                          {keyMetricCompanyRows.map((row) => (
+                            <div
+                              key={`v3-payout-${row.company}`}
+                              className="flex items-center justify-between text-[11px]"
+                            >
+                              <span className="text-[#4c4f69]">{row.company}</span>
+                              <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#4c4f69]">
+                          <span className="inline-block size-2 rounded-full bg-current" />
+                          Paying $167.25 daily
                         </p>
-                        <p className="mt-1 text-xs text-[#4c4f69]">
-                          Continue standard monitoring cadence.
+                      </article>
+                    </div>
+                  </article>
+
+                  <article
+                    data-v3-card="flags"
+                    className="card-shadow h-full rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                  >
+                    <div className="mb-4 flex items-center gap-2">
+                      <img
+                        src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
+                        alt=""
+                        className="section-icon size-5"
+                      />
+                      <h3 className="text-base font-bold leading-none">Flags</h3>
+                    </div>
+                    <div className="grid gap-3">
+                      <article
+                        onClick={() => setActiveFlagPanel("unicourt")}
+                        className="interactive-pop rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
+                          <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                            3 open
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-[#4c4f69]">
+                          Litigation search returned active dockets with recent filing activity.
                         </p>
-                      </div>
-                      <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
-                        clean
-                      </span>
-                    </article>
+                      </article>
+                      <article
+                        onClick={() => setActiveFlagPanel("datamerch")}
+                        className="interactive-pop rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
+                          <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                            clean
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-[#4c4f69]">
+                          No adverse peer-funder repayment or fraud postings were returned.
+                        </p>
+                      </article>
+                      <article
+                        onClick={() => setActiveFlagPanel("fraud")}
+                        className="interactive-pop rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                            Potential Fraud Alerts
+                          </p>
+                          <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                            1 alert
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-[#d20f39]">
+                          MoneyThumb-style statement authenticity mismatch detected.
+                        </p>
+                      </article>
+                    </div>
+                  </article>
+                </div>
+              </section>
+            ) : (
+              <>
+                <section>
+                  <div className="section-label-row mb-3 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <img
+                        src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
+                        alt=""
+                        className="section-icon size-5"
+                      />
+                      <h3 className="text-base font-bold leading-none">Key Metrics</h3>
+                    </div>
+                    <p className="text-xs text-[#4c4f69]">
+                      AI Analysis - 3 months of bank data
+                    </p>
                   </div>
 
-                  <article
-                    onClick={() => setActiveFlagPanel("fraud")}
-                    className="interactive-pop card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                  >
-                    <p className="text-xs font-light tracking-wide text-[#4c4f69]">
-                      POTENTIAL FRAUD ALERTS
-                    </p>
-                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
-                      1 Alert
-                    </p>
-                    <p className="mt-3 flex items-center gap-1 text-xs text-[#d20f39]">
-                      <span className="inline-block size-2.5 rounded-full bg-current" />
-                      MoneyThumb-style statement authenticity alert
-                    </p>
-                    <p className="mt-1.5 text-xs text-[#4c4f69]">
-                      PDF fingerprint and metadata checks suggest potential document tampering.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">
-                      Reconciliation variance detected between transaction detail and statement totals.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">
-                      Request direct bank export or login verification before approval.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">
-                      Compare against prior months for continuity in balances and transaction cadence.
-                    </p>
-                    <p className="mt-1 text-xs text-[#4c4f69]">
-                      Escalate to manual review if discrepancy persists after source verification.
-                    </p>
-                  </article>
-                </div>
-              )}
-            </section>
+                  {activeVersion === "v2" ? (
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <article
+                        onClick={() => {
+                          setActiveMetricTitle("MONTHLY REVENUE")
+                          setIsMonthlyBreakdownOpen(true)
+                        }}
+                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
+                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
+                        <div className="mt-4 space-y-3">
+                          {monthlyBreakdownRows.map((row) => (
+                            <div key={`revenue-${row.month}`} className="flex items-center justify-between text-xs">
+                              <span className="text-[#4c4f69]">{row.month}</span>
+                              <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-5 flex items-center gap-1.5 text-xs text-amber-500">
+                          <span className="inline-block size-2 rounded-full bg-current" />
+                          Low Revenue
+                        </p>
+                      </article>
+
+                      <article
+                        onClick={() => {
+                          setActiveMetricTitle("CURRENT LEVERAGE")
+                          setIsMonthlyBreakdownOpen(true)
+                        }}
+                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <p className="text-xs font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
+                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                        <div className="mt-4 space-y-3">
+                          {keyMetricCompanyRows.map((row) => (
+                            <div key={`leverage-${row.company}`} className="flex items-center justify-between text-xs">
+                              <span className="text-[#4c4f69]">{row.company}</span>
+                              <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-5 flex items-center gap-1.5 text-xs text-[#3277FF]">
+                          <span className="inline-block size-2 rounded-full bg-current" />
+                          Within Acceptable Range
+                        </p>
+                      </article>
+
+                      <article
+                        onClick={() => {
+                          setActiveMetricTitle("MONTHLY MCA PAYOUT")
+                          setIsMonthlyBreakdownOpen(true)
+                        }}
+                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
+                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                        <div className="mt-4 space-y-3">
+                          {keyMetricCompanyRows.map((row) => (
+                            <div key={`payout-${row.company}`} className="flex items-center justify-between text-xs">
+                              <span className="text-[#4c4f69]">{row.company}</span>
+                              <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-5 text-xs text-[#4c4f69]">Paying $167.25 daily</p>
+                      </article>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {metrics.map((metric) => (
+                        <article
+                          key={metric.title}
+                          onClick={() => {
+                            setActiveMetricTitle(metric.title)
+                            setIsMonthlyBreakdownOpen(true)
+                          }}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <p className="text-xs font-normal tracking-wide text-[#4c4f69]">
+                            {metric.title}
+                          </p>
+                          <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
+                            {metric.value}
+                          </p>
+                          <p className={`mt-3 flex items-center gap-1 text-xs ${metric.tone}`}>
+                            {metric.icon ? <span className="inline-block size-2.5 rounded-full bg-current" /> : null}
+                            {metric.note}
+                          </p>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section>
+                  <div className="section-label-row mb-3 flex items-center gap-2">
+                    <img
+                      src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
+                      alt=""
+                      className="section-icon size-5"
+                    />
+                    <h3 className="text-base font-bold leading-none">Flags</h3>
+                  </div>
+
+                  {activeVersion === "v2" ? (
+                    <div className="grid gap-3 xl:grid-cols-3">
+                      <article
+                        onClick={() => setActiveFlagPanel("unicourt")}
+                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
+                          <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                            3 open
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-[#4c4f69]">
+                          Litigation search returned active dockets with recent filing activity.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">Review disposition details before funding.</p>
+                      </article>
+                      <article
+                        onClick={() => setActiveFlagPanel("datamerch")}
+                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
+                          <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                            clean
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-[#4c4f69]">
+                          No adverse peer-funder repayment or fraud postings were returned.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">Continue normal underwriting checks.</p>
+                      </article>
+                      <article
+                        onClick={() => setActiveFlagPanel("fraud")}
+                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                            Potential Fraud Alerts
+                          </p>
+                          <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                            1 alert
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-[#d20f39]">
+                          MoneyThumb-style statement authenticity mismatch detected.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Request source-bank export or login verification before approval.
+                        </p>
+                      </article>
+                    </div>
+                  ) : (
+                    <div className="grid gap-3 lg:grid-cols-2">
+                      <div className="grid gap-3">
+                        <article
+                          onClick={() => setActiveFlagPanel("unicourt")}
+                          className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                        >
+                          <span className="mt-1 size-[9px] rounded-full bg-[#d20f39]"></span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                              UniCourt
+                            </p>
+                            <p className="mt-1 text-xs text-[#4c4f69]">
+                              Litigation search returned 3 open dockets
+                            </p>
+                            <p className="mt-1 text-xs text-[#4c4f69]">
+                              Recent filing activity detected in the last 30 days.
+                            </p>
+                            <p className="mt-1 text-xs text-[#4c4f69]">
+                              Validate dispositions before final approval.
+                            </p>
+                          </div>
+                          <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                            3 open
+                          </span>
+                        </article>
+                        <article
+                          onClick={() => setActiveFlagPanel("datamerch")}
+                          className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                        >
+                          <span className="mt-1 size-[9px] rounded-full bg-[#3277FF]"></span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                              DataMerch
+                            </p>
+                            <p className="mt-1 text-xs text-[#4c4f69]">
+                              No negative peer-funder repayment or fraud postings
+                            </p>
+                            <p className="mt-1 text-xs text-[#4c4f69]">
+                              FEIN/profile check returned a clean DataMerch file.
+                            </p>
+                            <p className="mt-1 text-xs text-[#4c4f69]">
+                              Continue standard monitoring cadence.
+                            </p>
+                          </div>
+                          <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                            clean
+                          </span>
+                        </article>
+                      </div>
+
+                      <article
+                        onClick={() => setActiveFlagPanel("fraud")}
+                        className="interactive-pop card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                      >
+                        <p className="text-xs font-light tracking-wide text-[#4c4f69]">
+                          POTENTIAL FRAUD ALERTS
+                        </p>
+                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
+                          1 Alert
+                        </p>
+                        <p className="mt-3 flex items-center gap-1 text-xs text-[#d20f39]">
+                          <span className="inline-block size-2.5 rounded-full bg-current" />
+                          MoneyThumb-style statement authenticity alert
+                        </p>
+                        <p className="mt-1.5 text-xs text-[#4c4f69]">
+                          PDF fingerprint and metadata checks suggest potential document tampering.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Reconciliation variance detected between transaction detail and statement totals.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Request direct bank export or login verification before approval.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Compare against prior months for continuity in balances and transaction cadence.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Escalate to manual review if discrepancy persists after source verification.
+                        </p>
+                      </article>
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
 
             <section>
               <div className="section-label-row mb-3 grid grid-cols-1 gap-4 xl:grid-cols-3">
