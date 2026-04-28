@@ -324,6 +324,12 @@ const monthlyBreakdownRows = [
     note: "Short month with consistent paydown and fewer reversal days.",
   },
 ]
+const VERSION_OPTIONS = [
+  { value: "v1", label: "v1" },
+  { value: "v2", label: "v2" },
+]
+
+const getVersionFromPath = (pathname) => (pathname === "/v2" ? "v2" : "v1")
 const flagDetailPanels = {
   unicourt: {
     title: "UniCourt Detail",
@@ -362,6 +368,7 @@ const flagDetailPanels = {
 
 function App() {
   const appRef = useRef(null)
+  const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
   const [colorMode, setColorMode] = useState("light")
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isMonthlyBreakdownOpen, setIsMonthlyBreakdownOpen] = useState(false)
@@ -584,6 +591,23 @@ function App() {
     return () => ctx.revert()
   }, [])
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveVersion(getVersionFromPath(window.location.pathname))
+    }
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [])
+
+  const handleVersionChange = (event) => {
+    const nextVersion = event.target.value
+    const nextPath = nextVersion === "v2" ? "/v2" : "/"
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, "", nextPath)
+    }
+    setActiveVersion(nextVersion)
+  }
+
   return (
     <div
       ref={appRef}
@@ -613,6 +637,26 @@ function App() {
           <h1 className="text-base font-semibold tracking-tight text-[#1c1b1f] sm:text-lg">
             Application #777
           </h1>
+          <div className="relative">
+            <select
+              value={activeVersion}
+              onChange={handleVersionChange}
+              aria-label="Choose page version"
+              className="h-7 min-w-[56px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-5 text-[11px] font-medium text-[#4c4f69]"
+            >
+              {VERSION_OPTIONS.map((version) => (
+                <option key={version.value} value={version.value}>
+                  {version.label}
+                </option>
+              ))}
+            </select>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
+            >
+              ⌄
+            </span>
+          </div>
         </div>
 
         <div className="hidden items-center xl:flex">
@@ -1144,27 +1188,6 @@ function App() {
                       return (
                       <div key={position.id} className="border-b border-[#d9d9d9] p-4">
                         <div className="mb-2 flex items-center gap-2">
-                          <button
-                            type="button"
-                            role="switch"
-                            aria-checked={on}
-                            aria-label={`${position.title} position active`}
-                            onClick={() =>
-                              setPositionToggles((prev) => ({
-                                ...prev,
-                                [position.id]: !prev[position.id],
-                              }))
-                            }
-                            className={`interactive-pop relative h-4 w-7 shrink-0 rounded-full p-[2px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3277FF] ${
-                              on ? "bg-[#3277FF]" : "bg-[#3277FF]/40"
-                            }`}
-                          >
-                            <span
-                              className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
-                                on ? "translate-x-3" : "translate-x-0"
-                              }`}
-                            />
-                          </button>
                           <p className={`flex-1 text-sm font-medium ${on ? "text-[#1c1b1f]" : "text-[#8b8ba0]"}`}>
                             {position.title}
                           </p>
@@ -1213,7 +1236,11 @@ function App() {
                             </svg>
                           </button>
                         </div>
-                        <div className={`mb-2 flex gap-1 text-[10px] transition-opacity ${on ? "opacity-100" : "opacity-45"}`}>
+                        <div
+                          className={`mb-2 flex flex-wrap gap-1 text-[10px] transition-opacity ${
+                            on ? "opacity-100" : "opacity-45"
+                          }`}
+                        >
                           {position.chips.map((chip, chipIndex) => {
                             const chipKey = `${position.id}-${chipIndex}`
                             const isActive = Boolean(activePositionChips[chipKey])
@@ -1227,12 +1254,24 @@ function App() {
                                     [chipKey]: !prev[chipKey],
                                   }))
                                 }
-                                className={`rounded-full border px-2 py-1 transition-colors ${
+                                className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 transition-colors ${
                                   isActive
                                     ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
                                     : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
                                 }`}
                               >
+                                <span
+                                  aria-hidden="true"
+                                  className={`relative h-3.5 w-6 rounded-full p-[1px] transition-colors ${
+                                    isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
+                                  }`}
+                                >
+                                  <span
+                                    className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
+                                      isActive ? "translate-x-2.5" : "translate-x-0"
+                                    }`}
+                                  />
+                                </span>
                                 {chip.amount}{" "}
                                 <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
                                   {chip.meta}
