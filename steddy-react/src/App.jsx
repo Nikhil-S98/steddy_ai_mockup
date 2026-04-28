@@ -381,6 +381,7 @@ function App() {
   const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
   const [colorMode, setColorMode] = useState("light")
   const [isContractOpen, setIsContractOpen] = useState(false)
+  const [isAiDecisionOpen, setIsAiDecisionOpen] = useState(false)
   const [isMonthlyBreakdownOpen, setIsMonthlyBreakdownOpen] = useState(false)
   const [isPositionEditorOpen, setIsPositionEditorOpen] = useState(false)
   const [activeFlagPanel, setActiveFlagPanel] = useState(null)
@@ -610,104 +611,6 @@ function App() {
     return () => window.removeEventListener("popstate", handlePopState)
   }, [])
 
-  // #region agent log
-  useEffect(() => {
-    fetch("http://127.0.0.1:7553/ingest/c17d0c4e-1a62-4256-9037-9623f9b46a5d", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "52d38b" },
-      body: JSON.stringify({
-        sessionId: "52d38b",
-        runId: "run-layout",
-        hypothesisId: "H0",
-        location: "App.jsx:useEffect:mount",
-        message: "Browser executed mount effect",
-        data: { pathname: window.location.pathname, activeVersion },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {})
-  }, [])
-  // #endregion
-
-  // #region agent log
-  useEffect(() => {
-    if (activeVersion !== "v3") return
-    const keyCard = document.querySelector('[data-v3-card="key-metrics"]')
-    const flagsCard = document.querySelector('[data-v3-card="flags"]')
-    const miniGrid = document.querySelector('[data-v3-key-grid="true"]')
-    const miniCards = Array.from(document.querySelectorAll('[data-v3-mini-card="true"]'))
-    const keyRect = keyCard?.getBoundingClientRect()
-    const flagsRect = flagsCard?.getBoundingClientRect()
-    const miniGridRect = miniGrid?.getBoundingClientRect()
-    const miniRects = miniCards.map((node) => node.getBoundingClientRect())
-    fetch("http://127.0.0.1:7553/ingest/c17d0c4e-1a62-4256-9037-9623f9b46a5d", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "52d38b" },
-      body: JSON.stringify({
-        sessionId: "52d38b",
-        runId: "run-layout",
-        hypothesisId: "H1",
-        location: "App.jsx:useEffect:v3-layout-metrics",
-        message: "Measured v3 card and mini-card geometry",
-        data: {
-          viewportWidth: window.innerWidth,
-          keyCard: keyRect
-            ? { top: keyRect.top, bottom: keyRect.bottom, height: keyRect.height }
-            : null,
-          flagsCard: flagsRect
-            ? { top: flagsRect.top, bottom: flagsRect.bottom, height: flagsRect.height }
-            : null,
-          bottomsDelta: keyRect && flagsRect ? keyRect.bottom - flagsRect.bottom : null,
-          miniGrid: miniGridRect
-            ? { top: miniGridRect.top, bottom: miniGridRect.bottom, height: miniGridRect.height }
-            : null,
-          miniCards: miniRects.map((r) => ({ top: r.top, bottom: r.bottom, height: r.height })),
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {})
-  }, [activeVersion])
-  // #endregion
-
-  // #region agent log
-  useEffect(() => {
-    if (activeVersion !== "v3") return
-    const keyCard = document.querySelector('[data-v3-card="key-metrics"]')
-    const flagsCard = document.querySelector('[data-v3-card="flags"]')
-    const keyStyle = keyCard ? window.getComputedStyle(keyCard) : null
-    const flagsStyle = flagsCard ? window.getComputedStyle(flagsCard) : null
-    fetch("http://127.0.0.1:7553/ingest/c17d0c4e-1a62-4256-9037-9623f9b46a5d", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "52d38b" },
-      body: JSON.stringify({
-        sessionId: "52d38b",
-        runId: "run-layout",
-        hypothesisId: "H2",
-        location: "App.jsx:useEffect:v3-card-styles",
-        message: "Measured computed padding/margins for v3 cards",
-        data: {
-          keyCard: keyStyle
-            ? {
-                paddingTop: keyStyle.paddingTop,
-                paddingBottom: keyStyle.paddingBottom,
-                marginTop: keyStyle.marginTop,
-                marginBottom: keyStyle.marginBottom,
-              }
-            : null,
-          flagsCard: flagsStyle
-            ? {
-                paddingTop: flagsStyle.paddingTop,
-                paddingBottom: flagsStyle.paddingBottom,
-                marginTop: flagsStyle.marginTop,
-                marginBottom: flagsStyle.marginBottom,
-              }
-            : null,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {})
-  }, [activeVersion])
-  // #endregion
-
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
     const nextPath = nextVersion === "v2" ? "/v2" : nextVersion === "v3" ? "/v3" : "/"
@@ -889,23 +792,38 @@ function App() {
                 <span className="tracking-normal">Confidence 94%</span>
               </div>
               <div className="ai-decision-card rounded-md border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
-                <div className="mb-2 flex items-center gap-2 text-[#3277FF]">
-                  <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[11px] text-[#fafafa]">
-                    ✓
+                <button
+                  type="button"
+                  onClick={() => setIsAiDecisionOpen((prev) => !prev)}
+                  className="flex w-full items-center justify-between gap-2 text-left text-[#3277FF]"
+                  aria-expanded={isAiDecisionOpen}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[11px] text-[#fafafa]">
+                      ✓
+                    </span>
+                    <span className="text-base font-bold leading-none">Approved</span>
                   </span>
-                  <span className="text-base font-bold leading-none">Approved</span>
-                </div>
-                <p className="text-[12px] leading-snug text-[#1c1b1f]">
-                  Revenue trend positive, leverage within range, 2 negative
-                  days flagged for review.
-                </p>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button className="interactive-pop rounded-md bg-[#3277FF] py-2 text-[13px] font-semibold text-[#fafafa]">
-                    Confirm
-                  </button>
-                  <button className="interactive-pop rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
-                    Override
-                  </button>
+                  <span
+                    aria-hidden="true"
+                    className={`text-xs text-[#4c4f69] transition-transform ${isAiDecisionOpen ? "rotate-180" : ""}`}
+                  >
+                    ▾
+                  </span>
+                </button>
+                <div className={`${isAiDecisionOpen ? "mt-3 block" : "hidden"}`}>
+                  <p className="text-[12px] leading-snug text-[#1c1b1f]">
+                    Revenue trend positive, leverage within range, 2 negative
+                    days flagged for review.
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button className="interactive-pop rounded-md bg-[#3277FF] py-2 text-[13px] font-semibold text-[#fafafa]">
+                      Confirm
+                    </button>
+                    <button className="interactive-pop rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
+                      Ignore
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1075,13 +993,6 @@ function App() {
           </div>
 
           <div className="border-t border-[#d9d9d9] bg-[#fafafa] p-4">
-            <button
-              type="button"
-              onClick={() => setIsContractOpen(true)}
-              className="interactive-pop mb-3 w-full rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-center text-[12px] font-medium text-[#4c4f69]"
-            >
-              View Contract &nbsp; <span className="rounded bg-[#efefef] px-1.5 py-0.5 text-[10px]">NOT SENT</span>
-            </button>
             <div className="grid grid-cols-2 gap-2">
               <button className="interactive-pop rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                 ✓ Approve
@@ -1101,9 +1012,9 @@ function App() {
             {activeVersion === "v3" ? (
               <section>
                 <div className="grid items-stretch gap-4 xl:grid-cols-2">
-                  <article
+                  <div
                     data-v3-card="key-metrics"
-                    className="card-shadow flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                    className="flex h-full flex-col"
                   >
                     <div className="mb-4 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
@@ -1196,11 +1107,11 @@ function App() {
                         </p>
                       </article>
                     </div>
-                  </article>
+                  </div>
 
-                  <article
+                  <div
                     data-v3-card="flags"
-                    className="card-shadow h-full rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                    className="h-full"
                   >
                     <div className="mb-4 flex items-center gap-2">
                       <img
@@ -1210,38 +1121,41 @@ function App() {
                       />
                       <h3 className="text-base font-bold leading-none">Flags</h3>
                     </div>
-                    <div className="grid gap-3">
-                      <article
-                        onClick={() => setActiveFlagPanel("unicourt")}
-                        className="interactive-pop rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
-                          <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                            3 open
-                          </span>
-                        </div>
-                        <p className="mt-2 text-xs text-[#4c4f69]">
-                          Litigation search returned active dockets with recent filing activity.
-                        </p>
-                      </article>
-                      <article
-                        onClick={() => setActiveFlagPanel("datamerch")}
-                        className="interactive-pop rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
-                          <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
-                            clean
-                          </span>
-                        </div>
-                        <p className="mt-2 text-xs text-[#4c4f69]">
-                          No adverse peer-funder repayment or fraud postings were returned.
-                        </p>
-                      </article>
+                    <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-2">
+                      <div className="grid gap-3 lg:grid-rows-2">
+                        <article
+                          onClick={() => setActiveFlagPanel("unicourt")}
+                          className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
+                            <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                              3 open
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-[#4c4f69]">
+                            Litigation search returned active dockets with recent filing activity.
+                          </p>
+                        </article>
+                        <article
+                          onClick={() => setActiveFlagPanel("datamerch")}
+                          className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
+                            <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                              clean
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-[#4c4f69]">
+                            No adverse peer-funder repayment or fraud postings were returned.
+                          </p>
+                        </article>
+                      </div>
+
                       <article
                         onClick={() => setActiveFlagPanel("fraud")}
-                        className="interactive-pop rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                        className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
@@ -1254,9 +1168,23 @@ function App() {
                         <p className="mt-2 text-xs text-[#d20f39]">
                           MoneyThumb-style statement authenticity mismatch detected.
                         </p>
+                        <div className="mt-3 space-y-2 text-xs text-[#4c4f69]">
+                          <div>
+                            <p className="font-semibold text-[#1c1b1f]">Dec</p>
+                            <p className="mt-0.5">Fingerprint mismatch</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-[#1c1b1f]">Jan</p>
+                            <p className="mt-0.5">Summary variance</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-[#1c1b1f]">Feb</p>
+                            <p className="mt-0.5">Metadata anomaly</p>
+                          </div>
+                        </div>
                       </article>
                     </div>
-                  </article>
+                  </div>
                 </div>
               </section>
             ) : (
@@ -1761,13 +1689,6 @@ function App() {
                     />
                     <span>Current Balance</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-[2px] w-4 rounded-full border-t-2 border-dashed border-transparent"
-                      style={{ borderColor: balanceChart.secondary }}
-                    />
-                    <span>With Offer</span>
-                  </div>
                 </div>
 
                 <div className="h-[220px] w-full">
@@ -1781,6 +1702,7 @@ function App() {
                         minTickGap={28}
                         axisLine={false}
                         tickLine={false}
+                        tickMargin={10}
                         tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
                       />
                       <YAxis
@@ -1794,11 +1716,13 @@ function App() {
                       <Tooltip
                         cursor={{ stroke: balanceChart.tooltipCursor, strokeWidth: 1 }}
                         formatter={(value) => `$${value}k`}
-                        labelStyle={{ color: "#4c4f69", fontWeight: 600 }}
+                        labelStyle={{ color: "#4c4f69", fontWeight: 600, fontSize: 11, marginBottom: 2 }}
+                        itemStyle={{ fontSize: 11, padding: 0 }}
                         contentStyle={{
                           border: "1px solid #d9d9d9",
-                          borderRadius: "8px",
-                          boxShadow: "0 2px 8px rgba(76, 79, 105, 0.15)",
+                          borderRadius: "6px",
+                          boxShadow: "0 1px 4px rgba(76, 79, 105, 0.12)",
+                          padding: "6px 8px",
                           color: "#1c1b1f",
                         }}
                       />
@@ -1806,17 +1730,9 @@ function App() {
                         type="monotone"
                         dataKey="current"
                         stroke={balanceChart.primary}
-                        strokeWidth={3}
-                        dot={false}
-                        activeDot={{ r: 4 }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="withOffer"
-                        stroke={balanceChart.secondary}
                         strokeWidth={2}
-                        strokeDasharray="6 6"
                         dot={false}
+                        activeDot={{ r: 3 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
