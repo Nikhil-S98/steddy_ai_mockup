@@ -324,6 +324,11 @@ const monthlyBreakdownRows = [
     note: "Short month with consistent paydown and fewer reversal days.",
   },
 ]
+const keyMetricCompanyRows = [
+  { company: "Advance Syndicate", leverage: "28%", payout: "$1,125" },
+  { company: "EBF Holdings", leverage: "23%", payout: "$1,050" },
+  { company: "CFG Merchant Solutions", leverage: "18%", payout: "$1,170" },
+]
 const VERSION_OPTIONS = [
   { value: "v1", label: "v1" },
   { value: "v2", label: "v2" },
@@ -1004,29 +1009,99 @@ function App() {
                 </p>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                {metrics.map((metric) => (
+              {activeVersion === "v2" ? (
+                <div className="grid gap-4 md:grid-cols-3">
                   <article
-                    key={metric.title}
                     onClick={() => {
-                      setActiveMetricTitle(metric.title)
+                      setActiveMetricTitle("MONTHLY REVENUE")
                       setIsMonthlyBreakdownOpen(true)
                     }}
                     className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                   >
-                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">
-                      {metric.title}
-                    </p>
-                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
-                      {metric.value}
-                    </p>
-                    <p className={`mt-3 flex items-center gap-1 text-xs ${metric.tone}`}>
-                      {metric.icon ? <span className="inline-block size-2.5 rounded-full bg-current" /> : null}
-                      {metric.note}
+                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
+                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
+                    <div className="mt-4 space-y-3">
+                      {monthlyBreakdownRows.map((row) => (
+                        <div key={`revenue-${row.month}`} className="flex items-center justify-between text-xs">
+                          <span className="text-[#4c4f69]">{row.month}</span>
+                          <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-5 flex items-center gap-1.5 text-xs text-amber-500">
+                      <span className="inline-block size-2 rounded-full bg-current" />
+                      Low Revenue
                     </p>
                   </article>
-                ))}
-              </div>
+
+                  <article
+                    onClick={() => {
+                      setActiveMetricTitle("CURRENT LEVERAGE")
+                      setIsMonthlyBreakdownOpen(true)
+                    }}
+                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                  >
+                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
+                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                    <div className="mt-4 space-y-3">
+                      {keyMetricCompanyRows.map((row) => (
+                        <div key={`leverage-${row.company}`} className="flex items-center justify-between text-xs">
+                          <span className="text-[#4c4f69]">{row.company}</span>
+                          <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-5 flex items-center gap-1.5 text-xs text-[#3277FF]">
+                      <span className="inline-block size-2 rounded-full bg-current" />
+                      Within Acceptable Range
+                    </p>
+                  </article>
+
+                  <article
+                    onClick={() => {
+                      setActiveMetricTitle("MONTHLY MCA PAYOUT")
+                      setIsMonthlyBreakdownOpen(true)
+                    }}
+                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                  >
+                    <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
+                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                    <div className="mt-4 space-y-3">
+                      {keyMetricCompanyRows.map((row) => (
+                        <div key={`payout-${row.company}`} className="flex items-center justify-between text-xs">
+                          <span className="text-[#4c4f69]">{row.company}</span>
+                          <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-5 text-xs text-[#4c4f69]">Paying $167.25 daily</p>
+                  </article>
+                </div>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-3">
+                  {metrics.map((metric) => (
+                    <article
+                      key={metric.title}
+                      onClick={() => {
+                        setActiveMetricTitle(metric.title)
+                        setIsMonthlyBreakdownOpen(true)
+                      }}
+                      className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                    >
+                      <p className="text-xs font-normal tracking-wide text-[#4c4f69]">
+                        {metric.title}
+                      </p>
+                      <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
+                        {metric.value}
+                      </p>
+                      <p className={`mt-3 flex items-center gap-1 text-xs ${metric.tone}`}>
+                        {metric.icon ? <span className="inline-block size-2.5 rounded-full bg-current" /> : null}
+                        {metric.note}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              )}
             </section>
 
             <section>
@@ -1039,87 +1114,141 @@ function App() {
                 <h3 className="text-base font-bold leading-none">Flags</h3>
               </div>
 
-              <div className="grid gap-3 lg:grid-cols-2">
-                <div className="grid gap-3">
+              {activeVersion === "v2" ? (
+                <div className="grid gap-3 xl:grid-cols-3">
                   <article
                     onClick={() => setActiveFlagPanel("unicourt")}
-                    className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                   >
-                    <span className="mt-1 size-[9px] rounded-full bg-[#d20f39]"></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
-                        UniCourt
-                      </p>
-                      <p className="mt-1 text-xs text-[#4c4f69]">
-                        Litigation search returned 3 open dockets
-                      </p>
-                      <p className="mt-1 text-xs text-[#4c4f69]">
-                        Recent filing activity detected in the last 30 days.
-                      </p>
-                      <p className="mt-1 text-xs text-[#4c4f69]">
-                        Validate dispositions before final approval.
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
+                      <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                        3 open
+                      </span>
                     </div>
-                    <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                      3 open
-                    </span>
+                    <p className="mt-2 text-xs text-[#4c4f69]">
+                      Litigation search returned active dockets with recent filing activity.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">Review disposition details before funding.</p>
                   </article>
                   <article
                     onClick={() => setActiveFlagPanel("datamerch")}
-                    className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
                   >
-                    <span className="mt-1 size-[9px] rounded-full bg-[#3277FF]"></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
-                        DataMerch
-                      </p>
-                      <p className="mt-1 text-xs text-[#4c4f69]">
-                        No negative peer-funder repayment or fraud postings
-                      </p>
-                      <p className="mt-1 text-xs text-[#4c4f69]">
-                        FEIN/profile check returned a clean DataMerch file.
-                      </p>
-                      <p className="mt-1 text-xs text-[#4c4f69]">
-                        Continue standard monitoring cadence.
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
+                      <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                        clean
+                      </span>
                     </div>
-                    <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
-                      clean
-                    </span>
+                    <p className="mt-2 text-xs text-[#4c4f69]">
+                      No adverse peer-funder repayment or fraud postings were returned.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">Continue normal underwriting checks.</p>
+                  </article>
+                  <article
+                    onClick={() => setActiveFlagPanel("fraud")}
+                    className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                        Potential Fraud Alerts
+                      </p>
+                      <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                        1 alert
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-[#d20f39]">
+                      MoneyThumb-style statement authenticity mismatch detected.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">
+                      Request source-bank export or login verification before approval.
+                    </p>
                   </article>
                 </div>
+              ) : (
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <div className="grid gap-3">
+                    <article
+                      onClick={() => setActiveFlagPanel("unicourt")}
+                      className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                    >
+                      <span className="mt-1 size-[9px] rounded-full bg-[#d20f39]"></span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                          UniCourt
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Litigation search returned 3 open dockets
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Recent filing activity detected in the last 30 days.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Validate dispositions before final approval.
+                        </p>
+                      </div>
+                      <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                        3 open
+                      </span>
+                    </article>
+                    <article
+                      onClick={() => setActiveFlagPanel("datamerch")}
+                      className="interactive-pop card-shadow flex min-h-[108px] items-start gap-3 rounded border border-[#d9d9d9] bg-[#fafafa] px-5 py-4"
+                    >
+                      <span className="mt-1 size-[9px] rounded-full bg-[#3277FF]"></span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                          DataMerch
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          No negative peer-funder repayment or fraud postings
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          FEIN/profile check returned a clean DataMerch file.
+                        </p>
+                        <p className="mt-1 text-xs text-[#4c4f69]">
+                          Continue standard monitoring cadence.
+                        </p>
+                      </div>
+                      <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                        clean
+                      </span>
+                    </article>
+                  </div>
 
-                <article
-                  onClick={() => setActiveFlagPanel("fraud")}
-                  className="interactive-pop card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                >
-                  <p className="text-xs font-light tracking-wide text-[#4c4f69]">
-                    POTENTIAL FRAUD ALERTS
-                  </p>
-                  <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
-                    1 Alert
-                  </p>
-                  <p className="mt-3 flex items-center gap-1 text-xs text-[#d20f39]">
-                    <span className="inline-block size-2.5 rounded-full bg-current" />
-                    MoneyThumb-style statement authenticity alert
-                  </p>
-                  <p className="mt-1.5 text-xs text-[#4c4f69]">
-                    PDF fingerprint and metadata checks suggest potential document tampering.
-                  </p>
-                  <p className="mt-1 text-xs text-[#4c4f69]">
-                    Reconciliation variance detected between transaction detail and statement totals.
-                  </p>
-                  <p className="mt-1 text-xs text-[#4c4f69]">
-                    Request direct bank export or login verification before approval.
-                  </p>
-                  <p className="mt-1 text-xs text-[#4c4f69]">
-                    Compare against prior months for continuity in balances and transaction cadence.
-                  </p>
-                  <p className="mt-1 text-xs text-[#4c4f69]">
-                    Escalate to manual review if discrepancy persists after source verification.
-                  </p>
-                </article>
-              </div>
+                  <article
+                    onClick={() => setActiveFlagPanel("fraud")}
+                    className="interactive-pop card-shadow min-h-[270px] rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                  >
+                    <p className="text-xs font-light tracking-wide text-[#4c4f69]">
+                      POTENTIAL FRAUD ALERTS
+                    </p>
+                    <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">
+                      1 Alert
+                    </p>
+                    <p className="mt-3 flex items-center gap-1 text-xs text-[#d20f39]">
+                      <span className="inline-block size-2.5 rounded-full bg-current" />
+                      MoneyThumb-style statement authenticity alert
+                    </p>
+                    <p className="mt-1.5 text-xs text-[#4c4f69]">
+                      PDF fingerprint and metadata checks suggest potential document tampering.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">
+                      Reconciliation variance detected between transaction detail and statement totals.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">
+                      Request direct bank export or login verification before approval.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">
+                      Compare against prior months for continuity in balances and transaction cadence.
+                    </p>
+                    <p className="mt-1 text-xs text-[#4c4f69]">
+                      Escalate to manual review if discrepancy persists after source verification.
+                    </p>
+                  </article>
+                </div>
+              )}
             </section>
 
             <section>
@@ -1254,7 +1383,7 @@ function App() {
                                     [chipKey]: !prev[chipKey],
                                   }))
                                 }
-                                className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 transition-colors ${
+                                className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
                                   isActive
                                     ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
                                     : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
@@ -1262,7 +1391,7 @@ function App() {
                               >
                                 <span
                                   aria-hidden="true"
-                                  className={`relative h-3.5 w-6 rounded-full p-[1px] transition-colors ${
+                                  className={`relative h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
                                     isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
                                   }`}
                                 >
