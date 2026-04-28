@@ -623,7 +623,7 @@ function App() {
   return (
     <div
       ref={appRef}
-      className={`h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
+      className={`steddy-app h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
         colorMode === "dark" ? "theme-dark" : ""
       } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
         colorMode === "indigo" ? "theme-indigo" : ""
@@ -636,6 +636,29 @@ function App() {
       } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
       }`}
     >
+      <style>
+        {`
+          .steddy-app,
+          .steddy-app * {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          }
+
+          /* Typography normalization: keep only a small shared scale */
+          .steddy-app .text-\\[9px\\],
+          .steddy-app .text-\\[10px\\],
+          .steddy-app .text-\\[11px\\] {
+            font-size: 0.75rem;
+            line-height: 1rem;
+          }
+
+          .steddy-app .text-\\[12px\\],
+          .steddy-app .text-\\[13px\\],
+          .steddy-app .text-\\[14px\\] {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+          }
+        `}
+      </style>
       <header
         data-animate
         className="flex h-16 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-6 lg:px-10"
@@ -988,6 +1011,7 @@ function App() {
                     <span className="text-[12px] font-semibold text-[#1c1b1f]">{totalLeverage}%</span>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -1205,73 +1229,127 @@ function App() {
                   </div>
 
                   {activeVersion === "v2" ? (
-                    <div className="grid gap-4 md:grid-cols-3">
-                      <article
-                        onClick={() => {
-                          setActiveMetricTitle("MONTHLY REVENUE")
-                          setIsMonthlyBreakdownOpen(true)
-                        }}
-                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                      >
-                        <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
-                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
-                        <div className="mt-4 space-y-3">
-                          {monthlyBreakdownRows.map((row) => (
-                            <div key={`revenue-${row.month}`} className="flex items-center justify-between text-xs">
-                              <span className="text-[#4c4f69]">{row.month}</span>
-                              <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="mt-5 flex items-center gap-1.5 text-xs text-amber-500">
-                          <span className="inline-block size-2 rounded-full bg-current" />
-                          Low Revenue
-                        </p>
-                      </article>
+                    <>
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <article
+                          onClick={() => {
+                            setActiveMetricTitle("MONTHLY REVENUE")
+                            setIsMonthlyBreakdownOpen(true)
+                          }}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
+                          <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
+                          <div className="mt-4 space-y-2">
+                            {monthlyBreakdownRows.map((row) => (
+                              <div key={`revenue-${row.month}`} className="flex items-center justify-between text-xs">
+                                <span className="text-[#4c4f69]">{row.month}</span>
+                                <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="mt-5 flex items-center gap-1.5 text-xs text-amber-500">
+                            <span className="inline-block size-2 rounded-full bg-current" />
+                            Low Revenue
+                          </p>
+                        </article>
 
-                      <article
-                        onClick={() => {
-                          setActiveMetricTitle("CURRENT LEVERAGE")
-                          setIsMonthlyBreakdownOpen(true)
-                        }}
-                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                      >
-                        <p className="text-xs font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
-                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">23%</p>
-                        <div className="mt-4 space-y-3">
-                          {keyMetricCompanyRows.map((row) => (
-                            <div key={`leverage-${row.company}`} className="flex items-center justify-between text-xs">
-                              <span className="text-[#4c4f69]">{row.company}</span>
-                              <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="mt-5 flex items-center gap-1.5 text-xs text-[#3277FF]">
-                          <span className="inline-block size-2 rounded-full bg-current" />
-                          Within Acceptable Range
-                        </p>
-                      </article>
+                        <article
+                          onClick={() => {
+                            setActiveMetricTitle("CURRENT LEVERAGE")
+                            setIsMonthlyBreakdownOpen(true)
+                          }}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <p className="text-xs font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
+                          <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                          <div className="mt-4 space-y-2">
+                            {keyMetricCompanyRows.map((row) => (
+                              <div key={`leverage-${row.company}`} className="flex items-center justify-between text-xs">
+                                <span className="text-[#4c4f69]">{row.company}</span>
+                                <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="mt-5 flex items-center gap-1.5 text-xs text-[#3277FF]">
+                            <span className="inline-block size-2 rounded-full bg-current" />
+                            Within Acceptable Range
+                          </p>
+                        </article>
 
-                      <article
-                        onClick={() => {
-                          setActiveMetricTitle("MONTHLY MCA PAYOUT")
-                          setIsMonthlyBreakdownOpen(true)
-                        }}
-                        className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
-                      >
-                        <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
-                        <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
-                        <div className="mt-4 space-y-3">
-                          {keyMetricCompanyRows.map((row) => (
-                            <div key={`payout-${row.company}`} className="flex items-center justify-between text-xs">
-                              <span className="text-[#4c4f69]">{row.company}</span>
-                              <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="mt-5 text-xs text-[#4c4f69]">Paying $167.25 daily</p>
-                      </article>
-                    </div>
+                        <article
+                          onClick={() => {
+                            setActiveMetricTitle("MONTHLY MCA PAYOUT")
+                            setIsMonthlyBreakdownOpen(true)
+                          }}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <p className="text-xs font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
+                          <p className="mt-2 text-4xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                          <div className="mt-4 space-y-2">
+                            {keyMetricCompanyRows.map((row) => (
+                              <div key={`payout-${row.company}`} className="flex items-center justify-between text-xs">
+                                <span className="text-[#4c4f69]">{row.company}</span>
+                                <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="mt-5 text-xs text-[#4c4f69]">Paying $167.25 daily</p>
+                        </article>
+                      </div>
+
+                      <div className="mt-3 grid gap-3 xl:grid-cols-3">
+                        <article
+                          onClick={() => setActiveFlagPanel("unicourt")}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
+                            <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                              3 open
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-[#4c4f69]">
+                            Litigation search returned active dockets with recent filing activity.
+                          </p>
+                          <p className="mt-1 text-xs text-[#4c4f69]">Review disposition details before funding.</p>
+                        </article>
+                        <article
+                          onClick={() => setActiveFlagPanel("datamerch")}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
+                            <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                              clean
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-[#4c4f69]">
+                            No adverse peer-funder repayment or fraud postings were returned.
+                          </p>
+                          <p className="mt-1 text-xs text-[#4c4f69]">Continue normal underwriting checks.</p>
+                        </article>
+                        <article
+                          onClick={() => setActiveFlagPanel("fraud")}
+                          className="interactive-pop card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold leading-none text-[#1c1b1f]">
+                              Potential Fraud Alerts
+                            </p>
+                            <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                              1 alert
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-[#d20f39]">
+                            MoneyThumb-style statement authenticity mismatch detected.
+                          </p>
+                          <p className="mt-1 text-xs text-[#4c4f69]">
+                            Request source-bank export or login verification before approval.
+                          </p>
+                        </article>
+                      </div>
+                    </>
                   ) : (
                     <div className="grid gap-4 md:grid-cols-3">
                       {metrics.map((metric) => (
@@ -1299,7 +1377,7 @@ function App() {
                   )}
                 </section>
 
-                <section>
+                <section className={activeVersion === "v2" ? "hidden" : ""}>
                   <div className="section-label-row mb-3 flex items-center gap-2">
                     <img
                       src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
@@ -1739,41 +1817,59 @@ function App() {
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-4 lg:grid-cols-3">
-                {monthlyBalanceSeries.map((series) => (
-                  <article
-                    key={series.month}
-                    className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]"
-                  >
-                    <div className="flex items-center justify-between border-b border-[#d9d9d9] bg-[#e9f0ff] px-3 py-2">
-                      <h4 className="text-sm font-semibold text-[#1c1b1f]">{series.month}</h4>
-                      <span className="text-xs text-[#4c4f69]">Daily closing balance</span>
-                    </div>
-                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#d9d9d9] bg-[#fafafa] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">
-                      <span>Date</span>
-                      <span className="text-right">Balance</span>
-                    </div>
-                    <div>
-                      {series.data
-                        .filter((entry) => {
-                          const date = new Date(`${series.month} ${entry.day}`)
-                          const dayOfWeek = date.getDay()
-                          return dayOfWeek !== 0 && dayOfWeek !== 6
-                        })
-                        .map((entry, idx) => (
-                        <div
-                          key={`${series.month}-${entry.day}-${idx}`}
-                          className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#efefef] px-3 py-1.5 text-xs last:border-b-0"
-                        >
-                          <span className="text-[#4c4f69]">{series.month.slice(0, 3)} {entry.day}</span>
-                          <span className="text-right tabular-nums text-[#1c1b1f]">
-                            ${entry.balance.toLocaleString()}
-                          </span>
+              <div className="mt-4 space-y-5">
+                {monthlyBalanceSeries.map((series) => {
+                  const [monthName, year] = series.month.split(" ")
+                  const monthNumber = new Date(`${monthName} 1, ${year}`).getMonth() + 1
+
+                  const weekdayRows = series.data.filter((entry) => {
+                    const date = new Date(`${series.month} ${entry.day}`)
+                    const dayOfWeek = date.getDay()
+                    return dayOfWeek !== 0 && dayOfWeek !== 6
+                  })
+
+                  const chunkSize = 8
+                  const ledgerColumns = Array.from({ length: 3 }, (_, columnIndex) =>
+                    weekdayRows.slice(columnIndex * chunkSize, (columnIndex + 1) * chunkSize),
+                  )
+
+                  return (
+                    <div key={series.month}>
+                      <div className="section-label-row mb-2 flex items-center gap-2">
+                        <h4 className="text-base font-bold leading-none text-[#1c1b1f]">{series.month}</h4>
+                      </div>
+                      <article className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
+                        <div className="grid gap-15 px-3 py-3 lg:grid-cols-3">
+                          {ledgerColumns.map((columnRows, columnIndex) => (
+                            <div key={`${series.month}-col-${columnIndex}`} className="min-w-0">
+                              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#d9d9d9] pb-1 text-xs font-semibold uppercase tracking-wide text-[#4c4f69]">
+                                <span>Date</span>
+                                <span className="whitespace-nowrap text-right">Balance ($)</span>
+                              </div>
+
+                              <div>
+                                {columnRows.map((entry, idx) => (
+                                  <div
+                                    key={`${series.month}-${columnIndex}-${entry.day}-${idx}`}
+                                    className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#efefef] py-1.5 text-sm last:border-b-0"
+                                  >
+                                    <span className="text-[#4c4f69]">
+                                      {String(monthNumber).padStart(2, "0")}/
+                                      {String(Number(entry.day)).padStart(2, "0")}
+                                    </span>
+                                    <span className="text-right font-medium tabular-nums text-[#1c1b1f]">
+                                      ${entry.balance.toLocaleString()}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </article>
                     </div>
-                  </article>
-                ))}
+                  )
+                })}
               </div>
             </section>
           </div>
