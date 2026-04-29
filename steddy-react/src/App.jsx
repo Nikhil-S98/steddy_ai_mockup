@@ -10,6 +10,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
+import V1Overview from "./versions/V1Overview"
+import V2Overview from "./versions/V2Overview"
+import V3Overview from "./versions/V3Overview"
+import V4Overview from "./versions/V4Overview"
 
 const metrics = [
   {
@@ -586,6 +590,16 @@ function App() {
   const paymentAmount = (FUNDING_AMOUNT * calculator.factor) / Math.max(frequencyDivisor, 1)
   const paybackTotal = FUNDING_AMOUNT * calculator.factor
   const totalLeverage = BASE_LEVERAGE + calculator.leverageDelta
+  const formatCurrency = (value) =>
+    value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+  const netCashFlowRows = [
+    { month: "December 2025", net: -420 },
+    { month: "January 2026", net: 120 },
+    { month: "February 2026", net: -860 },
+  ]
+  const totalNetCashFlow = netCashFlowRows.reduce((sum, row) => sum + row.net, 0)
+  const netCashFlowIsPositive = totalNetCashFlow >= 0
+  const netCashFlowTotalLabel = `${netCashFlowIsPositive ? "+" : "-"}$${formatCurrency(Math.abs(totalNetCashFlow))}`
   const isV4 = activeVersion === "v4"
   const selectedPosition = selectedPositionChip
     ? positionsData.find((position) => position.id === selectedPositionChip.positionId) ?? null
@@ -599,9 +613,6 @@ function App() {
             row.cadence.toLowerCase() === selectedPositionChip.meta.toLowerCase(),
         )
       : transactions
-
-  const formatCurrency = (value) =>
-    value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
   const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
 
@@ -799,6 +810,57 @@ function App() {
       window.history.pushState({}, "", nextPath)
     }
     setActiveVersion(nextVersion)
+  }
+
+  const renderVersionOverview = () => {
+    if (activeVersion === "v1") {
+      return (
+        <V1Overview
+          metrics={metrics}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+        />
+      )
+    }
+
+    if (activeVersion === "v2") {
+      return (
+        <V2Overview
+          monthlyBreakdownRows={monthlyBreakdownRows}
+          keyMetricCompanyRows={keyMetricCompanyRows}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+        />
+      )
+    }
+
+    if (activeVersion === "v3") {
+      return (
+        <V3Overview
+          monthlyBreakdownRows={monthlyBreakdownRows}
+          keyMetricCompanyRows={keyMetricCompanyRows}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+        />
+      )
+    }
+
+    return (
+      <V4Overview
+        monthlyBreakdownRows={monthlyBreakdownRows}
+        keyMetricCompanyRows={keyMetricCompanyRows}
+        netCashFlowRows={netCashFlowRows}
+        netCashFlowTotalLabel={netCashFlowTotalLabel}
+        netCashFlowIsPositive={netCashFlowIsPositive}
+        setActiveMetricTitle={setActiveMetricTitle}
+        setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+        setActiveFlagPanel={setActiveFlagPanel}
+        formatCurrency={formatCurrency}
+      />
+    )
   }
 
   return (
@@ -1214,6 +1276,8 @@ function App() {
           className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-6 lg:p-8"
         >
           <div className="w-full space-y-6">
+            {renderVersionOverview()}
+            <div className="hidden">
             {activeVersion === "v3" || activeVersion === "v4" ? (
               <section>
                 <div className="grid items-stretch gap-4 xl:grid-cols-2">
@@ -1267,7 +1331,9 @@ function App() {
                           setActiveMetricTitle("CURRENT LEVERAGE")
                           setIsMonthlyBreakdownOpen(true)
                         }}
-                        className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+                        className={`interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4 ${
+                          activeVersion === "v4" ? "md:order-2" : ""
+                        }`}
                       >
                         <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
                         <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
@@ -1290,27 +1356,67 @@ function App() {
                       <article
                         data-v3-mini-card="true"
                         onClick={() => {
-                          setActiveMetricTitle("MONTHLY MCA PAYOUT")
+                          setActiveMetricTitle(activeVersion === "v4" ? "NET CASH FLOW (3 MONTHS)" : "MONTHLY MCA PAYOUT")
                           setIsMonthlyBreakdownOpen(true)
                         }}
-                        className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+                        className={`interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4 ${
+                          activeVersion === "v4" ? "md:order-3" : ""
+                        }`}
                       >
-                        <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">MONTHLY MCA PAYOUT</p>
-                        <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                        <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">
+                          {activeVersion === "v4" ? "NET CASH FLOW" : "MONTHLY MCA PAYOUT"}
+                        </p>
+                        <p
+                          className={`mt-2 font-bold leading-none ${
+                            activeVersion === "v4"
+                              ? netCashFlowIsPositive
+                                ? "text-2xl text-[#3277FF]"
+                                : "text-2xl text-[#d20f39]"
+                              : "text-3xl text-[#1c1b1f]"
+                          }`}
+                        >
+                          {activeVersion === "v4" ? netCashFlowTotalLabel : "$3,345"}
+                        </p>
                         <div className="mt-3 space-y-2.5">
-                          {keyMetricCompanyRows.map((row) => (
-                            <div
-                              key={`v3-payout-${row.company}`}
-                              className="flex items-center justify-between text-[11px]"
-                            >
-                              <span className="text-[#4c4f69]">{row.company}</span>
-                              <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
-                            </div>
-                          ))}
+                          {activeVersion === "v4"
+                            ? netCashFlowRows.map((row) => (
+                                <div
+                                  key={`v4-net-${row.month}`}
+                                  className="flex items-center justify-between text-[11px]"
+                                >
+                                  <span className="text-[#4c4f69]">{row.month}</span>
+                                  <span
+                                    className={`font-semibold ${
+                                      row.net >= 0 ? "text-[#3277FF]" : "text-[#d20f39]"
+                                    }`}
+                                  >
+                                    {`${row.net >= 0 ? "+" : "-"}$${formatCurrency(Math.abs(row.net))}`}
+                                  </span>
+                                </div>
+                              ))
+                            : keyMetricCompanyRows.map((row) => (
+                                <div
+                                  key={`v3-payout-${row.company}`}
+                                  className="flex items-center justify-between text-[11px]"
+                                >
+                                  <span className="text-[#4c4f69]">{row.company}</span>
+                                  <span className="font-semibold text-[#1c1b1f]">{row.payout}</span>
+                                </div>
+                              ))}
                         </div>
-                        <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#4c4f69]">
+                        <p
+                          className={`mt-auto flex items-center gap-1.5 pt-4 text-xs ${
+                            activeVersion === "v4"
+                              ? netCashFlowIsPositive
+                                ? "text-[#3277FF]"
+                                : "text-[#d20f39]"
+                              : "text-[#4c4f69]"
+                          }`}
+                        >
                           <span className="inline-block size-2 rounded-full bg-current" />
-                          Paying $167.25 daily
+                          {activeVersion === "v4"
+                            ? `${netCashFlowIsPositive ? "Net gain" : "Net loss"} over the past 3 months`
+                            : "Paying $167.25 daily"}
                         </p>
                       </article>
                     </div>
@@ -1320,7 +1426,7 @@ function App() {
                     data-v3-card="flags"
                     className="h-full"
                   >
-                    <div className="mb-4 flex items-center gap-2">
+                    <div className={`mb-4 flex items-center gap-2 ${activeVersion === "v4" ? "pl-4" : ""}`}>
                       <img
                         src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
                         alt=""
@@ -1328,7 +1434,11 @@ function App() {
                       />
                       <h3 className="text-base font-bold leading-none">Flags</h3>
                     </div>
-                    <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-2">
+                    <div
+                      className={`grid flex-1 items-stretch gap-3 lg:grid-cols-2 ${
+                        activeVersion === "v4" ? "border-l border-[#d9d9d9] pl-4" : ""
+                      }`}
+                    >
                       <div className="grid gap-3 lg:grid-rows-2">
                         <article
                           onClick={() => setActiveFlagPanel("unicourt")}
@@ -1708,6 +1818,7 @@ function App() {
                 </section>
               </>
             )}
+            </div>
 
             <section>
               <div className="section-label-row mb-3 grid grid-cols-1 gap-4 xl:grid-cols-3">
@@ -1946,10 +2057,16 @@ function App() {
                     <div className="min-h-0 flex-1 overflow-y-auto">
                       <table className="w-full border-collapse text-left text-sm">
                         <thead>
-                          <tr className="bg-[#e9f0ff] text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
-                            <th className="whitespace-nowrap px-4 py-2.5 font-medium">Date</th>
-                            <th className="px-4 py-2.5 font-medium">Description</th>
-                            <th className="whitespace-nowrap px-4 py-2.5 text-right font-medium">Amount</th>
+                          <tr className="text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
+                            <th className="sticky top-0 z-10 whitespace-nowrap bg-[#e9f0ff] px-4 py-2.5 font-medium">
+                              Date
+                            </th>
+                            <th className="sticky top-0 z-10 bg-[#e9f0ff] px-4 py-2.5 font-medium">
+                              Description
+                            </th>
+                            <th className="sticky top-0 z-10 whitespace-nowrap bg-[#e9f0ff] px-4 py-2.5 text-right font-medium">
+                              Amount
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
