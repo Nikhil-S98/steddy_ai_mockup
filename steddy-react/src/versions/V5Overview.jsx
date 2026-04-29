@@ -7,7 +7,7 @@ export default function V5Overview({
 }) {
   return (
     <section>
-      <div className="grid items-stretch gap-4 xl:grid-cols-[1fr_2fr]">
+      <div className="grid items-stretch gap-4 xl:grid-cols-3">
         <div data-v3-card="key-metrics" className="flex h-full flex-col">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -79,8 +79,8 @@ export default function V5Overview({
           </div>
         </div>
 
-        <div data-v3-card="flags" className="h-full">
-          <div className="mb-4 flex items-center gap-2 pl-4">
+        <div data-v3-card="flags" className="h-full xl:col-span-2">
+          <div className="mb-4 flex items-center gap-2">
             <img
               src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
               alt=""
@@ -88,13 +88,13 @@ export default function V5Overview({
             />
             <h3 className="text-base font-bold leading-none">Flags</h3>
           </div>
-          <div className="grid flex-1 items-stretch gap-3 border-l border-[#d9d9d9] pl-4 lg:grid-cols-3">
+          <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-3">
             <article
               data-v3-mini-card="true"
-              onClick={() => setActiveFlagPanel("issues")}
+              onClick={() => setActiveFlagPanel("irregularities")}
               className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
             >
-              <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">ISSUES</p>
+              <p className="text-sm font-semibold leading-none text-[#1c1b1f]">Irregularities</p>
               <div className="mt-2 border-t border-[#d9d9d9]" />
               <div className="mt-2 space-y-2.5">
                 <div className="flex items-center justify-between text-[11px]">
