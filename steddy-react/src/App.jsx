@@ -1,19 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts"
 import V1Overview from "./versions/V1Overview"
 import V2Overview from "./versions/V2Overview"
 import V3Overview from "./versions/V3Overview"
 import V4Overview from "./versions/V4Overview"
+import V5Overview from "./versions/V5Overview"
+import BalancesSection from "./components/BalancesSection"
 
 const metrics = [
   {
@@ -325,15 +317,15 @@ const monthlyBalanceSeries = [
     data: [
       { day: "1", balance: 61240 }, { day: "2", balance: 64890 }, { day: "3", balance: 67220 },
       { day: "4", balance: 65130 }, { day: "5", balance: 62840 }, { day: "6", balance: 60330 },
-      { day: "7", balance: 57410 }, { day: "8", balance: 54820 }, { day: "9", balance: 52660 },
-      { day: "10", balance: 55420 }, { day: "11", balance: 58310 }, { day: "12", balance: 61280 },
-      { day: "13", balance: 59440 }, { day: "14", balance: 57130 }, { day: "15", balance: 55320 },
-      { day: "16", balance: 53210 }, { day: "17", balance: 50980 }, { day: "18", balance: 48650 },
-      { day: "19", balance: 51420 }, { day: "20", balance: 54410 }, { day: "21", balance: 56300 },
-      { day: "22", balance: 58120 }, { day: "23", balance: 59890 }, { day: "24", balance: 61750 },
-      { day: "25", balance: 60340 }, { day: "26", balance: 58420 }, { day: "27", balance: 56210 },
-      { day: "28", balance: 54460 }, { day: "29", balance: 52890 }, { day: "30", balance: 50970 },
-      { day: "31", balance: 49220 },
+      { day: "7", balance: 57410 }, { day: "8", balance: 54820 }, { day: "9", balance: -1200 },
+      { day: "10", balance: -2100 }, { day: "11", balance: -2900 }, { day: "12", balance: -3600 },
+      { day: "13", balance: -4400 }, { day: "14", balance: -5200 }, { day: "15", balance: -6100 },
+      { day: "16", balance: -4700 }, { day: "17", balance: -3900 }, { day: "18", balance: -3200 },
+      { day: "19", balance: -2400 }, { day: "20", balance: 600 }, { day: "21", balance: 1400 },
+      { day: "22", balance: 400 }, { day: "23", balance: 2100 }, { day: "24", balance: 3900 },
+      { day: "25", balance: 5200 }, { day: "26", balance: 7300 }, { day: "27", balance: 9800 },
+      { day: "28", balance: 12800 }, { day: "29", balance: 16100 }, { day: "30", balance: 19800 },
+      { day: "31", balance: 22900 },
     ],
   },
   {
@@ -502,12 +494,14 @@ const VERSION_OPTIONS = [
   { value: "v2", label: "v2" },
   { value: "v3", label: "v3" },
   { value: "v4", label: "v4" },
+  { value: "v5", label: "v5" },
 ]
 
 const getVersionFromPath = (pathname) => {
   if (pathname === "/v2") return "v2"
   if (pathname === "/v3") return "v3"
   if (pathname === "/v4") return "v4"
+  if (pathname === "/v5") return "v5"
   return "v1"
 }
 const flagDetailPanels = {
@@ -563,6 +557,10 @@ function App() {
   )
   const [activePositionChips, setActivePositionChips] = useState({})
   const [selectedPositionChip, setSelectedPositionChip] = useState(null)
+  const [transactionsSearchQuery, setTransactionsSearchQuery] = useState("")
+  const [transactionsAccountFilter, setTransactionsAccountFilter] = useState("all")
+  const [transactionsMonthFilter, setTransactionsMonthFilter] = useState("all")
+  const [transactionsDirectionFilter, setTransactionsDirectionFilter] = useState("all")
   const [draftPosition, setDraftPosition] = useState({
     title: "",
     paymentAmount: "",
@@ -600,7 +598,7 @@ function App() {
   const totalNetCashFlow = netCashFlowRows.reduce((sum, row) => sum + row.net, 0)
   const netCashFlowIsPositive = totalNetCashFlow >= 0
   const netCashFlowTotalLabel = `${netCashFlowIsPositive ? "+" : "-"}$${formatCurrency(Math.abs(totalNetCashFlow))}`
-  const isV4 = activeVersion === "v4"
+  const isV4 = activeVersion === "v4" || activeVersion === "v5"
   const selectedPosition = selectedPositionChip
     ? positionsData.find((position) => position.id === selectedPositionChip.positionId) ?? null
     : null
@@ -613,6 +611,26 @@ function App() {
             row.cadence.toLowerCase() === selectedPositionChip.meta.toLowerCase(),
         )
       : transactions
+  const ACCOUNT_FILTER_OPTIONS = ["x4085", "x6045", "x0237"]
+  const getTransactionMonth = (dateLabel) => dateLabel.split(" ")[0]?.toLowerCase() ?? ""
+  const getTransactionAccountId = (row) => {
+    const key = `${row.date}|${row.description}|${row.value}`
+    const hash = Array.from(key).reduce((sum, char) => sum + char.charCodeAt(0), 0)
+    return ACCOUNT_FILTER_OPTIONS[hash % ACCOUNT_FILTER_OPTIONS.length]
+  }
+  const visibleTransactions = filteredTransactions.filter((row) => {
+    if (transactionsAccountFilter !== "all" && getTransactionAccountId(row) !== transactionsAccountFilter) return false
+    if (transactionsMonthFilter !== "all" && getTransactionMonth(row.date) !== transactionsMonthFilter) return false
+    if (transactionsDirectionFilter === "credit" && !row.credit) return false
+    if (transactionsDirectionFilter === "debit" && row.credit) return false
+    const normalizedQuery = transactionsSearchQuery.trim().toLowerCase()
+    if (!normalizedQuery) return true
+    return (
+      row.description.toLowerCase().includes(normalizedQuery) ||
+      row.date.toLowerCase().includes(normalizedQuery) ||
+      row.value.toLowerCase().includes(normalizedQuery)
+    )
+  })
   const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
 
@@ -805,7 +823,15 @@ function App() {
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
     const nextPath =
-      nextVersion === "v2" ? "/v2" : nextVersion === "v3" ? "/v3" : nextVersion === "v4" ? "/v4" : "/"
+      nextVersion === "v2"
+        ? "/v2"
+        : nextVersion === "v3"
+          ? "/v3"
+          : nextVersion === "v4"
+            ? "/v4"
+            : nextVersion === "v5"
+              ? "/v5"
+              : "/"
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, "", nextPath)
     }
@@ -848,8 +874,24 @@ function App() {
       )
     }
 
+    if (activeVersion === "v4") {
+      return (
+        <V4Overview
+          monthlyBreakdownRows={monthlyBreakdownRows}
+          keyMetricCompanyRows={keyMetricCompanyRows}
+          netCashFlowRows={netCashFlowRows}
+          netCashFlowTotalLabel={netCashFlowTotalLabel}
+          netCashFlowIsPositive={netCashFlowIsPositive}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+          formatCurrency={formatCurrency}
+        />
+      )
+    }
+
     return (
-      <V4Overview
+      <V5Overview
         monthlyBreakdownRows={monthlyBreakdownRows}
         keyMetricCompanyRows={keyMetricCompanyRows}
         netCashFlowRows={netCashFlowRows}
@@ -1296,7 +1338,7 @@ function App() {
                   </button>
                 </div>
                 <div className="flex min-w-0 items-center justify-between gap-3 xl:col-span-2">
-                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <div className="flex min-w-0 flex-1 items-center gap-1.5">
                     <svg
                       className="size-5 shrink-0 text-[#4c4f69]"
                       viewBox="0 0 24 24"
@@ -1318,9 +1360,67 @@ function App() {
                     <input
                       type="search"
                       placeholder="Search..."
-                      className="box-border h-5 w-full max-w-[132px] shrink-0 rounded border border-[#d9d9d9] bg-[#fafafa] px-2 py-0 text-sm font-normal leading-none text-[#1c1b1f] placeholder:text-[rgba(76,79,105,0.45)] sm:max-w-[148px]"
+                      value={transactionsSearchQuery}
+                      onChange={(event) => setTransactionsSearchQuery(event.target.value)}
+                      className="box-border h-7 w-full max-w-[152px] shrink-0 rounded border border-[#4c4f69] bg-[#fafafa] px-2 text-[10px] font-medium leading-none text-[#1c1b1f] placeholder:text-[rgba(76,79,105,0.6)]"
                       aria-label="Search transactions"
                     />
+                    <div className="relative shrink-0">
+                      <select
+                        value={transactionsAccountFilter}
+                        onChange={(event) => setTransactionsAccountFilter(event.target.value)}
+                        aria-label="Filter transactions by account"
+                        className="h-7 min-w-[84px] appearance-none rounded border border-[#4c4f69] bg-[#fafafa] px-2 pr-5 text-[10px] font-medium text-[#4c4f69]"
+                      >
+                        <option value="all">Account</option>
+                        <option value="x4085">x4085</option>
+                        <option value="x6045">x6045</option>
+                        <option value="x0237">x0237</option>
+                      </select>
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
+                      >
+                        ⌄
+                      </span>
+                    </div>
+                    <div className="relative shrink-0">
+                      <select
+                        value={transactionsMonthFilter}
+                        onChange={(event) => setTransactionsMonthFilter(event.target.value)}
+                        aria-label="Filter transactions by month"
+                        className="h-7 min-w-[72px] appearance-none rounded border border-[#4c4f69] bg-[#fafafa] px-2 pr-5 text-[10px] font-medium text-[#4c4f69]"
+                      >
+                        <option value="all">Month</option>
+                        <option value="jan">Jan</option>
+                        <option value="feb">Feb</option>
+                        <option value="mar">Mar</option>
+                      </select>
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
+                      >
+                        ⌄
+                      </span>
+                    </div>
+                    <div className="relative shrink-0">
+                      <select
+                        value={transactionsDirectionFilter}
+                        onChange={(event) => setTransactionsDirectionFilter(event.target.value)}
+                        aria-label="Filter transactions by direction"
+                        className="h-7 min-w-[90px] appearance-none rounded border border-[#4c4f69] bg-[#fafafa] px-2 pr-5 text-[10px] font-medium text-[#4c4f69]"
+                      >
+                        <option value="all">Credit/Debit</option>
+                        <option value="credit">Credit</option>
+                        <option value="debit">Debit</option>
+                      </select>
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
+                      >
+                        ⌄
+                      </span>
+                    </div>
                   </div>
                   <button
                     type="button"
@@ -1528,7 +1628,7 @@ function App() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredTransactions.map((row, i) => (
+                          {visibleTransactions.map((row, i) => (
                             <tr
                               key={`${row.date}-${row.description}-${i}`}
                               className="border-b border-[#efefef] last:border-b-0"
@@ -1547,10 +1647,12 @@ function App() {
                               </td>
                             </tr>
                           ))}
-                          {isV4 && selectedPositionChip && filteredTransactions.length === 0 ? (
+                          {visibleTransactions.length === 0 ? (
                             <tr>
                               <td colSpan={3} className="px-4 py-3 text-xs text-[#4c4f69]">
-                                No matching weekly deductions for this chip.
+                                {isV4 && selectedPositionChip && filteredTransactions.length === 0
+                                  ? "No matching weekly deductions for this chip."
+                                  : "No transactions match the current search/filter."}
                               </td>
                             </tr>
                           ) : null}
@@ -1561,142 +1663,14 @@ function App() {
                 </div>
               </div>
             </section>
-            <section data-animate>
-              <div className="section-label-row mb-3 flex items-center gap-2">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 text-[#4c4f69]"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M4 19.5V5.5M4 19.5H20M4 19.5L9.5 13L13.5 16.5L20 9"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <h3 className="text-base font-bold leading-none text-[#1c1b1f]">
-                  Daily Balances
-                </h3>
-              </div>
-
-              <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
-                <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-[2px] w-4 rounded-full"
-                      style={{ backgroundColor: balanceChart.primary }}
-                    />
-                    <span>Current Balance</span>
-                  </div>
-                </div>
-
-                <div className="h-[220px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                      <CartesianGrid stroke={balanceChart.grid} strokeDasharray="0" vertical={false} />
-                      <ReferenceLine y={0} stroke={balanceChart.refLine} strokeDasharray="5 5" />
-                      <XAxis
-                        dataKey="date"
-                        interval="preserveStartEnd"
-                        minTickGap={28}
-                        axisLine={false}
-                        tickLine={false}
-                        tickMargin={10}
-                        tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
-                      />
-                      <YAxis
-                        domain={[-30, 120]}
-                        ticks={[-30, 0, 30, 60, 90, 120]}
-                        axisLine={false}
-                        tickLine={false}
-                        tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
-                        tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
-                      />
-                      <Tooltip
-                        cursor={{ stroke: balanceChart.tooltipCursor, strokeWidth: 1 }}
-                        formatter={(value) => `$${value}k`}
-                        labelStyle={{ color: "#4c4f69", fontWeight: 600, fontSize: 11, marginBottom: 2 }}
-                        itemStyle={{ fontSize: 11, padding: 0 }}
-                        contentStyle={{
-                          border: "1px solid #d9d9d9",
-                          borderRadius: "6px",
-                          boxShadow: "0 1px 4px rgba(76, 79, 105, 0.12)",
-                          padding: "6px 8px",
-                          color: "#1c1b1f",
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="current"
-                        stroke={balanceChart.primary}
-                        strokeWidth={2}
-                        dot={false}
-                        activeDot={{ r: 3 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-5">
-                {monthlyBalanceSeries.map((series) => {
-                  const [monthName, year] = series.month.split(" ")
-                  const monthNumber = new Date(`${monthName} 1, ${year}`).getMonth() + 1
-
-                  const weekdayRows = series.data.filter((entry) => {
-                    const date = new Date(`${series.month} ${entry.day}`)
-                    const dayOfWeek = date.getDay()
-                    return dayOfWeek !== 0 && dayOfWeek !== 6
-                  })
-
-                  const chunkSize = 8
-                  const ledgerColumns = Array.from({ length: 3 }, (_, columnIndex) =>
-                    weekdayRows.slice(columnIndex * chunkSize, (columnIndex + 1) * chunkSize),
-                  )
-
-                  return (
-                    <div key={series.month}>
-                      <div className="section-label-row mb-2 flex items-center gap-2">
-                        <h4 className="text-base font-bold leading-none text-[#1c1b1f]">{series.month}</h4>
-                      </div>
-                      <article className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
-                        <div className="grid gap-15 px-3 py-3 lg:grid-cols-3">
-                          {ledgerColumns.map((columnRows, columnIndex) => (
-                            <div key={`${series.month}-col-${columnIndex}`} className="min-w-0">
-                              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#d9d9d9] pb-1 text-xs font-semibold uppercase tracking-wide text-[#4c4f69]">
-                                <span>Date</span>
-                                <span className="whitespace-nowrap text-right">Balance ($)</span>
-                              </div>
-
-                              <div>
-                                {columnRows.map((entry, idx) => (
-                                  <div
-                                    key={`${series.month}-${columnIndex}-${entry.day}-${idx}`}
-                                    className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#efefef] py-1.5 text-sm last:border-b-0"
-                                  >
-                                    <span className="text-[#4c4f69]">
-                                      {String(monthNumber).padStart(2, "0")}/
-                                      {String(Number(entry.day)).padStart(2, "0")}
-                                    </span>
-                                    <span className="text-right font-medium tabular-nums text-[#1c1b1f]">
-                                      ${entry.balance.toLocaleString()}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </article>
-                    </div>
-                  )
-                })}
-              </div>
-            </section>
+            <BalancesSection
+              balanceData={balanceData}
+              monthlyBalanceSeries={monthlyBalanceSeries}
+              balanceChart={balanceChart}
+            />
+            <footer className="border-t border-[#d9d9d9] pt-3 text-center text-[11px] text-[#4c4f69]">
+              <p>Steddy AI Mockup • Internal Preview</p>
+            </footer>
           </div>
         </section>
       </main>
