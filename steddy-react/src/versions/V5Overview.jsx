@@ -15,7 +15,7 @@ export default function V5Overview({
 
   return (
     <section>
-      <div className="grid items-stretch gap-4 xl:grid-cols-2">
+      <div className="grid items-stretch gap-4 xl:grid-cols-[1fr_2fr]">
         <div data-v3-card="key-metrics" className="flex h-full flex-col">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -27,7 +27,7 @@ export default function V5Overview({
               <h3 className="text-base font-bold leading-none">Key Financial Metrics</h3>
             </div>
           </div>
-          <div data-v3-key-grid="true" className="grid flex-1 items-stretch gap-3 md:grid-cols-3">
+          <div data-v3-key-grid="true" className="grid flex-1 items-stretch gap-3 md:grid-cols-2">
             <article
               data-v3-mini-card="true"
               onClick={() => {
@@ -80,13 +80,23 @@ export default function V5Overview({
                 Acceptable Range
               </p>
             </article>
+          </div>
+        </div>
+
+        <div data-v3-card="flags" className="h-full">
+          <div className="mb-4 flex items-center gap-2 pl-4">
+            <img
+              src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
+              alt=""
+              className="section-icon size-5"
+            />
+            <h3 className="text-base font-bold leading-none">Flags</h3>
+          </div>
+          <div className="grid flex-1 items-stretch gap-3 border-l border-[#d9d9d9] pl-4 lg:grid-cols-3">
             <article
               data-v3-mini-card="true"
-              onClick={() => {
-                setActiveMetricTitle("ISSUES")
-                setIsMonthlyBreakdownOpen(true)
-              }}
-              className="interactive-pop md:order-3 flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+              onClick={() => setActiveFlagPanel("issues")}
+              className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">ISSUES</p>
               <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">12</p>
@@ -113,19 +123,6 @@ export default function V5Overview({
                 Elevated risk signals detected
               </p>
             </article>
-          </div>
-        </div>
-
-        <div data-v3-card="flags" className="h-full">
-          <div className="mb-4 flex items-center gap-2 pl-4">
-            <img
-              src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
-              alt=""
-              className="section-icon size-5"
-            />
-            <h3 className="text-base font-bold leading-none">Flags</h3>
-          </div>
-          <div className="grid flex-1 items-stretch gap-3 border-l border-[#d9d9d9] pl-4 lg:grid-cols-2">
             <div className="grid gap-3 lg:grid-rows-2">
               <article
                 onClick={() => setActiveFlagPanel("fraud")}
@@ -181,8 +178,8 @@ export default function V5Overview({
                 </li>
               </ul>
             </article>
-            </div>
           </div>
+        </div>
       </div>
     </section>
   )
