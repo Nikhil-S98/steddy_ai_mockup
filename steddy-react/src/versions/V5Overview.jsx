@@ -4,15 +4,7 @@ export default function V5Overview({
   setActiveMetricTitle,
   setIsMonthlyBreakdownOpen,
   setActiveFlagPanel,
-  formatCurrency,
 }) {
-  const monthlyLeverageByCompany = {
-    "Advance Syndicate": 1530,
-    "EBF Holdings": 1275,
-    "CFG Merchant Solutions": 1410,
-  }
-  const totalMonthlyPayout = Object.values(monthlyLeverageByCompany).reduce((sum, value) => sum + value, 0)
-
   return (
     <section>
       <div className="grid items-stretch gap-4 xl:grid-cols-[1fr_2fr]">
@@ -60,19 +52,23 @@ export default function V5Overview({
               className="interactive-pop md:order-2 flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
-              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
-              <div className="mt-3 space-y-2.5">
-                {keyMetricCompanyRows.map((row) => (
-                  <div key={`v5-leverage-${row.company}`} className="flex items-center justify-between text-[11px]">
-                    <span className="text-[#4c4f69]">{row.company}</span>
-                    <span className="font-semibold text-[#1c1b1f]">
-                      ${formatCurrency(monthlyLeverageByCompany[row.company])}/mo
-                    </span>
+              <div className="group relative mt-2 flex flex-1 flex-col">
+                <div className="border-b border-[#d9d9d9] pb-3">
+                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                </div>
+                <div className="pt-3">
+                  <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">MCA Payout</p>
+                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                </div>
+                <div className="pointer-events-none absolute left-0 top-full z-50 mt-2 w-full rounded border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 shadow-[0_6px_18px_rgba(28,27,31,0.14)] transition-opacity duration-150 group-hover:opacity-100">
+                  <div className="space-y-1.5">
+                    {keyMetricCompanyRows.map((row) => (
+                      <div key={`v5-leverage-tooltip-${row.company}`} className="flex items-center justify-between gap-2">
+                        <span className="text-[#4c4f69]">{row.company}</span>
+                        <span className="font-semibold text-[#1c1b1f]">{`${row.payout}/mo`}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-                <div className="mt-1 border-t border-[#d9d9d9] pt-2 flex items-center justify-between text-[11px]">
-                  <span className="font-semibold text-[#1c1b1f]">Total Monthly Payout</span>
-                  <span className="font-semibold text-[#1c1b1f]">${formatCurrency(totalMonthlyPayout)}/mo</span>
                 </div>
               </div>
               <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#3277FF]">
@@ -99,15 +95,15 @@ export default function V5Overview({
               className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">ISSUES</p>
-              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">12</p>
-              <div className="mt-3 space-y-2.5">
+              <div className="mt-2 border-t border-[#d9d9d9]" />
+              <div className="mt-2 space-y-2.5">
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#4c4f69]">Missed Payments</span>
                   <span className="font-semibold text-[#1c1b1f]">3</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#4c4f69]">NSFs</span>
-                  <span className="font-semibold text-[#1c1b1f]">2</span>
+                  <span className="font-semibold text-[#1c1b1f]">5</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#4c4f69]">Negative Days</span>
@@ -118,9 +114,9 @@ export default function V5Overview({
                   <span className="font-semibold text-[#1c1b1f]">$315</span>
                 </div>
               </div>
-              <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#1c1b1f]">
+              <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#d20f39]">
                 <span className="inline-block size-2 rounded-full bg-current" />
-                Elevated risk signals detected
+                High amount of negative days
               </p>
             </article>
             <div className="grid gap-3 lg:grid-rows-2">
