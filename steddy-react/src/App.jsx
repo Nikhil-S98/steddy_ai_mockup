@@ -1275,7 +1275,7 @@ function App() {
           data-animate
           className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-6 lg:p-8"
         >
-          <div className="w-full space-y-6">
+          <div className="w-full space-y-4 sm:space-y-6 lg:space-y-8">
             {renderVersionOverview()}
 
             <section>

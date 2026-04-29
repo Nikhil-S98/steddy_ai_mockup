@@ -56,14 +56,14 @@ export default function V4Overview({
               className="interactive-pop md:order-2 flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
-              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
-              <div className="mt-3 space-y-2.5">
-                {keyMetricCompanyRows.map((row) => (
-                  <div key={`v3-leverage-${row.company}`} className="flex items-center justify-between text-[11px]">
-                    <span className="text-[#4c4f69]">{row.company}</span>
-                    <span className="font-semibold text-[#1c1b1f]">{row.leverage}</span>
-                  </div>
-                ))}
+              <div className="mt-2 flex flex-1 flex-col">
+                <div className="border-b border-[#d9d9d9] pb-3">
+                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                </div>
+                <div className="pt-3">
+                  <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">MCA Payout</p>
+                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                </div>
               </div>
               <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#3277FF]">
                 <span className="inline-block size-2 rounded-full bg-current" />
@@ -116,18 +116,16 @@ export default function V4Overview({
           <div className="grid flex-1 items-stretch gap-3 border-l border-[#d9d9d9] pl-4 lg:grid-cols-2">
             <div className="grid gap-3 lg:grid-rows-2">
               <article
-                onClick={() => setActiveFlagPanel("unicourt")}
+                onClick={() => setActiveFlagPanel("fraud")}
                 className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
               >
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
-                  <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                    3 open
+                  <p className="text-sm font-semibold leading-none text-[#1c1b1f]">Potential Fraud Alerts</p>
+                  <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                    1 alert
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-[#4c4f69]">
-                  Litigation search returned active dockets with recent filing activity.
-                </p>
+                <p className="mt-2 text-xs text-[#d20f39]">Bank statement authenticity mismatch detected.</p>
               </article>
               <article
                 onClick={() => setActiveFlagPanel("datamerch")}
@@ -140,38 +138,38 @@ export default function V4Overview({
                   </span>
                 </div>
                 <p className="mt-2 text-xs text-[#4c4f69]">
-                  No adverse peer-funder repayment or fraud postings were returned.
+                  No postings were returned. The merchant was searched 23 times.
                 </p>
               </article>
             </div>
 
             <article
-              onClick={() => setActiveFlagPanel("fraud")}
+              onClick={() => setActiveFlagPanel("unicourt")}
               className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold leading-none text-[#1c1b1f]">Potential Fraud Alerts</p>
-                <span className="rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
-                  1 alert
+                <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
+                <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                  3 open
                 </span>
               </div>
-              <p className="mt-2 text-xs text-[#d20f39]">
-                MoneyThumb-style statement authenticity mismatch detected.
+              <p className="mt-2 text-xs text-[#4c4f69]">
+                Litigation search returned three active dockets.
               </p>
-              <div className="mt-3 space-y-2 text-xs text-[#4c4f69]">
-                <div>
-                  <p className="font-semibold text-[#1c1b1f]">Dec</p>
-                  <p className="mt-0.5">Fingerprint mismatch</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-[#1c1b1f]">Jan</p>
-                  <p className="mt-0.5">Summary variance</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-[#1c1b1f]">Feb</p>
-                  <p className="mt-0.5">Metadata anomaly</p>
-                </div>
-              </div>
+              <ul className="mt-3 space-y-1.5 text-[11px] leading-4 text-[#4c4f69]">
+                <li>
+                  <p className="font-semibold text-[#1c1b1f]">Atlas Funding v. Riverstone Auto Group</p>
+                  <p className="mt-0.5">Breach of contract</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-[#1c1b1f]">Merchant Capital Partners v. Horizon Plumbing</p>
+                  <p className="mt-0.5">Judgment filing</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-[#1c1b1f]">Summit Advance Group v. Blue Harbor Services</p>
+                  <p className="mt-0.5">UCC enforcement</p>
+                </li>
+              </ul>
             </article>
           </div>
         </div>
