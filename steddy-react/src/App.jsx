@@ -104,6 +104,170 @@ const transactions = [
   { date: "Feb 16", description: "Weekend Deposit", credit: true, value: "$2,110" },
   { date: "Feb 16", description: "Tax Withholding Transfer", credit: false, value: "$1,470" },
 ]
+const weeklyDeductionTransactions = [
+  {
+    date: "Mar 01",
+    positionId: "advance-syndicate",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "Advance Syndicate",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Feb 22",
+    positionId: "advance-syndicate",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "Advance Syndicate",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Feb 15",
+    positionId: "advance-syndicate",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "Advance Syndicate",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Mar 01",
+    positionId: "advance-syndicate",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "Advance Syndicate",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Feb 22",
+    positionId: "advance-syndicate",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "Advance Syndicate",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Feb 15",
+    positionId: "advance-syndicate",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "Advance Syndicate",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Mar 01",
+    positionId: "ebf-holdings",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "EBF Holdings",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Feb 22",
+    positionId: "ebf-holdings",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "EBF Holdings",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Feb 15",
+    positionId: "ebf-holdings",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "EBF Holdings",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Mar 01",
+    positionId: "ebf-holdings",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "EBF Holdings",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Feb 22",
+    positionId: "ebf-holdings",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "EBF Holdings",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Feb 15",
+    positionId: "ebf-holdings",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "EBF Holdings",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Mar 01",
+    positionId: "cfg-merchant-solutions",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "CFG Merchant Solutions",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Feb 22",
+    positionId: "cfg-merchant-solutions",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "CFG Merchant Solutions",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Feb 15",
+    positionId: "cfg-merchant-solutions",
+    amount: "$182.32",
+    cadence: "weekly",
+    description: "CFG Merchant Solutions",
+    credit: false,
+    value: "$182.32",
+  },
+  {
+    date: "Mar 01",
+    positionId: "cfg-merchant-solutions",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "CFG Merchant Solutions",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Feb 22",
+    positionId: "cfg-merchant-solutions",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "CFG Merchant Solutions",
+    credit: false,
+    value: "$102.00",
+  },
+  {
+    date: "Feb 15",
+    positionId: "cfg-merchant-solutions",
+    amount: "$102.00",
+    cadence: "weekly",
+    description: "CFG Merchant Solutions",
+    credit: false,
+    value: "$102.00",
+  },
+]
 
 const balanceData = [
   { date: "Dec 02", current: 72, withOffer: 64 },
@@ -333,11 +497,13 @@ const VERSION_OPTIONS = [
   { value: "v1", label: "v1" },
   { value: "v2", label: "v2" },
   { value: "v3", label: "v3" },
+  { value: "v4", label: "v4" },
 ]
 
 const getVersionFromPath = (pathname) => {
   if (pathname === "/v2") return "v2"
   if (pathname === "/v3") return "v3"
+  if (pathname === "/v4") return "v4"
   return "v1"
 }
 const flagDetailPanels = {
@@ -392,6 +558,7 @@ function App() {
     Object.fromEntries(initialPositions.map((position) => [position.id, true])),
   )
   const [activePositionChips, setActivePositionChips] = useState({})
+  const [selectedPositionChip, setSelectedPositionChip] = useState(null)
   const [draftPosition, setDraftPosition] = useState({
     title: "",
     paymentAmount: "",
@@ -419,6 +586,19 @@ function App() {
   const paymentAmount = (FUNDING_AMOUNT * calculator.factor) / Math.max(frequencyDivisor, 1)
   const paybackTotal = FUNDING_AMOUNT * calculator.factor
   const totalLeverage = BASE_LEVERAGE + calculator.leverageDelta
+  const isV4 = activeVersion === "v4"
+  const selectedPosition = selectedPositionChip
+    ? positionsData.find((position) => position.id === selectedPositionChip.positionId) ?? null
+    : null
+  const filteredTransactions =
+    isV4 && selectedPositionChip
+      ? weeklyDeductionTransactions.filter(
+          (row) =>
+            row.positionId === selectedPositionChip.positionId &&
+            row.amount === selectedPositionChip.amount &&
+            row.cadence.toLowerCase() === selectedPositionChip.meta.toLowerCase(),
+        )
+      : transactions
 
   const formatCurrency = (value) =>
     value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
@@ -613,7 +793,8 @@ function App() {
 
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
-    const nextPath = nextVersion === "v2" ? "/v2" : nextVersion === "v3" ? "/v3" : "/"
+    const nextPath =
+      nextVersion === "v2" ? "/v2" : nextVersion === "v3" ? "/v3" : nextVersion === "v4" ? "/v4" : "/"
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, "", nextPath)
     }
@@ -1033,7 +1214,7 @@ function App() {
           className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-6 lg:p-8"
         >
           <div className="w-full space-y-6">
-            {activeVersion === "v3" ? (
+            {activeVersion === "v3" || activeVersion === "v4" ? (
               <section>
                 <div className="grid items-stretch gap-4 xl:grid-cols-2">
                   <div
@@ -1049,7 +1230,9 @@ function App() {
                         />
                         <h3 className="text-base font-bold leading-none">Key Metrics</h3>
                       </div>
-                      <p className="text-xs text-[#4c4f69]">AI Analysis - 3 months of bank data</p>
+                      {activeVersion === "v3" ? (
+                        <p className="text-xs text-[#4c4f69]">AI Analysis - 3 months of bank data</p>
+                      ) : null}
                     </div>
                     <div data-v3-key-grid="true" className="grid flex-1 items-stretch gap-3 md:grid-cols-3">
                       <article
@@ -1649,38 +1832,96 @@ function App() {
                             const chipKey = `${position.id}-${chipIndex}`
                             const isActive = Boolean(activePositionChips[chipKey])
                             return (
-                              <button
-                                key={chipKey}
-                                type="button"
-                                onClick={() =>
-                                  setActivePositionChips((prev) => ({
-                                    ...prev,
-                                    [chipKey]: !prev[chipKey],
-                                  }))
-                                }
-                                className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
-                                  isActive
-                                    ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
-                                    : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
-                                }`}
-                              >
+                              isV4 ? (
                                 <span
-                                  aria-hidden="true"
-                                  className={`relative h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
-                                    isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
+                                  key={chipKey}
+                                  className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
+                                    isActive
+                                      ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                                      : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
+                                  }`}
+                                >
+                                  <button
+                                    type="button"
+                                    aria-label={`Toggle ${position.title} ${chip.amount} ${chip.meta}`}
+                                    onClick={() =>
+                                      setActivePositionChips((prev) => ({
+                                        ...prev,
+                                        [chipKey]: !prev[chipKey],
+                                      }))
+                                    }
+                                    className="rounded-sm"
+                                  >
+                                    <span
+                                      aria-hidden="true"
+                                      className={`relative block h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
+                                        isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
+                                      }`}
+                                    >
+                                      <span
+                                        className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
+                                          isActive ? "translate-x-2.5" : "translate-x-0"
+                                        }`}
+                                      />
+                                    </span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setSelectedPositionChip((prev) => {
+                                        const isSameChip =
+                                          prev?.positionId === position.id && prev?.chipIndex === chipIndex
+                                        if (isSameChip) return null
+                                        return {
+                                          positionId: position.id,
+                                          chipIndex,
+                                          amount: chip.amount,
+                                          meta: chip.meta,
+                                        }
+                                      })
+                                    }
+                                    className="rounded-sm px-0.5 text-left"
+                                  >
+                                    {chip.amount}{" "}
+                                    <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
+                                      {chip.meta}
+                                    </span>
+                                  </button>
+                                </span>
+                              ) : (
+                                <button
+                                  key={chipKey}
+                                  type="button"
+                                  onClick={() =>
+                                    setActivePositionChips((prev) => ({
+                                      ...prev,
+                                      [chipKey]: !prev[chipKey],
+                                    }))
+                                  }
+                                  className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
+                                    isActive
+                                      ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                                      : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
                                   }`}
                                 >
                                   <span
-                                    className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
-                                      isActive ? "translate-x-2.5" : "translate-x-0"
+                                    aria-hidden="true"
+                                    className={`relative h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
+                                      isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
                                     }`}
-                                  />
-                                </span>
-                                {chip.amount}{" "}
-                                <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
-                                  {chip.meta}
-                                </span>
-                              </button>
+                                  >
+                                    <span
+                                      className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
+                                        isActive ? "translate-x-2.5" : "translate-x-0"
+                                      }`}
+                                    />
+                                  </span>
+                                  {chip.amount}{" "}
+                                  <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
+                                    {chip.meta}
+                                  </span>
+                                </button>
+                              )
                             )
                           })}
                         </div>
@@ -1702,15 +1943,17 @@ function App() {
                     </div>
                   </div>
                   <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
-                    <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,1fr)] items-center gap-2 bg-[#e9f0ff] px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
-                      <span>Date</span>
-                      <span>Description</span>
-                      <span className="text-right">Amount</span>
-                    </div>
                     <div className="min-h-0 flex-1 overflow-y-auto">
                       <table className="w-full border-collapse text-left text-sm">
+                        <thead>
+                          <tr className="bg-[#e9f0ff] text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
+                            <th className="whitespace-nowrap px-4 py-2.5 font-medium">Date</th>
+                            <th className="px-4 py-2.5 font-medium">Description</th>
+                            <th className="whitespace-nowrap px-4 py-2.5 text-right font-medium">Amount</th>
+                          </tr>
+                        </thead>
                         <tbody>
-                          {transactions.map((row, i) => (
+                          {filteredTransactions.map((row, i) => (
                             <tr
                               key={`${row.date}-${row.description}-${i}`}
                               className="border-b border-[#efefef] last:border-b-0"
@@ -1729,6 +1972,13 @@ function App() {
                               </td>
                             </tr>
                           ))}
+                          {isV4 && selectedPositionChip && filteredTransactions.length === 0 ? (
+                            <tr>
+                              <td colSpan={3} className="px-4 py-3 text-xs text-[#4c4f69]">
+                                No matching weekly deductions for this chip.
+                              </td>
+                            </tr>
+                          ) : null}
                         </tbody>
                       </table>
                     </div>
