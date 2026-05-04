@@ -1,6 +1,8 @@
 export default function V7Overview({
   monthlyBreakdownRows,
   keyMetricCompanyRows,
+  currentLeverageLabel,
+  mcaPayoutLabel,
   setActiveMetricTitle,
   setIsMonthlyBreakdownOpen,
   setActiveFlagPanel,
@@ -52,20 +54,22 @@ export default function V7Overview({
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
               <div className="mt-2 flex flex-1 flex-col">
                 <div className="border-b border-[#d9d9d9] pb-3">
-                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">{currentLeverageLabel}</p>
                 </div>
                 <div className="pt-3">
                   <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">MCA Payout</p>
-                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">{mcaPayoutLabel}</p>
                 </div>
                 <div className="pointer-events-none absolute left-0 top-full z-[130] mt-2 w-full rounded border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                   <div className="space-y-1.5">
-                    {keyMetricCompanyRows.map((row) => (
+                    {keyMetricCompanyRows.length ? keyMetricCompanyRows.map((row) => (
                       <div key={`v7-leverage-tooltip-${row.company}`} className="flex items-center justify-between gap-2">
                         <span className="text-[#4c4f69]">{row.company}</span>
                         <span className="font-semibold text-[#1c1b1f]">{`${row.payout}/mo`}</span>
                       </div>
-                    ))}
+                    )) : (
+                      <p className="text-[#4c4f69]">No active withdrawals selected.</p>
+                    )}
                   </div>
                 </div>
               </div>

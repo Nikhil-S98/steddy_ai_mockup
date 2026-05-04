@@ -551,11 +551,25 @@ function App() {
   const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
   const [colorMode, setColorMode] = useState("light")
   const [isContractOpen, setIsContractOpen] = useState(false)
+  const [isApplicationInfoOpen, setIsApplicationInfoOpen] = useState(false)
   const [isAiDecisionOpen, setIsAiDecisionOpen] = useState(false)
   const [isMonthlyBreakdownOpen, setIsMonthlyBreakdownOpen] = useState(false)
   const [isPositionEditorOpen, setIsPositionEditorOpen] = useState(false)
   const [activeFlagPanel, setActiveFlagPanel] = useState(null)
   const [activeMetricTitle, setActiveMetricTitle] = useState("MONTHLY REVENUE")
+  const [applicationInfo, setApplicationInfo] = useState({
+    companyName: "Green Farm Equipment",
+    ownerName: "Judy Green",
+    ein: "20-2573652",
+    email: "",
+    phoneCountryCode: "+1",
+    phoneNumber: "(XXX) XXX-XXXX",
+    addressLine1: "1110 4th street",
+    city: "Rancho Cucamonga",
+    stateCode: "CA",
+    postalCode: "91730",
+  })
+  const [isEditingApplicationInfo, setIsEditingApplicationInfo] = useState(false)
   const [positionsData, setPositionsData] = useState(initialPositions)
   const [editingPositionId, setEditingPositionId] = useState(null)
   const [positionToggles, setPositionToggles] = useState(() =>
@@ -638,6 +652,46 @@ function App() {
       row.value.toLowerCase().includes(normalizedQuery)
     )
   })
+  const parseMoney = (value) => Number(value.replace(/[^0-9.-]/g, "")) || 0
+  const monthlyMultiplierByCadence = {
+    daily: 30,
+    weekly: 4.33,
+    "bi-weekly": 2.17,
+    monthly: 1,
+  }
+  const activeWithdrawals = positionsData.flatMap((position) =>
+    position.chips.flatMap((chip, chipIndex) => {
+      const chipKey = `${position.id}-${chipIndex}`
+      if (!activePositionChips[chipKey]) return []
+      const cadenceKey = chip.meta.toLowerCase()
+      const multiplier = monthlyMultiplierByCadence[cadenceKey] ?? 1
+      const monthlyPayout = parseMoney(chip.amount) * multiplier
+      return [
+        {
+          positionId: position.id,
+          company: position.title,
+          monthlyPayout,
+        },
+      ]
+    }),
+  )
+  const v7PayoutByPosition = activeWithdrawals.reduce((acc, withdrawal) => {
+    acc[withdrawal.positionId] = (acc[withdrawal.positionId] ?? 0) + withdrawal.monthlyPayout
+    return acc
+  }, {})
+  const v7KeyMetricCompanyRows = positionsData
+    .map((position) => {
+      const monthlyPayout = v7PayoutByPosition[position.id] ?? 0
+      return {
+        company: position.title,
+        payout: `$${formatCurrency(monthlyPayout)}`,
+      }
+    })
+    .filter((row) => parseMoney(row.payout) > 0)
+  const v7McaPayoutValue = activeWithdrawals.reduce((sum, row) => sum + row.monthlyPayout, 0)
+  const v7CurrentLeverageValue = FUNDING_AMOUNT > 0 ? (v7McaPayoutValue / FUNDING_AMOUNT) * 100 : 0
+  const v7McaPayoutLabel = `$${formatCurrency(v7McaPayoutValue)}`
+  const v7CurrentLeverageLabel = `${Math.round(v7CurrentLeverageValue)}%`
   const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
 
@@ -949,7 +1003,9 @@ function App() {
     return (
       <V7Overview
         monthlyBreakdownRows={monthlyBreakdownRows}
-        keyMetricCompanyRows={keyMetricCompanyRows}
+        keyMetricCompanyRows={v7KeyMetricCompanyRows}
+        currentLeverageLabel={v7CurrentLeverageLabel}
+        mcaPayoutLabel={v7McaPayoutLabel}
         netCashFlowRows={netCashFlowRows}
         netCashFlowTotalLabel={netCashFlowTotalLabel}
         netCashFlowIsPositive={netCashFlowIsPositive}
@@ -1107,7 +1163,7 @@ function App() {
           className="flex h-[calc(100vh-64px)] flex-col border-r border-[#d9d9d9] bg-[#fafafa]"
         >
           <div className="border-b border-[#d9d9d9] px-5 py-4">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="grid size-10 place-items-center rounded-xl border border-[#3277FF] bg-[#e9f0ff]">
                 <svg
                   viewBox="0 0 24 24"
@@ -1132,14 +1188,24 @@ function App() {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="truncate text-base font-bold leading-none text-[#1c1b1f]">
-                  Green Farm Equipment LLC
-                </h2>
-                <div className="mt-1.5 flex items-center gap-2 text-[11px]">
+                <div className="flex items-center justify-between gap-1.5">
+                  <h2 className="truncate text-base font-bold leading-none text-[#1c1b1f]">{applicationInfo.companyName}</h2>
+                  <button
+                    type="button"
+                    aria-label="Open application info panel"
+                    onClick={() => setIsApplicationInfoOpen(true)}
+                    className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[#4c4f69] transition-colors hover:bg-[#efefef]"
+                  >
+                    <span aria-hidden="true" className="material-symbols-rounded text-[17px] leading-none">
+                      more_vert
+                    </span>
+                  </button>
+                </div>
+                <div className="mt-1 flex items-center gap-1.5 text-[11px]">
                   <span className="rounded bg-[#e9f0ff] px-2 py-0.5 font-medium text-[#3277FF]">
                     • Review
                   </span>
-                  <span className="text-[#4c4f69]">Judy Green</span>
+                  <span className="text-[#4c4f69]">{applicationInfo.ownerName}</span>
                 </div>
               </div>
             </div>
@@ -1739,6 +1805,272 @@ function App() {
           </div>
         </section>
       </main>
+
+      <div
+        className={`fixed inset-0 z-[44] transition-opacity duration-300 ${
+          isApplicationInfoOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close application info panel"
+          className="absolute inset-0 bg-[rgba(28,27,31,0.2)]"
+          onClick={() => setIsApplicationInfoOpen(false)}
+        />
+        <aside
+          className={`absolute right-0 top-0 h-full w-full max-w-[390px] border-l border-[#d9d9d9] bg-[#fafafa] transition-transform duration-300 ease-out ${
+            isApplicationInfoOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-[#d9d9d9] px-5 py-4">
+              <h3 className="text-base font-semibold text-[#1c1b1f]">Application Info</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingApplicationInfo((prev) => !prev)}
+                  className="interactive-pop rounded border border-[#4c4f69] px-2 py-1 text-[11px] font-medium text-[#4c4f69] hover:bg-[#efefef]"
+                >
+                  {isEditingApplicationInfo ? "Stop Editing" : "Edit Application"}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Close application info panel"
+                  className="interactive-pop text-lg leading-none text-[#4c4f69]"
+                  onClick={() => setIsApplicationInfoOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <div className="rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                <h4 className="text-base font-semibold text-[#1c1b1f]">Business Information</h4>
+                <div className="mt-3 space-y-2.5 text-[12px]">
+                  <div>
+                    <p className="mb-1 text-[11px] text-[#4c4f69]">Company Name</p>
+                    <input
+                      type="text"
+                      value={applicationInfo.companyName}
+                      disabled={!isEditingApplicationInfo}
+                      onChange={(event) =>
+                        setApplicationInfo((prev) => ({
+                          ...prev,
+                          companyName: event.target.value,
+                        }))
+                      }
+                      className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                        isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-[11px] text-[#4c4f69]">Owner Name</p>
+                    <input
+                      type="text"
+                      value={applicationInfo.ownerName}
+                      disabled={!isEditingApplicationInfo}
+                      onChange={(event) =>
+                        setApplicationInfo((prev) => ({
+                          ...prev,
+                          ownerName: event.target.value,
+                        }))
+                      }
+                      className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                        isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-[11px] text-[#4c4f69]">EIN</p>
+                    <input
+                      type="text"
+                      value={applicationInfo.ein}
+                      disabled={!isEditingApplicationInfo}
+                      onChange={(event) =>
+                        setApplicationInfo((prev) => ({
+                          ...prev,
+                          ein: event.target.value,
+                        }))
+                      }
+                      className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                        isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-[11px] text-[#4c4f69]">Email</p>
+                    <input
+                      type="email"
+                      value={applicationInfo.email}
+                      disabled={!isEditingApplicationInfo}
+                      onChange={(event) =>
+                        setApplicationInfo((prev) => ({
+                          ...prev,
+                          email: event.target.value,
+                        }))
+                      }
+                      className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                        isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-[11px] text-[#4c4f69]">Phone</p>
+                    <div className="grid grid-cols-[auto_1fr] gap-2">
+                      <input
+                        type="text"
+                        value={applicationInfo.phoneCountryCode}
+                        disabled={!isEditingApplicationInfo}
+                        onChange={(event) =>
+                          setApplicationInfo((prev) => ({
+                            ...prev,
+                            phoneCountryCode: event.target.value,
+                          }))
+                        }
+                        className={`h-9 w-[68px] rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                          isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                        }`}
+                      />
+                      <input
+                        type="text"
+                        value={applicationInfo.phoneNumber}
+                        disabled={!isEditingApplicationInfo}
+                        onChange={(event) =>
+                          setApplicationInfo((prev) => ({
+                            ...prev,
+                            phoneNumber: event.target.value,
+                          }))
+                        }
+                        className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                          isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                <h4 className="text-base font-semibold text-[#1c1b1f]">Business Address</h4>
+                <div className="mt-3 space-y-2.5 text-[12px]">
+                  <div>
+                    <p className="mb-1 text-[11px] text-[#4c4f69]">Address Line 1</p>
+                    <input
+                      type="text"
+                      value={applicationInfo.addressLine1}
+                      disabled={!isEditingApplicationInfo}
+                      onChange={(event) =>
+                        setApplicationInfo((prev) => ({
+                          ...prev,
+                          addressLine1: event.target.value,
+                        }))
+                      }
+                      className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                        isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                      }`}
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <p className="mb-1 text-[11px] text-[#4c4f69]">City</p>
+                      <input
+                        type="text"
+                        value={applicationInfo.city}
+                        disabled={!isEditingApplicationInfo}
+                        onChange={(event) =>
+                          setApplicationInfo((prev) => ({
+                            ...prev,
+                            city: event.target.value,
+                          }))
+                        }
+                        className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                          isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] text-[#4c4f69]">State Code</p>
+                      <input
+                        type="text"
+                        value={applicationInfo.stateCode}
+                        disabled={!isEditingApplicationInfo}
+                        onChange={(event) =>
+                          setApplicationInfo((prev) => ({
+                            ...prev,
+                            stateCode: event.target.value,
+                          }))
+                        }
+                        className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                          isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] text-[#4c4f69]">Postal Code</p>
+                      <input
+                        type="text"
+                        value={applicationInfo.postalCode}
+                        disabled={!isEditingApplicationInfo}
+                        onChange={(event) =>
+                          setApplicationInfo((prev) => ({
+                            ...prev,
+                            postalCode: event.target.value,
+                          }))
+                        }
+                        className={`h-9 w-full rounded border border-[#d9d9d9] px-2 text-[#1c1b1f] ${
+                          isEditingApplicationInfo ? "bg-[#fafafa]" : "bg-[#efefef]"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                <p className="text-[10px] font-semibold tracking-wide text-[#4c4f69]">FILES UPLOADED</p>
+                <ul className="mt-2 space-y-2 text-[12px] text-[#1c1b1f]">
+                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                    <span>Bank Statement - Dec 2025.pdf</span>
+                    <span className="text-[10px] text-[#4c4f69]">Verified</span>
+                  </li>
+                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                    <span>Bank Statement - Jan 2026.pdf</span>
+                    <span className="text-[10px] text-[#4c4f69]">Uploaded</span>
+                  </li>
+                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                    <span>Bank Statement - Feb 2026.pdf</span>
+                    <span className="text-[10px] text-[#4c4f69]">Uploaded</span>
+                  </li>
+                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                    <span>Application Form.pdf</span>
+                    <span className="text-[10px] text-[#4c4f69]">Verified</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditingApplicationInfo(false)
+                    setIsApplicationInfoOpen(false)
+                  }}
+                  disabled={!isEditingApplicationInfo}
+                  className={`rounded px-4 py-2 text-[12px] font-semibold ${
+                    isEditingApplicationInfo
+                      ? "bg-[#3277FF] text-[#fafafa]"
+                      : "bg-[#e3e5eb] text-[#9b9bb0]"
+                  }`}
+                >
+                  Update Application
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
 
       <div
         className={`fixed inset-0 z-[43] transition-opacity duration-300 ${
