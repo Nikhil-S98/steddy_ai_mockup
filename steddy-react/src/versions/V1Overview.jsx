@@ -9,11 +9,9 @@ export default function V1Overview({
       <section>
         <div className="section-label-row mb-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img
-              src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
-              alt=""
-              className="section-icon size-5"
-            />
+            <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69]">
+              query_stats
+            </span>
             <h3 className="text-base font-bold leading-none">Key Metrics</h3>
           </div>
           <p className="text-xs text-[#4c4f69]">AI Analysis - 3 months of bank data</p>
@@ -42,11 +40,9 @@ export default function V1Overview({
 
       <section>
         <div className="section-label-row mb-3 flex items-center gap-2">
-          <img
-            src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
-            alt=""
-            className="section-icon size-5"
-          />
+          <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69]">
+            flag
+          </span>
           <h3 className="text-base font-bold leading-none">Flags</h3>
         </div>
 

@@ -908,7 +908,7 @@ function App() {
   return (
     <div
       ref={appRef}
-      className={`steddy-app h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Helvetica_Neue',Helvetica,Arial,sans-serif] ${
+      className={`steddy-app h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Schibsted_Grotesk','Helvetica_Neue',Arial,sans-serif] ${
         colorMode === "dark" ? "theme-dark" : ""
       } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
         colorMode === "indigo" ? "theme-indigo" : ""
@@ -924,8 +924,8 @@ function App() {
       <style>
         {`
           .steddy-app,
-          .steddy-app * {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          .steddy-app *:not(.material-symbols-rounded):not(.material-symbols-sharp) {
+            font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
           }
 
           /* Typography normalization: keep only a small shared scale */
@@ -949,11 +949,9 @@ function App() {
         className="flex h-16 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-6 lg:px-10"
       >
         <div className="flex items-center gap-2">
-          <img
-            src="https://www.figma.com/api/mcp/asset/4cfaa8ca-2e26-4a98-ac59-b9f36f00b6e0"
-            alt=""
-            className="size-5 opacity-70"
-          />
+          <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69] opacity-70">
+            arrow_back
+          </span>
           <h1 className="text-base font-semibold tracking-tight text-[#1c1b1f] sm:text-lg">
             Application #777
           </h1>
@@ -994,9 +992,7 @@ function App() {
                           ? "border-[#3277FF] bg-[#fafafa] text-transparent"
                           : "border-[#c8ced9] bg-[#fafafa] text-transparent"
                     }`}
-                  >
-                    {isCompleted ? "✓" : ""}
-                  </span>
+                  />
                   <span
                     className={`text-[11px] ${
                       isCompleted || isActive
@@ -1107,8 +1103,10 @@ function App() {
                   aria-expanded={isAiDecisionOpen}
                 >
                   <span className="flex items-center gap-2">
-                    <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[11px] text-[#fafafa]">
-                      ✓
+                    <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[#fafafa]">
+                      <span aria-hidden="true" className="material-symbols-sharp text-[12px] leading-none">
+                        done
+                      </span>
                     </span>
                     <span className="text-base font-bold leading-none">Approved</span>
                   </span>
@@ -1304,7 +1302,12 @@ function App() {
           <div className="border-t border-[#d9d9d9] bg-[#fafafa] p-4">
             <div className="grid grid-cols-2 gap-2">
               <button className="interactive-pop rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
-                ✓ Approve
+                <span className="inline-flex items-center gap-1.5">
+                  <span aria-hidden="true" className="material-symbols-sharp text-[16px] leading-none">
+                    done
+                  </span>
+                  <span>Approve</span>
+                </span>
               </button>
               <button className="interactive-pop rounded-lg border border-[#d20f39] bg-[#d20f39] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                 ✕ Decline
@@ -1323,11 +1326,9 @@ function App() {
             <section>
               <div className="section-label-row mb-3 grid grid-cols-1 gap-4 xl:grid-cols-3">
                 <div className="flex items-center gap-2">
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/cf13024f-3e71-4f25-9938-768089b93a1d"
-                    alt=""
-                    className="section-icon size-5 shrink-0"
-                  />
+                  <span aria-hidden="true" className="material-symbols-rounded shrink-0 text-[#4c4f69]">
+                    work_outline
+                  </span>
                   <h3 className="text-base font-bold leading-none">Positions</h3>
                   <button
                     type="button"

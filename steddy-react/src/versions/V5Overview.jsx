@@ -11,11 +11,9 @@ export default function V5Overview({
         <div data-v3-card="key-metrics" className="flex h-full flex-col">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <img
-                src="https://www.figma.com/api/mcp/asset/a3793c52-6f95-494a-9ba9-f57990eecf62"
-                alt=""
-                className="section-icon size-5"
-              />
+              <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69]">
+                query_stats
+              </span>
               <h3 className="text-base font-bold leading-none">Key Financial Metrics</h3>
             </div>
           </div>
@@ -49,10 +47,10 @@ export default function V5Overview({
                 setActiveMetricTitle("CURRENT LEVERAGE")
                 setIsMonthlyBreakdownOpen(true)
               }}
-              className="interactive-pop md:order-2 flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
+              className="interactive-pop group relative z-10 md:order-2 flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4 hover:z-[120]"
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
-              <div className="group relative mt-2 flex flex-1 flex-col">
+              <div className="mt-2 flex flex-1 flex-col">
                 <div className="border-b border-[#d9d9d9] pb-3">
                   <p className="text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
                 </div>
@@ -60,7 +58,7 @@ export default function V5Overview({
                   <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">MCA Payout</p>
                   <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
                 </div>
-                <div className="pointer-events-none absolute left-0 top-full z-50 mt-2 w-full rounded border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 shadow-[0_6px_18px_rgba(28,27,31,0.14)] transition-opacity duration-150 group-hover:opacity-100">
+                <div className="pointer-events-none absolute left-0 top-full z-[130] mt-2 w-full rounded border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 shadow-[0_6px_18px_rgba(28,27,31,0.14)] transition-opacity duration-150 group-hover:opacity-100">
                   <div className="space-y-1.5">
                     {keyMetricCompanyRows.map((row) => (
                       <div key={`v5-leverage-tooltip-${row.company}`} className="flex items-center justify-between gap-2">
@@ -79,13 +77,11 @@ export default function V5Overview({
           </div>
         </div>
 
-        <div data-v3-card="flags" className="h-full xl:col-span-2">
+        <div data-v3-card="flags" className="flex h-full flex-col xl:col-span-2">
           <div className="mb-4 flex items-center gap-2">
-            <img
-              src="https://www.figma.com/api/mcp/asset/03690ed8-b334-458e-958c-cf99d6584b21"
-              alt=""
-              className="section-icon size-5"
-            />
+            <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69]">
+              flag
+            </span>
             <h3 className="text-base font-bold leading-none">Flags</h3>
           </div>
           <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-3">
@@ -119,10 +115,10 @@ export default function V5Overview({
                 High amount of negative days
               </p>
             </article>
-            <div className="grid gap-3 lg:grid-rows-2">
+            <div className="grid h-full gap-3 lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)]">
               <article
                 onClick={() => setActiveFlagPanel("fraud")}
-                className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                className="interactive-pop h-full min-h-0 rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold leading-none text-[#1c1b1f]">Potential Fraud Alerts</p>
@@ -134,7 +130,7 @@ export default function V5Overview({
               </article>
               <article
                 onClick={() => setActiveFlagPanel("datamerch")}
-                className="interactive-pop h-full rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+                className="interactive-pop h-full min-h-0 rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
