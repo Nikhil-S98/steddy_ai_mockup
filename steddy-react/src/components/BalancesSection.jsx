@@ -199,7 +199,7 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                     type="monotone"
                     dataKey="current"
                     stroke={balanceChart.primary}
-                    strokeWidth={1}
+                    strokeWidth={2}
                     strokeOpacity={1}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -210,7 +210,7 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                     type="monotone"
                     dataKey="withOffer"
                     stroke={balanceChart.secondary}
-                    strokeWidth={2.4}
+                    strokeWidth={2}
                     strokeDasharray="5 3"
                     strokeOpacity={1}
                     strokeLinecap="round"
