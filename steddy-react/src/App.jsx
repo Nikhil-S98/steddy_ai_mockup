@@ -1659,7 +1659,7 @@ function App() {
                           </div>
                         ) : (
                           <div
-                            className={`mb-4 flex flex-col gap-1.5 text-[10px] transition-opacity ${
+                            className={`mb-4 flex flex-col items-start gap-1.5 text-[10px] transition-opacity ${
                               on ? "opacity-100" : "opacity-45"
                             }`}
                           >
@@ -1673,17 +1673,19 @@ function App() {
                               const isActive = Boolean(activePositionChips[chipKey])
                               const pulledAmount = ((position.id.length * 7 + (chipIndex + 1) * 13) % 60) + 1
                               return (
-                                <div key={chipKey} className="flex items-center gap-2">
+                                <div key={chipKey} className="flex w-full items-center justify-start gap-1 text-left">
                                   <span
-                                    className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
+                                    className={
                                       activeVersion === "v7"
-                                        ? `rounded-none border-0 bg-transparent px-0 py-0 ${
+                                        ? `m-0 flex items-center gap-1 rounded-none border-0 bg-transparent text-[9px] transition-colors ${
                                             isActive ? "text-[#3277FF]" : "text-[#1c1b1f]"
                                           }`
-                                        : isActive
-                                          ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
-                                          : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
-                                    }`}
+                                        : `m-0 flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
+                                            isActive
+                                              ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                                              : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
+                                          }`
+                                    }
                                   >
                                     <button
                                       type="button"
@@ -1694,7 +1696,7 @@ function App() {
                                           [chipKey]: !prev[chipKey],
                                         }))
                                       }
-                                      className="rounded-sm"
+                                      className="rounded-sm p-0"
                                     >
                                       <span
                                         aria-hidden="true"
@@ -1734,7 +1736,7 @@ function App() {
                                           }
                                         })
                                       }
-                                      className="rounded-sm px-0.5 text-left"
+                                      className="rounded-sm p-0 text-left"
                                     >
                                       {chip.amount}{" "}
                                       <span
@@ -1753,7 +1755,7 @@ function App() {
                                     </button>
                                   </span>
                                   <span className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
-                                    | pulled {pulledAmount} amount
+                                    | pulled {pulledAmount} times
                                   </span>
                                 </div>
                               )
