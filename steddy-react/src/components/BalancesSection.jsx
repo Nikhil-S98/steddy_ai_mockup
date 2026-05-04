@@ -1,8 +1,9 @@
 import { useState } from "react"
 import {
+  Area,
   CartesianGrid,
+  ComposedChart,
   Line,
-  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -140,8 +141,20 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
             </div>
             <div className="h-[240px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                  <CartesianGrid stroke={balanceChart.grid} vertical={false} />
+                <ComposedChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                  <defs>
+                    <linearGradient id="current-balance-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={balanceChart.primary} stopOpacity={0.22} />
+                      <stop offset="100%" stopColor={balanceChart.primary} stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    stroke={balanceChart.grid}
+                    strokeDasharray="0"
+                    strokeOpacity={0.9}
+                    horizontal
+                    vertical={false}
+                  />
                   <XAxis
                     dataKey="date"
                     interval={2}
@@ -149,42 +162,62 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                     axisLine={false}
                     tickLine={false}
                     tickMargin={10}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
+                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
                   />
                   <YAxis
+                    domain={[-30, "auto"]}
+                    allowDataOverflow
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
+                    tickCount={6}
+                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
                     tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
                   />
-                  <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="4 3" />
+                  <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="2 4" strokeOpacity={0.9} />
                   <Tooltip
                     formatter={(value) => `$${value}k`}
                     labelStyle={{ fontSize: 10, fontWeight: 600, marginBottom: 2 }}
                     itemStyle={{ fontSize: 10, padding: 0 }}
                     contentStyle={{
                       border: "1px solid #d9d9d9",
-                      borderRadius: "5px",
-                      boxShadow: "0 1px 3px rgba(76, 79, 105, 0.1)",
-                      padding: "4px 6px",
+                      borderRadius: "8px",
+                      boxShadow: "none",
+                      backgroundColor: "#fafafa",
+                      padding: "6px 8px",
                     }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="current"
+                    stroke="none"
+                    fill="url(#current-balance-fill)"
+                    fillOpacity={1}
+                    baseValue={0}
+                    isAnimationActive={false}
                   />
                   <Line
                     type="monotone"
                     dataKey="current"
                     stroke={balanceChart.primary}
-                    strokeWidth={2}
+                    strokeWidth={1}
+                    strokeOpacity={1}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    activeDot={{ r: 3, fill: balanceChart.primary, strokeWidth: 0 }}
                     dot={false}
                   />
                   <Line
                     type="monotone"
                     dataKey="withOffer"
                     stroke={balanceChart.secondary}
-                    strokeWidth={1.75}
-                    strokeDasharray="4 3"
+                    strokeWidth={2.4}
+                    strokeDasharray="5 3"
+                    strokeOpacity={1}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     dot={false}
                   />
-                </LineChart>
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -209,8 +242,20 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
             </div>
             <div className="h-[240px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                  <CartesianGrid stroke={balanceChart.grid} vertical={false} />
+                <ComposedChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                  <defs>
+                    <linearGradient id="current-balance-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={balanceChart.primary} stopOpacity={0.42} />
+                      <stop offset="100%" stopColor={balanceChart.primary} stopOpacity={0.08} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    stroke={balanceChart.grid}
+                    strokeDasharray="0"
+                    strokeOpacity={0.9}
+                    horizontal
+                    vertical={false}
+                  />
                   <XAxis
                     dataKey="date"
                     interval={2}
@@ -218,42 +263,62 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                     axisLine={false}
                     tickLine={false}
                     tickMargin={10}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
+                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
                   />
                   <YAxis
+                    domain={[-30, "auto"]}
+                    allowDataOverflow
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 12 }}
+                    tickCount={6}
+                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
                     tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
                   />
-                  <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="4 3" />
+                  <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="2 4" strokeOpacity={0.9} />
                   <Tooltip
                     formatter={(value) => `$${value}k`}
                     labelStyle={{ fontSize: 10, fontWeight: 600, marginBottom: 2 }}
                     itemStyle={{ fontSize: 10, padding: 0 }}
                     contentStyle={{
                       border: "1px solid #d9d9d9",
-                      borderRadius: "5px",
-                      boxShadow: "0 1px 3px rgba(76, 79, 105, 0.1)",
-                      padding: "4px 6px",
+                      borderRadius: "8px",
+                      boxShadow: "none",
+                      backgroundColor: "#fafafa",
+                      padding: "6px 8px",
                     }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="current"
+                    stroke="none"
+                    fill="url(#current-balance-fill)"
+                    fillOpacity={1}
+                    baseValue={0}
+                    isAnimationActive={false}
                   />
                   <Line
                     type="monotone"
                     dataKey="current"
                     stroke={balanceChart.primary}
-                    strokeWidth={2}
+                    strokeWidth={3}
+                    strokeOpacity={1}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    activeDot={{ r: 3, fill: balanceChart.primary, strokeWidth: 0 }}
                     dot={false}
                   />
                   <Line
                     type="monotone"
                     dataKey="withOffer"
                     stroke={balanceChart.secondary}
-                    strokeWidth={1.75}
-                    strokeDasharray="4 3"
+                    strokeWidth={2.4}
+                    strokeDasharray="5 3"
+                    strokeOpacity={1}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     dot={false}
                   />
-                </LineChart>
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>

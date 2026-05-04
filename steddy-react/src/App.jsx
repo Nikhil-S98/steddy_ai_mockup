@@ -569,7 +569,7 @@ function App() {
     stateCode: "CA",
     postalCode: "91730",
   })
-  const [isEditingApplicationInfo, setIsEditingApplicationInfo] = useState(false)
+  const isEditingApplicationInfo = true
   const [positionsData, setPositionsData] = useState(initialPositions)
   const [editingPositionId, setEditingPositionId] = useState(null)
   const [positionToggles, setPositionToggles] = useState(() =>
@@ -694,6 +694,12 @@ function App() {
   const v7CurrentLeverageLabel = `${Math.round(v7CurrentLeverageValue)}%`
   const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
+  const isDarkLikeMode =
+    colorMode === "dark" ||
+    colorMode === "tealDark" ||
+    colorMode === "gruvbox" ||
+    colorMode === "ayuMirage" ||
+    colorMode === "ayuDark"
 
   const resetDraftPosition = () => {
     setDraftPosition({
@@ -1653,7 +1659,7 @@ function App() {
                           </div>
                         ) : (
                           <div
-                            className={`mb-4 flex flex-wrap gap-1 text-[10px] transition-opacity ${
+                            className={`mb-4 flex flex-col gap-1.5 text-[10px] transition-opacity ${
                               on ? "opacity-100" : "opacity-45"
                             }`}
                           >
@@ -1665,62 +1671,91 @@ function App() {
                             {position.chips.map((chip, chipIndex) => {
                               const chipKey = `${position.id}-${chipIndex}`
                               const isActive = Boolean(activePositionChips[chipKey])
+                              const pulledAmount = ((position.id.length * 7 + (chipIndex + 1) * 13) % 60) + 1
                               return (
-                                <span
-                                  key={chipKey}
-                                  className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
-                                    isActive
-                                      ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
-                                      : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
-                                  }`}
-                                >
-                                  <button
-                                    type="button"
-                                    aria-label={`Toggle ${position.title} ${chip.amount} ${chip.meta}`}
-                                    onClick={() =>
-                                      setActivePositionChips((prev) => ({
-                                        ...prev,
-                                        [chipKey]: !prev[chipKey],
-                                      }))
-                                    }
-                                    className="rounded-sm"
+                                <div key={chipKey} className="flex items-center gap-2">
+                                  <span
+                                    className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
+                                      activeVersion === "v7"
+                                        ? `rounded-none border-0 bg-transparent px-0 py-0 ${
+                                            isActive ? "text-[#3277FF]" : "text-[#1c1b1f]"
+                                          }`
+                                        : isActive
+                                          ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                                          : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
+                                    }`}
                                   >
-                                    <span
-                                      aria-hidden="true"
-                                      className={`relative block h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
-                                        isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
-                                      }`}
+                                    <button
+                                      type="button"
+                                      aria-label={`Toggle ${position.title} ${chip.amount} ${chip.meta}`}
+                                      onClick={() =>
+                                        setActivePositionChips((prev) => ({
+                                          ...prev,
+                                          [chipKey]: !prev[chipKey],
+                                        }))
+                                      }
+                                      className="rounded-sm"
                                     >
                                       <span
-                                        className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
-                                          isActive ? "translate-x-2.5" : "translate-x-0"
+                                        aria-hidden="true"
+                                        className={`relative block h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
+                                          activeVersion === "v7"
+                                            ? isActive
+                                              ? "bg-[#cbd5e1]"
+                                              : "bg-[#d9d9d9]"
+                                            : isActive
+                                              ? "bg-[#fafafa]/50"
+                                              : "bg-[#3277FF]/40"
                                         }`}
-                                      />
-                                    </span>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setSelectedPositionChip((prev) => {
-                                        const isSameChip =
-                                          prev?.positionId === position.id && prev?.chipIndex === chipIndex
-                                        if (isSameChip) return null
-                                        return {
-                                          positionId: position.id,
-                                          chipIndex,
-                                          amount: chip.amount,
-                                          meta: chip.meta,
+                                      >
+                                        <span
+                                          className={`block size-3 rounded-full transition-transform ${
+                                            activeVersion === "v7"
+                                              ? `${isDarkLikeMode ? "bg-[#4c4f69]" : "bg-[#fafafa]"} ${
+                                                  isActive ? "translate-x-2.5" : "translate-x-0"
+                                                }`
+                                              : `bg-[#fafafa] ${isActive ? "translate-x-2.5" : "translate-x-0"}`
+                                          }`}
+                                        />
+                                      </span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setSelectedPositionChip((prev) => {
+                                          const isSameChip =
+                                            prev?.positionId === position.id && prev?.chipIndex === chipIndex
+                                          if (isSameChip) return null
+                                          return {
+                                            positionId: position.id,
+                                            chipIndex,
+                                            amount: chip.amount,
+                                            meta: chip.meta,
+                                          }
+                                        })
+                                      }
+                                      className="rounded-sm px-0.5 text-left"
+                                    >
+                                      {chip.amount}{" "}
+                                      <span
+                                        className={
+                                          activeVersion === "v7"
+                                            ? isActive
+                                              ? "text-[rgba(15,23,42,0.72)]"
+                                              : "text-[rgba(76,79,105,0.5)]"
+                                            : isActive
+                                              ? "text-[#dbe6ff]"
+                                              : "text-[rgba(76,79,105,0.5)]"
                                         }
-                                      })
-                                    }
-                                    className="rounded-sm px-0.5 text-left"
-                                  >
-                                    {chip.amount}{" "}
-                                    <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
-                                      {chip.meta}
-                                    </span>
-                                  </button>
-                                </span>
+                                      >
+                                        {chip.meta}
+                                      </span>
+                                    </button>
+                                  </span>
+                                  <span className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
+                                    | pulled {pulledAmount} amount
+                                  </span>
+                                </div>
                               )
                             })}
                           </div>
@@ -1826,13 +1861,6 @@ function App() {
             <div className="flex items-center justify-between border-b border-[#d9d9d9] px-5 py-4">
               <h3 className="text-base font-semibold text-[#1c1b1f]">Application Info</h3>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEditingApplicationInfo((prev) => !prev)}
-                  className="interactive-pop rounded border border-[#4c4f69] px-2 py-1 text-[11px] font-medium text-[#4c4f69] hover:bg-[#efefef]"
-                >
-                  {isEditingApplicationInfo ? "Stop Editing" : "Edit Application"}
-                </button>
                 <button
                   type="button"
                   aria-label="Close application info panel"
@@ -2054,7 +2082,6 @@ function App() {
                 <button
                   type="button"
                   onClick={() => {
-                    setIsEditingApplicationInfo(false)
                     setIsApplicationInfoOpen(false)
                   }}
                   disabled={!isEditingApplicationInfo}
