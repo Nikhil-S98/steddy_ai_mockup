@@ -5,6 +5,8 @@ import V2Overview from "./versions/V2Overview"
 import V3Overview from "./versions/V3Overview"
 import V4Overview from "./versions/V4Overview"
 import V5Overview from "./versions/V5Overview"
+import V6Overview from "./versions/V6Overview"
+import V7Overview from "./versions/V7Overview"
 import BalancesSection from "./components/BalancesSection"
 
 const metrics = [
@@ -495,6 +497,8 @@ const VERSION_OPTIONS = [
   { value: "v3", label: "v3" },
   { value: "v4", label: "v4" },
   { value: "v5", label: "v5" },
+  { value: "v6", label: "v6" },
+  { value: "v7", label: "v7" },
 ]
 
 const getVersionFromPath = (pathname) => {
@@ -502,6 +506,8 @@ const getVersionFromPath = (pathname) => {
   if (pathname === "/v3") return "v3"
   if (pathname === "/v4") return "v4"
   if (pathname === "/v5") return "v5"
+  if (pathname === "/v6") return "v6"
+  if (pathname === "/v7") return "v7"
   return "v1"
 }
 const flagDetailPanels = {
@@ -598,12 +604,13 @@ function App() {
   const totalNetCashFlow = netCashFlowRows.reduce((sum, row) => sum + row.net, 0)
   const netCashFlowIsPositive = totalNetCashFlow >= 0
   const netCashFlowTotalLabel = `${netCashFlowIsPositive ? "+" : "-"}$${formatCurrency(Math.abs(totalNetCashFlow))}`
-  const isV4 = activeVersion === "v4" || activeVersion === "v5"
+  const supportsChipFilters =
+    activeVersion === "v4" || activeVersion === "v5" || activeVersion === "v6" || activeVersion === "v7"
   const selectedPosition = selectedPositionChip
     ? positionsData.find((position) => position.id === selectedPositionChip.positionId) ?? null
     : null
   const filteredTransactions =
-    isV4 && selectedPositionChip
+    supportsChipFilters && selectedPositionChip
       ? weeklyDeductionTransactions.filter(
           (row) =>
             row.positionId === selectedPositionChip.positionId &&
@@ -820,6 +827,19 @@ function App() {
     return () => window.removeEventListener("popstate", handlePopState)
   }, [])
 
+  useEffect(() => {
+    if ((activeVersion !== "v6" && activeVersion !== "v7") || selectedPositionChip) return
+    const firstPositionWithWithdrawal = positionsData.find((position) => position.chips.length > 0)
+    if (!firstPositionWithWithdrawal) return
+    const firstWithdrawal = firstPositionWithWithdrawal.chips[0]
+    setSelectedPositionChip({
+      positionId: firstPositionWithWithdrawal.id,
+      chipIndex: 0,
+      amount: firstWithdrawal.amount,
+      meta: firstWithdrawal.meta,
+    })
+  }, [activeVersion, positionsData, selectedPositionChip])
+
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
     const nextPath =
@@ -831,6 +851,10 @@ function App() {
             ? "/v4"
             : nextVersion === "v5"
               ? "/v5"
+              : nextVersion === "v6"
+                ? "/v6"
+                : nextVersion === "v7"
+                  ? "/v7"
               : "/"
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, "", nextPath)
@@ -890,8 +914,40 @@ function App() {
       )
     }
 
+    if (activeVersion === "v5") {
+      return (
+        <V5Overview
+          monthlyBreakdownRows={monthlyBreakdownRows}
+          keyMetricCompanyRows={keyMetricCompanyRows}
+          netCashFlowRows={netCashFlowRows}
+          netCashFlowTotalLabel={netCashFlowTotalLabel}
+          netCashFlowIsPositive={netCashFlowIsPositive}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+          formatCurrency={formatCurrency}
+        />
+      )
+    }
+
+    if (activeVersion === "v6") {
+      return (
+        <V6Overview
+          monthlyBreakdownRows={monthlyBreakdownRows}
+          keyMetricCompanyRows={keyMetricCompanyRows}
+          netCashFlowRows={netCashFlowRows}
+          netCashFlowTotalLabel={netCashFlowTotalLabel}
+          netCashFlowIsPositive={netCashFlowIsPositive}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+          formatCurrency={formatCurrency}
+        />
+      )
+    }
+
     return (
-      <V5Overview
+      <V7Overview
         monthlyBreakdownRows={monthlyBreakdownRows}
         keyMetricCompanyRows={keyMetricCompanyRows}
         netCashFlowRows={netCashFlowRows}
@@ -1493,16 +1549,57 @@ function App() {
                             </svg>
                           </button>
                         </div>
-                        <div
-                          className={`mb-2 flex flex-wrap gap-1 text-[10px] transition-opacity ${
-                            on ? "opacity-100" : "opacity-45"
-                          }`}
-                        >
-                          {position.chips.map((chip, chipIndex) => {
-                            const chipKey = `${position.id}-${chipIndex}`
-                            const isActive = Boolean(activePositionChips[chipKey])
-                            return (
-                              isV4 ? (
+                        {activeVersion === "v6" ? (
+                          <div className="mb-4">
+                            <p className={`text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
+                              Withdrawals
+                            </p>
+                            {position.chips.length ? (
+                              position.chips.map((chip, chipIndex) => (
+                                <button
+                                  key={`${position.id}-withdrawal-${chipIndex}`}
+                                  type="button"
+                                  onClick={() =>
+                                    setSelectedPositionChip({
+                                      positionId: position.id,
+                                      chipIndex,
+                                      amount: chip.amount,
+                                      meta: chip.meta,
+                                    })
+                                  }
+                                  className={`block rounded px-1 py-0.5 text-[10px] transition-colors ${
+                                    selectedPositionChip?.positionId === position.id &&
+                                    selectedPositionChip?.chipIndex === chipIndex
+                                      ? "bg-[#3277FF] text-[#fafafa]"
+                                      : on
+                                        ? "text-[#4c4f69] hover:bg-[#efefef]"
+                                        : "text-[#9b9bb0]"
+                                  }`}
+                                >
+                                  {chip.amount} | {chip.meta.toLowerCase()}
+                                </button>
+                              ))
+                            ) : (
+                              <p className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
+                                No withdrawals added
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            className={`mb-4 flex flex-wrap gap-1 text-[10px] transition-opacity ${
+                              on ? "opacity-100" : "opacity-45"
+                            }`}
+                          >
+                            {activeVersion === "v7" ? (
+                              <p className={`w-full text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
+                                Withdrawals
+                              </p>
+                            ) : null}
+                            {position.chips.map((chip, chipIndex) => {
+                              const chipKey = `${position.id}-${chipIndex}`
+                              const isActive = Boolean(activePositionChips[chipKey])
+                              return (
                                 <span
                                   key={chipKey}
                                   className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
@@ -1558,43 +1655,10 @@ function App() {
                                     </span>
                                   </button>
                                 </span>
-                              ) : (
-                                <button
-                                  key={chipKey}
-                                  type="button"
-                                  onClick={() =>
-                                    setActivePositionChips((prev) => ({
-                                      ...prev,
-                                      [chipKey]: !prev[chipKey],
-                                    }))
-                                  }
-                                  className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
-                                    isActive
-                                      ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
-                                      : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
-                                  }`}
-                                >
-                                  <span
-                                    aria-hidden="true"
-                                    className={`relative h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
-                                      isActive ? "bg-[#fafafa]/50" : "bg-[#3277FF]/40"
-                                    }`}
-                                  >
-                                    <span
-                                      className={`block size-3 rounded-full bg-[#fafafa] shadow-sm transition-transform ${
-                                        isActive ? "translate-x-2.5" : "translate-x-0"
-                                      }`}
-                                    />
-                                  </span>
-                                  {chip.amount}{" "}
-                                  <span className={isActive ? "text-[#dbe6ff]" : "text-[rgba(76,79,105,0.5)]"}>
-                                    {chip.meta}
-                                  </span>
-                                </button>
                               )
-                            )
-                          })}
-                        </div>
+                            })}
+                          </div>
+                        )}
                         <p className={`text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>Deposits</p>
                         {position.deposits.length ? (
                           position.deposits.map((deposit) => (
@@ -1651,7 +1715,7 @@ function App() {
                           {visibleTransactions.length === 0 ? (
                             <tr>
                               <td colSpan={3} className="px-4 py-3 text-xs text-[#4c4f69]">
-                                {isV4 && selectedPositionChip && filteredTransactions.length === 0
+                                {supportsChipFilters && selectedPositionChip && filteredTransactions.length === 0
                                   ? "No matching weekly deductions for this chip."
                                   : "No transactions match the current search/filter."}
                               </td>
@@ -1688,7 +1752,7 @@ function App() {
           onClick={() => setIsPositionEditorOpen(false)}
         />
         <aside
-          className={`absolute right-0 top-0 h-full w-full max-w-[400px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-full max-w-[400px] border-l border-[#d9d9d9] bg-[#fafafa] transition-transform duration-300 ease-out ${
             isPositionEditorOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -1866,7 +1930,7 @@ function App() {
           onClick={() => setIsMonthlyBreakdownOpen(false)}
         />
         <aside
-          className={`absolute right-0 top-0 h-full w-full max-w-[390px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-full max-w-[390px] border-l border-[#d9d9d9] bg-[#fafafa] transition-transform duration-300 ease-out ${
             isMonthlyBreakdownOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -1934,7 +1998,7 @@ function App() {
           onClick={() => setActiveFlagPanel(null)}
         />
         <aside
-          className={`absolute right-0 top-0 h-full w-full max-w-[380px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-full max-w-[380px] border-l border-[#d9d9d9] bg-[#fafafa] transition-transform duration-300 ease-out ${
             activeFlagPanel ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -1990,7 +2054,7 @@ function App() {
           onClick={() => setIsContractOpen(false)}
         />
         <aside
-          className={`absolute right-0 top-0 h-full w-full max-w-[360px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-[-8px_0_20px_rgba(28,27,31,0.14)] transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-full max-w-[360px] border-l border-[#d9d9d9] bg-[#fafafa] transition-transform duration-300 ease-out ${
             isContractOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >

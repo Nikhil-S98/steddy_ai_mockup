@@ -22,7 +22,8 @@ body {
 }
 
 .card-shadow {
-  box-shadow: 0 1px 2px rgba(76, 79, 105, 0.14);
+  box-shadow: none !important;
+  border: 1px solid #d9d9d9;
 }
 
 button {
@@ -63,12 +64,11 @@ button {
 
 .interactive-pop {
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  transition: transform 0.12s ease, filter 0.12s ease;
 }
 
 .interactive-pop:hover {
   transform: translateY(-1.5px) scale(1.006);
-  box-shadow: 0 2px 5px rgba(76, 79, 105, 0.14);
 }
 
 .interactive-pop:active {
@@ -76,7 +76,7 @@ button {
 }
 
 .rounded {
-  border-radius: 0.5rem !important;
+  border-radius: 0.75rem !important;
 }
 
 .rounded-md {
@@ -84,11 +84,11 @@ button {
 }
 
 .rounded-lg {
-  border-radius: 0.95rem !important;
+  border-radius: 0.75rem !important;
 }
 
 .rounded-xl {
-  border-radius: 1.1rem !important;
+  border-radius: 0.75rem !important;
 }
 
 .theme-teal .bg-\[\#3277FF\] {
@@ -394,10 +394,6 @@ button {
   color: #9fb1c8 !important;
 }
 
-.theme-dark .card-shadow {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
-}
-
 .theme-dark svg,
 .theme-dark svg * {
   color: #c8d6ea !important;
@@ -410,10 +406,6 @@ button {
 
 .theme-dark .opacity-45 {
   opacity: 0.85 !important;
-}
-
-.theme-dark .interactive-pop:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
 }
 
 .theme-dark .rounded-full.border.bg-\[\#efefef\].px-2.py-1 {
@@ -631,10 +623,6 @@ button {
   border-color: #cc241d !important;
 }
 
-.theme-gruvbox .card-shadow {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
 .theme-gruvbox svg,
 .theme-gruvbox svg * {
   color: #d5c4a1 !important;
@@ -751,10 +739,6 @@ button {
 .theme-gruvbox-light .border-\[\#d20f39\],
 .theme-gruvbox-light .border-\[\#f5c2cb\] {
   border-color: #cc241d !important;
-}
-
-.theme-gruvbox-light .card-shadow {
-  box-shadow: 0 1px 2px rgba(60, 56, 54, 0.13);
 }
 
 .theme-gruvbox-light svg,
@@ -874,10 +858,6 @@ button {
   border-color: #8ec7f0 !important;
 }
 
-.theme-ayu-light .card-shadow {
-  box-shadow: 0 1px 2px rgba(92, 97, 102, 0.12);
-}
-
 .theme-ayu-light svg,
 .theme-ayu-light svg * {
   color: #5c6166 !important;
@@ -989,10 +969,6 @@ button {
 
 .theme-ayu-mirage .border-\[\#b8d4ff\] {
   border-color: #73d0ff !important;
-}
-
-.theme-ayu-mirage .card-shadow {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .theme-ayu-mirage svg,
@@ -1119,10 +1095,6 @@ button {
 
 .theme-ayu-dark .border-\[\#b8d4ff\] {
   border-color: #59c2ff !important;
-}
-
-.theme-ayu-dark .card-shadow {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
 }
 
 .theme-ayu-dark svg,
