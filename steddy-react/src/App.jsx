@@ -8,6 +8,7 @@ import V5Overview from "./versions/V5Overview"
 import V6Overview from "./versions/V6Overview"
 import V7Overview from "./versions/V7Overview"
 import BalancesSection from "./components/BalancesSection"
+import DashboardPage from "./features/dashboard/DashboardPage"
 
 const metrics = [
   {
@@ -510,6 +511,37 @@ const getVersionFromPath = (pathname) => {
   if (pathname === "/v7") return "v7"
   return "v1"
 }
+const getPathFromVersion = (version) => {
+  if (version === "v2") return "/v2"
+  if (version === "v3") return "/v3"
+  if (version === "v4") return "/v4"
+  if (version === "v5") return "/v5"
+  if (version === "v6") return "/v6"
+  if (version === "v7") return "/v7"
+  return "/"
+}
+const getViewFromPath = (pathname) => (pathname.endsWith("/dashboard") ? "dashboard" : "application")
+const TYPOGRAPHY_NORMALIZATION_CSS = `
+  .steddy-app,
+  .steddy-app *:not(.material-symbols-rounded):not(.material-symbols-sharp) {
+    font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* Typography normalization: keep only a small shared scale */
+  .steddy-app .text-\\[9px\\],
+  .steddy-app .text-\\[10px\\],
+  .steddy-app .text-\\[11px\\] {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .steddy-app .text-\\[12px\\],
+  .steddy-app .text-\\[13px\\],
+  .steddy-app .text-\\[14px\\] {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+`
 const flagDetailPanels = {
   unicourt: {
     title: "UniCourt Detail",
@@ -549,6 +581,8 @@ const flagDetailPanels = {
 function App() {
   const appRef = useRef(null)
   const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
+  const [activeView, setActiveView] = useState(() => getViewFromPath(window.location.pathname))
+  const [activeApplicationId, setActiveApplicationId] = useState("777")
   const [colorMode, setColorMode] = useState("light")
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isApplicationInfoOpen, setIsApplicationInfoOpen] = useState(false)
@@ -882,6 +916,7 @@ function App() {
     const handlePopState = () => {
       const parsedVersion = getVersionFromPath(window.location.pathname)
       setActiveVersion(parsedVersion)
+      setActiveView(getViewFromPath(window.location.pathname))
     }
     window.addEventListener("popstate", handlePopState)
     return () => window.removeEventListener("popstate", handlePopState)
@@ -902,24 +937,58 @@ function App() {
 
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
-    const nextPath =
-      nextVersion === "v2"
-        ? "/v2"
-        : nextVersion === "v3"
-          ? "/v3"
-          : nextVersion === "v4"
-            ? "/v4"
-            : nextVersion === "v5"
-              ? "/v5"
-              : nextVersion === "v6"
-                ? "/v6"
-                : nextVersion === "v7"
-                  ? "/v7"
-              : "/"
+    const nextPath = getPathFromVersion(nextVersion)
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, "", nextPath)
     }
+    setActiveView("application")
     setActiveVersion(nextVersion)
+  }
+
+  const handleBackToDashboard = () => {
+    if (window.location.pathname !== "/dashboard") {
+      window.history.pushState({}, "", "/dashboard")
+    }
+    setActiveView("dashboard")
+  }
+
+  const handleOpenApplication = (applicationId = "777") => {
+    const nextPath = getPathFromVersion(activeVersion)
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, "", nextPath)
+    }
+    setActiveApplicationId(String(applicationId))
+    setActiveView("application")
+  }
+
+  if (activeView === "dashboard") {
+    return (
+      <div
+        ref={appRef}
+        className={`steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Schibsted_Grotesk','Helvetica_Neue',Arial,sans-serif] ${
+          colorMode === "dark" ? "theme-dark" : ""
+        } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
+          colorMode === "indigo" ? "theme-indigo" : ""
+        } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
+          colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
+        } ${
+          colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
+        } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
+          colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
+        } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
+        }`}
+      >
+        <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
+        <div className="min-h-0 flex-1">
+          <DashboardPage
+            onOpenApplication={handleOpenApplication}
+            colorMode={colorMode}
+            setColorMode={setColorMode}
+            colorThemes={COLOR_THEMES}
+          />
+        </div>
+      </div>
+    )
   }
 
   const renderVersionOverview = () => {
@@ -1039,39 +1108,24 @@ function App() {
       } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
       }`}
     >
-      <style>
-        {`
-          .steddy-app,
-          .steddy-app *:not(.material-symbols-rounded):not(.material-symbols-sharp) {
-            font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
-          }
-
-          /* Typography normalization: keep only a small shared scale */
-          .steddy-app .text-\\[9px\\],
-          .steddy-app .text-\\[10px\\],
-          .steddy-app .text-\\[11px\\] {
-            font-size: 0.75rem;
-            line-height: 1rem;
-          }
-
-          .steddy-app .text-\\[12px\\],
-          .steddy-app .text-\\[13px\\],
-          .steddy-app .text-\\[14px\\] {
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-          }
-        `}
-      </style>
+      <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
       <header
         data-animate
         className="flex h-16 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-6 lg:px-10"
       >
         <div className="flex items-center gap-2">
-          <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69] opacity-70">
-            arrow_back
-          </span>
+          <button
+            type="button"
+            onClick={handleBackToDashboard}
+            aria-label="Back to dashboard"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#4c4f69] opacity-70 transition hover:bg-[#efefef] hover:opacity-100"
+          >
+            <span aria-hidden="true" className="material-symbols-rounded text-[20px] leading-none">
+              arrow_back
+            </span>
+          </button>
           <h1 className="text-base font-semibold tracking-tight text-[#1c1b1f] sm:text-lg">
-            Application #777
+            Application #{activeApplicationId}
           </h1>
           <div className="relative">
             <select

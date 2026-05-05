@@ -1125,3 +1125,55 @@ button {
 .theme-ayu-dark .text-\[rgba\(76\,79\,105\,0\.6\)\] {
   color: #8791a3 !important;
 }
+
+/* Default history warning chip: solid yellow/orange with contrast text */
+.default-history-chip-solid {
+  background: #fff8db !important;
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
+}
+
+.theme-teal .default-history-chip-solid {
+  background: #fff8db !important;
+  border-color: #d97706 !important;
+  color: #b45309 !important;
+}
+
+.theme-green .default-history-chip-solid {
+  background: #fff8db !important;
+  border-color: #ca8a04 !important;
+  color: #9a6700 !important;
+}
+
+.theme-indigo .default-history-chip-solid {
+  background: #fff8db !important;
+  border-color: #d97706 !important;
+  color: #a16207 !important;
+}
+
+.theme-dark .default-history-chip-solid,
+.theme-dark.theme-teal-dark .default-history-chip-solid,
+.theme-ayu-mirage .default-history-chip-solid,
+.theme-ayu-dark .default-history-chip-solid {
+  background: #5a4a20 !important;
+  border-color: #b45309 !important;
+  color: #fcd34d !important;
+}
+
+.theme-gruvbox .default-history-chip-solid {
+  background: #4f4225 !important;
+  border-color: #d79921 !important;
+  color: #f9d783 !important;
+}
+
+.theme-gruvbox-light .default-history-chip-solid {
+  background: #f1e3ae !important;
+  border-color: #d79921 !important;
+  color: #3c3836 !important;
+}
+
+.theme-ayu-light .default-history-chip-solid {
+  background: #fff3cf !important;
+  border-color: #f2ae49 !important;
+  color: #3d2c00 !important;
+}
