@@ -192,7 +192,7 @@ export const CARD_VARIANTS = {
     createLabel: "New Application",
     listLabel: "applications",
     primaryColumnLabel: "Company",
-    searchPlaceholder: "Search... try iso:name -status:declined created:-7 owner:smith",
+    searchPlaceholder: "Search",
   },
   brokers: {
     key: "brokers",
@@ -201,7 +201,7 @@ export const CARD_VARIANTS = {
     createLabel: "New Broker",
     listLabel: "brokers",
     primaryColumnLabel: "Email",
-    searchPlaceholder: "Search by email or company name...",
+    searchPlaceholder: "Search",
   },
   underwriters: {
     key: "underwriters",
@@ -209,8 +209,8 @@ export const CARD_VARIANTS = {
     description: "Manage underwriter accounts",
     createLabel: "New Underwriter",
     listLabel: "underwriters",
-    primaryColumnLabel: "Underwriter",
-    searchPlaceholder: "Search by email or company name...",
+    primaryColumnLabel: "U/W",
+    searchPlaceholder: "Search",
   },
 }
 

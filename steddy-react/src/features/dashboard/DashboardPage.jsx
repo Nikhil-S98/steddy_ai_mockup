@@ -49,7 +49,7 @@ export default function DashboardPage({ onOpenApplication, colorMode, setColorMo
         setActiveCard={setActiveCard}
         cardVariants={CARD_VARIANTS}
       >
-        <div className="mx-auto flex h-full w-full max-w-[1120px]">
+        <div className="mx-auto flex h-full w-full max-w-[1260px]">
           <DashboardListCard
             cardVariant={cardVariant}
             activeRows={activeRows}
