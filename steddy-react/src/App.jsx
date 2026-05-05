@@ -351,6 +351,13 @@ const monthlyBalanceSeries = [
 const BASE_LEVERAGE = 23
 const FUNDING_AMOUNT = 29472
 const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+const UI_FONT_OPTIONS = [
+  { value: "grotesk", label: "Schibsted Grotesk" },
+  { value: "helvetica", label: "Helvetica" },
+  { value: "helvetica-neue", label: "Helvetica Neue" },
+  { value: "inter", label: "Inter" },
+]
+
 const COLOR_THEMES = [
   { value: "light", label: "Light" },
   { value: "teal", label: "Teal" },
@@ -524,7 +531,7 @@ const getViewFromPath = (pathname) => (pathname.endsWith("/dashboard") ? "dashbo
 const TYPOGRAPHY_NORMALIZATION_CSS = `
   .steddy-app,
   .steddy-app *:not(.material-symbols-rounded):not(.material-symbols-sharp) {
-    font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--steddy-font-ui);
   }
 
   /* Typography normalization: keep only a small shared scale */
@@ -584,6 +591,21 @@ function App() {
   const [activeView, setActiveView] = useState(() => getViewFromPath(window.location.pathname))
   const [activeApplicationId, setActiveApplicationId] = useState("777")
   const [colorMode, setColorMode] = useState("light")
+  const [uiFont, setUiFont] = useState(() => {
+    try {
+      const stored = window.localStorage.getItem("steddy-ui-font")
+      if (
+        stored === "grotesk" ||
+        stored === "helvetica" ||
+        stored === "helvetica-neue" ||
+        stored === "inter"
+      )
+        return stored
+    } catch {
+      /* ignore */
+    }
+    return "grotesk"
+  })
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isApplicationInfoOpen, setIsApplicationInfoOpen] = useState(false)
   const [isAiDecisionOpen, setIsAiDecisionOpen] = useState(false)
@@ -935,6 +957,23 @@ function App() {
     })
   }, [activeVersion, positionsData, selectedPositionChip])
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("steddy-ui-font", uiFont)
+    } catch {
+      /* ignore */
+    }
+  }, [uiFont])
+
+  const uiFontClass =
+    uiFont === "helvetica"
+      ? "font-ui-helvetica"
+      : uiFont === "helvetica-neue"
+        ? "font-ui-helvetica-neue"
+        : uiFont === "inter"
+          ? "font-ui-inter"
+          : ""
+
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
     const nextPath = getPathFromVersion(nextVersion)
@@ -965,7 +1004,7 @@ function App() {
     return (
       <div
         ref={appRef}
-        className={`steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Schibsted_Grotesk','Helvetica_Neue',Arial,sans-serif] ${
+        className={`steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
           colorMode === "dark" ? "theme-dark" : ""
         } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
           colorMode === "indigo" ? "theme-indigo" : ""
@@ -985,6 +1024,9 @@ function App() {
             colorMode={colorMode}
             setColorMode={setColorMode}
             colorThemes={COLOR_THEMES}
+            uiFont={uiFont}
+            setUiFont={setUiFont}
+            uiFontOptions={UI_FONT_OPTIONS}
           />
         </div>
       </div>
@@ -1095,7 +1137,7 @@ function App() {
   return (
     <div
       ref={appRef}
-      className={`steddy-app h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] [font-family:'Schibsted_Grotesk','Helvetica_Neue',Arial,sans-serif] ${
+      className={`steddy-app h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
         colorMode === "dark" ? "theme-dark" : ""
       } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
         colorMode === "indigo" ? "theme-indigo" : ""

@@ -24,7 +24,7 @@ function ApplicationStatusChip({ status }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[8.75px] font-medium ${getStatusClasses(status.tone)}`}
+      className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${getStatusClasses(status.tone)}`}
     >
       {icon}
       {status.label}
@@ -46,27 +46,28 @@ function ApplicantSelect({ children, className = "" }) {
   )
 }
 
+const ROW_HEIGHT_CLASS = "h-16"
+const CELL_PAD_CLASS = "align-middle px-2 py-1.5"
+
 function AccountRow({ row, isLast }) {
   const statusClasses =
-    row.status === "active"
-      ? "border-[#b8ead1] bg-[#e9fbf2] text-[#167a4f]"
-      : "border-[#f5c2cb] bg-[#fde8ea] text-[#b42318]"
+    row.status === "active" ? getStatusClasses("review") : getStatusClasses("declined")
 
   return (
-    <tr className={!isLast ? "border-b border-[#d9d9d9]" : ""}>
-      <td className="w-[1%] px-0 py-0" />
-      <td className="min-w-0 px-2 py-2 text-[11px] font-medium text-[#3277FF]">
+    <tr className={`${ROW_HEIGHT_CLASS} ${!isLast ? "border-b border-[#d9d9d9]" : ""}`}>
+      <td className="w-[1%] px-0 py-0 align-middle" />
+      <td className={`min-w-0 ${CELL_PAD_CLASS} text-[11px] font-medium text-[#3277FF]`}>
         <span className="block truncate">{row.email}</span>
       </td>
-      <td className="min-w-0 px-2 py-2 text-[11px] text-[#1c1b1f]">
+      <td className={`min-w-0 ${CELL_PAD_CLASS} text-[11px] text-[#1c1b1f]`}>
         <span className="block truncate">{row.companyName}</span>
       </td>
-      <td className="px-2 py-2">
-        <span className={`inline-flex whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[8.75px] font-medium ${statusClasses}`}>
+      <td className={`${CELL_PAD_CLASS} text-center`}>
+        <span className={`inline-flex whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${statusClasses}`}>
           {row.status}
         </span>
       </td>
-      <td className="pl-2 pr-0 py-2 text-[11px] text-[#4c4f69]">{row.created}</td>
+      <td className={`pl-2 pr-0 ${CELL_PAD_CLASS} text-[11px] text-[#4c4f69]`}>{row.created}</td>
     </tr>
   )
 }
@@ -79,57 +80,72 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
   const createdDateLabel = row.createdDate.replace(/,?\s*\d{4}$/, "")
   const updatedDateLabel = row.updatedDate.replace(/,?\s*\d{4}$/, "")
 
+  const rowBg = hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"
+
   return (
-    <tr className={!isLast ? "border-b border-[#d9d9d9]" : ""}>
-      <td className={`w-1 px-0 py-0 ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"}`}>
-        {hasUnreadHighlight ? (
-          <div className="h-full min-h-[56px] w-[3px] rounded-r bg-[#3277FF]" />
-        ) : null}
+    <tr className={`${ROW_HEIGHT_CLASS} ${!isLast ? "border-b border-[#d9d9d9]" : ""}`}>
+      <td className={`w-[1%] p-0 align-middle ${rowBg}`} />
+      <td className={["min-w-0", CELL_PAD_CLASS, "text-[11px]", rowBg].join(" ")}>
+        <div className="flex min-h-0 flex-col justify-center gap-0.5">
+          <button
+            type="button"
+            onClick={() => onOpenApplication("111123")}
+            className="block max-w-full cursor-pointer truncate text-left font-medium text-[#1c1b1f] underline-offset-2 transition hover:underline"
+          >
+            {row.company}
+          </button>
+          <p className="truncate text-[10px] leading-tight text-[#4c4f69]">{row.owner}</p>
+        </div>
       </td>
-      <td
-        className={[
-          "min-w-0 px-2 py-2 text-[11px] font-medium",
-          hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]",
-        ].join(" ")}
-      >
-        <button
-          type="button"
-          onClick={() => onOpenApplication("111123")}
-          className="block max-w-full truncate text-left text-[#3277FF] underline-offset-2 transition hover:text-[#2462d8] hover:underline"
-        >
-          {row.company}
-        </button>
-      </td>
-      <td className={`px-2 py-2 text-[11px] ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"} text-[#1c1b1f]`}>
-        {row.owner}
-      </td>
-      <td className={`px-2 py-2 text-[11px] ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"} text-[#1c1b1f]`}>
-        {isoDisplayName}
-      </td>
-      <td
-        className={`px-2 py-2 text-[11px] font-medium ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"} text-[#3277FF]`}
-      >
-        {underwriterDisplayName}
-      </td>
-      <td className={`px-2 py-2 ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"}`}>
+      <td className={`${CELL_PAD_CLASS} ${rowBg} text-center`}>
         <ApplicationStatusChip status={row.status} />
       </td>
-      <td className={`px-2 py-2 ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"}`}>
+      <td className={`${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#1c1b1f]`}>
+        {row.isoEmail && row.isoEmail !== "—" ? (
+          <a
+            href={`mailto:${row.isoEmail}`}
+            className="font-medium text-[#3277FF] underline-offset-2 transition hover:text-[#2462d8] hover:underline"
+          >
+            {isoDisplayName}
+          </a>
+        ) : (
+          "—"
+        )}
+      </td>
+      <td className={`${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#1c1b1f]`}>
+        {row.underwriterEmail && row.underwriterEmail !== "—" ? (
+          <a
+            href={`mailto:${row.underwriterEmail}`}
+            className="font-medium text-[#3277FF] underline-offset-2 transition hover:text-[#2462d8] hover:underline"
+          >
+            {underwriterDisplayName}
+          </a>
+        ) : (
+          "—"
+        )}
+      </td>
+      <td className={`${CELL_PAD_CLASS} ${rowBg} text-center`}>
         <span
-          className={`inline-flex whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[8.75px] font-medium ${
+          className={`inline-flex whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${
             row.defaultCount > 0 ? defaultHistoryClasses : "border-transparent bg-transparent text-[rgba(76,79,105,0.65)]"
           }`}
         >
           {row.defaultHistory}
         </span>
       </td>
-      <td className={`px-2 py-2 text-[11px] ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"} text-[#4c4f69]`}>
-        <div>{createdDateLabel}</div>
-        <div className="text-[10px] text-[rgba(76,79,105,0.85)]">{row.createdTime}</div>
+      <td className={`${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#4c4f69]`}>
+        <span className="whitespace-nowrap">
+          {row.createdTime}
+          <span className="mx-1 text-[rgba(76,79,105,0.45)]">·</span>
+          {createdDateLabel}
+        </span>
       </td>
-      <td className={`pl-2 pr-0 py-2 text-[11px] ${hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"} text-[#4c4f69]`}>
-        <div>{updatedDateLabel}</div>
-        <div className="text-[10px] text-[rgba(76,79,105,0.85)]">{row.updatedTime}</div>
+      <td className={`pl-2 pr-0 ${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#4c4f69]`}>
+        <span className="whitespace-nowrap">
+          {row.updatedTime}
+          <span className="mx-1 text-[rgba(76,79,105,0.45)]">·</span>
+          {updatedDateLabel}
+        </span>
       </td>
     </tr>
   )
@@ -156,49 +172,48 @@ export default function DashboardListCard({
 
   return (
     <section className="flex h-full min-h-0 flex-1 flex-col">
-      <div className="card-shadow overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa] shadow-sm">
-        <header className="border-b border-[#d9d9d9] bg-[#fafafa] px-3 py-3 sm:px-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-[18px] font-semibold leading-none text-[#1c1b1f]">{cardVariant.title}</h2>
-                <span className="inline-flex items-center whitespace-nowrap rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-1.5 py-0.5 text-[9px] font-semibold text-[#3277FF]">
-                  {activeRows.length}
-                </span>
-              </div>
-              <p className="mt-1 text-[11px] text-[#4c4f69]">{cardVariant.description}</p>
-            </div>
-            <button
-              type="button"
-              className="interactive-pop rounded-md bg-[#3277FF] px-4 py-2 text-xs font-semibold text-[#fafafa] transition hover:opacity-95"
-            >
-              {cardVariant.createLabel}
-            </button>
+      <header className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <h2 className="text-base font-semibold leading-none tracking-tight text-[#1c1b1f] sm:text-lg">
+              {cardVariant.title}
+            </h2>
+            <span className="inline-flex items-center whitespace-nowrap rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-1.5 py-0.5 text-[9px] font-semibold text-[#3277FF]">
+              {activeRows.length}
+            </span>
           </div>
-        </header>
-        <div className="bg-[#fafafa] px-3 py-3 sm:px-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <input
-              type="text"
-              placeholder={cardVariant.searchPlaceholder}
-              className="box-border h-8 w-full max-w-[930px] rounded border border-[#4c4f69] bg-[#fafafa] px-2 text-[11px] font-medium leading-none text-[#1c1b1f] placeholder:text-[rgba(76,79,105,0.6)] focus:border-[#3277FF] focus:outline-none"
-            />
-            <div className="ml-auto flex items-center gap-2">
-              <ApplicantSelect>
-                <select className="h-8 min-w-[120px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-[11px] font-medium text-[#4c4f69]">
-                  {statusOptions.map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </select>
-              </ApplicantSelect>
-              <ApplicantSelect>
-                <select className="h-8 min-w-[130px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-[11px] font-medium text-[#4c4f69]">
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </select>
-              </ApplicantSelect>
-            </div>
+          <p className="mt-1 text-[11px] text-[#4c4f69]">{cardVariant.description}</p>
+        </div>
+        <button
+          type="button"
+          className="interactive-pop shrink-0 rounded-md bg-[#3277FF] px-4 py-2 text-xs font-semibold text-[#fafafa] transition hover:opacity-95"
+        >
+          {cardVariant.createLabel}
+        </button>
+      </header>
+
+      <div className="mt-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            placeholder={cardVariant.searchPlaceholder}
+            className="box-border h-8 w-full max-w-[930px] rounded border border-[#4c4f69] bg-[#fafafa] px-2 text-[11px] font-medium leading-none text-[#1c1b1f] placeholder:text-[rgba(76,79,105,0.6)] focus:border-[#3277FF] focus:outline-none"
+          />
+          <div className="ml-auto flex items-center gap-2">
+            <ApplicantSelect>
+              <select className="h-8 min-w-[120px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-[11px] font-medium text-[#4c4f69]">
+                {statusOptions.map((option) => (
+                  <option key={option}>{option}</option>
+                ))}
+              </select>
+            </ApplicantSelect>
+            <ApplicantSelect>
+              <select className="h-8 min-w-[130px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-[11px] font-medium text-[#4c4f69]">
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option}>{option}</option>
+                ))}
+              </select>
+            </ApplicantSelect>
           </div>
         </div>
       </div>
@@ -212,7 +227,7 @@ export default function DashboardListCard({
                   <th className="w-[1%] px-0 py-2 text-[9px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]" />
                   <th className={`w-[24.75%] ${tableHeaderCellClasses}`}>{cardVariant.primaryColumnLabel}</th>
                   <th className={`w-[24.75%] ${tableHeaderCellClasses}`}>Company Name</th>
-                  <th className={`w-[24.75%] ${tableHeaderCellClasses}`}>Status</th>
+                  <th className={`w-[24.75%] ${tableHeaderCellClasses} text-center`}>Status</th>
                   <th className={`w-[24.75%] py-2 pl-2 pr-0 text-[8.5px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]`}>
                     Created
                   </th>
@@ -220,14 +235,13 @@ export default function DashboardListCard({
               ) : (
                 <tr className="text-left">
                   <th className="w-[1%] px-0 py-2 text-[9px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]" />
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>{cardVariant.primaryColumnLabel}</th>
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>Owner</th>
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>ISO</th>
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>U/W</th>
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>Status</th>
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>Default History</th>
-                  <th className={`w-[12.375%] ${tableHeaderCellClasses}`}>Created</th>
-                  <th className={`w-[12.375%] py-2 pl-2 pr-0 text-[8.5px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]`}>
+                  <th className={`w-[15%] ${tableHeaderCellClasses}`}>{cardVariant.primaryColumnLabel}</th>
+                  <th className={`w-[14%] ${tableHeaderCellClasses} text-center`}>Status</th>
+                  <th className={`w-[14%] ${tableHeaderCellClasses}`}>ISO</th>
+                  <th className={`w-[14%] ${tableHeaderCellClasses}`}>U/W</th>
+                  <th className={`w-[14%] ${tableHeaderCellClasses} text-center`}>Flags</th>
+                  <th className={`w-[14%] ${tableHeaderCellClasses}`}>Created</th>
+                  <th className={`w-[14%] py-2 pl-2 pr-0 text-[8.5px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]`}>
                     Updated
                   </th>
                 </tr>

@@ -10,7 +10,15 @@ import {
   underwriterRows,
 } from "./data/dashboardData"
 
-export default function DashboardPage({ onOpenApplication, colorMode, setColorMode, colorThemes }) {
+export default function DashboardPage({
+  onOpenApplication,
+  colorMode,
+  setColorMode,
+  colorThemes,
+  uiFont,
+  setUiFont,
+  uiFontOptions,
+}) {
   const [activeCard, setActiveCard] = useState("applications")
   const tableViewportRef = useRef(null)
 
@@ -45,11 +53,14 @@ export default function DashboardPage({ onOpenApplication, colorMode, setColorMo
         colorMode={colorMode}
         setColorMode={setColorMode}
         colorThemes={colorThemes}
+        uiFont={uiFont}
+        setUiFont={setUiFont}
+        uiFontOptions={uiFontOptions}
         activeCard={activeCard}
         setActiveCard={setActiveCard}
         cardVariants={CARD_VARIANTS}
       >
-        <div className="mx-auto flex h-full w-full max-w-[1260px]">
+        <div className="flex h-full min-h-0 w-full max-w-[1260px] flex-1 flex-col min-w-0 self-center">
           <DashboardListCard
             cardVariant={cardVariant}
             activeRows={activeRows}
