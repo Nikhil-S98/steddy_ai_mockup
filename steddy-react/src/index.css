@@ -35,6 +35,10 @@
   --steddy-font-ui: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.steddy-app.font-ui-ibm-plex-mono {
+  --steddy-font-ui: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
 .steddy-app.font-ui-geist {
   --steddy-font-ui: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -43,7 +47,21 @@
   --steddy-font-ui: "Outfit", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.steddy-app.font-ui-roboto {
+  --steddy-font-ui: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.steddy-app.font-ui-roboto-mono {
+  --steddy-font-ui: "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+.steddy-app.font-ui-space-mono {
+  --steddy-font-ui: "Space Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
 :root {
+  --steddy-radius-surface: 0.75rem;
+  --steddy-radius-control: 0.375rem;
   font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   color: #1c1b1f;
   background: #e9f0ff;
@@ -121,20 +139,27 @@ button {
   transform: translateY(0) scale(0.995);
 }
 
-.rounded {
-  border-radius: 0.75rem !important;
-}
-
-.rounded-md {
-  border-radius: 0.75rem !important;
-}
-
-.rounded-lg {
-  border-radius: 0.75rem !important;
-}
-
+.rounded,
+.rounded-md,
+.rounded-lg,
 .rounded-xl {
-  border-radius: 0.75rem !important;
+  border-radius: var(--steddy-radius-surface) !important;
+}
+
+/* Buttons, fields, and selects use half the surface radius */
+.steddy-app button.rounded,
+.steddy-app button.rounded-md,
+.steddy-app button.rounded-lg,
+.steddy-app button.rounded-xl,
+.steddy-app select.rounded,
+.steddy-app select.rounded-md,
+.steddy-app select.rounded-lg,
+.steddy-app select.rounded-xl,
+.steddy-app input.rounded,
+.steddy-app input.rounded-md,
+.steddy-app input.rounded-lg,
+.steddy-app input.rounded-xl {
+  border-radius: var(--steddy-radius-control) !important;
 }
 
 .theme-teal .bg-\[\#3277FF\] {

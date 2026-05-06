@@ -175,7 +175,7 @@ export default function DashboardListCard({
       <header className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <h2 className="text-base font-semibold leading-none tracking-tight text-[#1c1b1f] sm:text-lg">
+            <h2 className="text-xl font-semibold leading-tight tracking-tight text-[#1c1b1f] sm:text-4xl">
               {cardVariant.title}
             </h2>
             <span className="inline-flex items-center whitespace-nowrap rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-1.5 py-0.5 text-[9px] font-semibold text-[#3277FF]">

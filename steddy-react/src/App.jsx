@@ -358,8 +358,12 @@ const UI_FONT_OPTIONS = [
   { value: "inter", label: "Inter" },
   { value: "dm-sans", label: "DM Sans" },
   { value: "ibm-plex-sans", label: "IBM Plex Sans" },
+  { value: "ibm-plex-mono", label: "IBM Plex Mono" },
   { value: "geist", label: "Geist" },
   { value: "outfit", label: "Outfit" },
+  { value: "roboto", label: "Roboto" },
+  { value: "roboto-mono", label: "Roboto Mono" },
+  { value: "space-mono", label: "Space Mono" },
 ]
 
 const VALID_UI_FONT_KEYS = new Set(UI_FONT_OPTIONS.map((option) => option.value))
@@ -370,8 +374,12 @@ const UI_FONT_CLASS_BY_VALUE = {
   inter: "font-ui-inter",
   "dm-sans": "font-ui-dm-sans",
   "ibm-plex-sans": "font-ui-ibm-plex-sans",
+  "ibm-plex-mono": "font-ui-ibm-plex-mono",
   geist: "font-ui-geist",
   outfit: "font-ui-outfit",
+  roboto: "font-ui-roboto",
+  "roboto-mono": "font-ui-roboto-mono",
+  "space-mono": "font-ui-space-mono",
 }
 
 const COLOR_THEMES = [

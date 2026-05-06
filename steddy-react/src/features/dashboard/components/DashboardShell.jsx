@@ -12,7 +12,7 @@ function HeaderBrand() {
         </svg>
       </span>
       <div className="flex min-h-0 min-w-0 flex-1 items-center">
-        <span className="text-base font-semibold leading-none tracking-tight text-[#1c1b1f] sm:text-lg">
+        <span className="text-xl font-semibold leading-tight tracking-tight text-[#1c1b1f] sm:text-2xl">
           Steddy AI
         </span>
       </div>
