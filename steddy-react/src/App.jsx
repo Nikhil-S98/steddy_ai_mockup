@@ -356,7 +356,23 @@ const UI_FONT_OPTIONS = [
   { value: "helvetica", label: "Helvetica" },
   { value: "helvetica-neue", label: "Helvetica Neue" },
   { value: "inter", label: "Inter" },
+  { value: "dm-sans", label: "DM Sans" },
+  { value: "ibm-plex-sans", label: "IBM Plex Sans" },
+  { value: "geist", label: "Geist" },
+  { value: "outfit", label: "Outfit" },
 ]
+
+const VALID_UI_FONT_KEYS = new Set(UI_FONT_OPTIONS.map((option) => option.value))
+
+const UI_FONT_CLASS_BY_VALUE = {
+  helvetica: "font-ui-helvetica",
+  "helvetica-neue": "font-ui-helvetica-neue",
+  inter: "font-ui-inter",
+  "dm-sans": "font-ui-dm-sans",
+  "ibm-plex-sans": "font-ui-ibm-plex-sans",
+  geist: "font-ui-geist",
+  outfit: "font-ui-outfit",
+}
 
 const COLOR_THEMES = [
   { value: "light", label: "Light" },
@@ -594,13 +610,7 @@ function App() {
   const [uiFont, setUiFont] = useState(() => {
     try {
       const stored = window.localStorage.getItem("steddy-ui-font")
-      if (
-        stored === "grotesk" ||
-        stored === "helvetica" ||
-        stored === "helvetica-neue" ||
-        stored === "inter"
-      )
-        return stored
+      if (stored && VALID_UI_FONT_KEYS.has(stored)) return stored
     } catch {
       /* ignore */
     }
@@ -965,14 +975,7 @@ function App() {
     }
   }, [uiFont])
 
-  const uiFontClass =
-    uiFont === "helvetica"
-      ? "font-ui-helvetica"
-      : uiFont === "helvetica-neue"
-        ? "font-ui-helvetica-neue"
-        : uiFont === "inter"
-          ? "font-ui-inter"
-          : ""
+  const uiFontClass = UI_FONT_CLASS_BY_VALUE[uiFont] ?? ""
 
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
@@ -1230,6 +1233,26 @@ function App() {
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="relative">
+            <select
+              value={uiFont}
+              onChange={(event) => setUiFont(event.target.value)}
+              aria-label="Choose UI font"
+              className="h-8 min-w-[170px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-xs font-medium text-[#4c4f69]"
+            >
+              {UI_FONT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
+            >
+              ⌄
+            </span>
+          </div>
           <div className="relative">
             <select
               value={colorMode}
