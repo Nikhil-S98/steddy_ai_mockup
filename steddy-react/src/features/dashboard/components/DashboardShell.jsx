@@ -40,6 +40,7 @@ export default function DashboardShell({
   uiFontOptions,
   activeCard,
   setActiveCard,
+  onCardSelect,
   cardVariants,
   children,
 }) {
@@ -61,7 +62,13 @@ export default function DashboardShell({
                 <li key={key}>
                   <button
                     type="button"
-                    onClick={() => setActiveCard(key)}
+                    onClick={() => {
+                      if (onCardSelect) {
+                        onCardSelect(key)
+                        return
+                      }
+                      setActiveCard(key)
+                    }}
                     className={`flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left transition ${
                       isActive
                         ? "bg-[#e9f0ff] text-[#3277FF]"

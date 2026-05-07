@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react"
+import { gsap } from "gsap"
 import DashboardShell from "./components/DashboardShell"
 import DashboardListCard from "./components/DashboardListCard"
 import usePagination from "./hooks/usePagination"
@@ -23,6 +24,8 @@ export default function DashboardPage({
   uiFontOptions,
 }) {
   const tableViewportRef = useRef(null)
+  const listCardContainerRef = useRef(null)
+  const isCardTransitioningRef = useRef(false)
 
   const activeRows = useMemo(() => {
     if (activeCard === "brokers") return brokersRows
@@ -49,6 +52,55 @@ export default function DashboardPage({
 
   const cardVariant = CARD_VARIANTS[activeCard]
 
+  const handleSidebarCardChange = (nextCard) => {
+    if (!nextCard || nextCard === activeCard || isCardTransitioningRef.current) return
+
+    const container = listCardContainerRef.current
+    if (!container) {
+      setActiveCard(nextCard)
+      return
+    }
+
+    isCardTransitioningRef.current = true
+    gsap.killTweensOf(container)
+    gsap.to(container, {
+      opacity: 0,
+      duration: 0.14,
+      ease: "power1.out",
+      onComplete: () => {
+        setActiveCard(nextCard)
+        requestAnimationFrame(() => {
+          const nextContainer = listCardContainerRef.current
+          if (!nextContainer) {
+            isCardTransitioningRef.current = false
+            return
+          }
+
+          gsap.killTweensOf(nextContainer)
+          gsap.fromTo(
+            nextContainer,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.2,
+              ease: "power1.inOut",
+              clearProps: "opacity",
+              onComplete: () => {
+                isCardTransitioningRef.current = false
+              },
+              onInterrupt: () => {
+                isCardTransitioningRef.current = false
+              },
+            },
+          )
+        })
+      },
+      onInterrupt: () => {
+        isCardTransitioningRef.current = false
+      },
+    })
+  }
+
   return (
     <div className="h-full min-h-0 flex flex-col">
       <DashboardShell
@@ -60,9 +112,10 @@ export default function DashboardPage({
         uiFontOptions={uiFontOptions}
         activeCard={activeCard}
         setActiveCard={setActiveCard}
+        onCardSelect={handleSidebarCardChange}
         cardVariants={CARD_VARIANTS}
       >
-        <div className="flex h-full min-h-0 w-full max-w-[1260px] flex-1 flex-col min-w-0 self-center">
+        <div ref={listCardContainerRef} className="flex h-full min-h-0 w-full max-w-[1260px] flex-1 flex-col min-w-0 self-center">
           <DashboardListCard
             cardVariant={cardVariant}
             activeRows={activeRows}

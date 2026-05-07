@@ -567,7 +567,7 @@ const getPathFromVersion = (version) => {
   return "/"
 }
 const getViewFromPath = (pathname) => {
-  if (pathname.endsWith("/dashboard/new-application")) return "newApplication"
+  if (pathname.endsWith("/dashboard/new-application")) return "dashboard"
   if (pathname.endsWith("/dashboard")) return "dashboard"
   return "application"
 }
@@ -630,8 +630,11 @@ const flagDetailPanels = {
 
 function App() {
   const appRef = useRef(null)
+  const isPageTransitioningRef = useRef(false)
+  const isNewApplicationPath = window.location.pathname.endsWith("/dashboard/new-application")
   const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
   const [activeView, setActiveView] = useState(() => getViewFromPath(window.location.pathname))
+  const [isNewApplicationOpen, setIsNewApplicationOpen] = useState(() => isNewApplicationPath)
   const [dashboardActiveCard, setDashboardActiveCard] = useState("applications")
   const [activeApplicationId, setActiveApplicationId] = useState("777")
   const [colorMode, setColorMode] = useState("light")
@@ -976,6 +979,7 @@ function App() {
       const parsedVersion = getVersionFromPath(window.location.pathname)
       setActiveVersion(parsedVersion)
       setActiveView(getViewFromPath(window.location.pathname))
+      setIsNewApplicationOpen(window.location.pathname.endsWith("/dashboard/new-application"))
     }
     window.addEventListener("popstate", handlePopState)
     return () => window.removeEventListener("popstate", handlePopState)
@@ -1011,21 +1015,73 @@ function App() {
 
   const uiFontClass = UI_FONT_CLASS_BY_VALUE[uiFont] ?? ""
 
+  const runPageFadeTransition = (onMidpoint) => {
+    if (isPageTransitioningRef.current) return
+    const currentRoot = appRef.current
+    if (!currentRoot) {
+      onMidpoint()
+      return
+    }
+
+    isPageTransitioningRef.current = true
+    gsap.killTweensOf(currentRoot)
+    gsap.to(currentRoot, {
+      opacity: 0,
+      duration: 0.16,
+      ease: "power1.out",
+      onComplete: () => {
+        onMidpoint()
+        requestAnimationFrame(() => {
+          const nextRoot = appRef.current
+          if (!nextRoot) {
+            isPageTransitioningRef.current = false
+            return
+          }
+
+          gsap.killTweensOf(nextRoot)
+          gsap.fromTo(
+            nextRoot,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.22,
+              ease: "power1.inOut",
+              clearProps: "opacity",
+              onComplete: () => {
+                isPageTransitioningRef.current = false
+              },
+              onInterrupt: () => {
+                isPageTransitioningRef.current = false
+              },
+            },
+          )
+        })
+      },
+      onInterrupt: () => {
+        isPageTransitioningRef.current = false
+      },
+    })
+  }
+
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
-    const nextPath = getPathFromVersion(nextVersion)
-    if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, "", nextPath)
-    }
-    setActiveView("application")
-    setActiveVersion(nextVersion)
+    runPageFadeTransition(() => {
+      const nextPath = getPathFromVersion(nextVersion)
+      if (window.location.pathname !== nextPath) {
+        window.history.pushState({}, "", nextPath)
+      }
+      setActiveView("application")
+      setActiveVersion(nextVersion)
+    })
   }
 
   const handleBackToDashboard = () => {
-    if (window.location.pathname !== "/dashboard") {
-      window.history.pushState({}, "", "/dashboard")
-    }
-    setActiveView("dashboard")
+    runPageFadeTransition(() => {
+      if (window.location.pathname !== "/dashboard") {
+        window.history.pushState({}, "", "/dashboard")
+      }
+      setActiveView("dashboard")
+    })
   }
 
   const handleOpenNewApplication = () => {
@@ -1033,16 +1089,29 @@ function App() {
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, "", nextPath)
     }
-    setActiveView("newApplication")
+    setIsNewApplicationOpen(true)
+  }
+
+  const handleCloseNewApplication = () => {
+    if (window.location.pathname !== "/dashboard") {
+      window.history.pushState({}, "", "/dashboard")
+    }
+    setIsNewApplicationOpen(false)
   }
 
   const handleOpenApplication = (applicationId = "777") => {
-    const nextPath = getPathFromVersion(activeVersion)
-    if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, "", nextPath)
-    }
-    setActiveApplicationId(String(applicationId))
-    setActiveView("application")
+    runPageFadeTransition(() => {
+      const nextPath = getPathFromVersion(activeVersion)
+      if (window.location.pathname !== nextPath) {
+        window.history.pushState({}, "", nextPath)
+      }
+      setActiveApplicationId(String(applicationId))
+      setActiveView("application")
+    })
+  }
+
+  const handleCreateApplication = () => {
+    handleOpenApplication("777")
   }
 
   const dashboardShellThemeClassName = `steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
@@ -1062,7 +1131,7 @@ function App() {
     return (
       <div ref={appRef} className={dashboardShellThemeClassName}>
         <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
-        <div className="min-h-0 flex-1">
+        <div className="relative min-h-0 flex-1">
           <DashboardPage
             onOpenApplication={handleOpenApplication}
             onNewApplication={handleOpenNewApplication}
@@ -1075,27 +1144,24 @@ function App() {
             setUiFont={setUiFont}
             uiFontOptions={UI_FONT_OPTIONS}
           />
-        </div>
-      </div>
-    )
-  }
-
-  if (activeView === "newApplication") {
-    return (
-      <div ref={appRef} className={dashboardShellThemeClassName}>
-        <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
-        <div className="min-h-0 flex-1">
-          <NewApplicationPage
-            onBackToDashboard={handleBackToDashboard}
-            activeCard={dashboardActiveCard}
-            setActiveCard={setDashboardActiveCard}
-            colorMode={colorMode}
-            setColorMode={setColorMode}
-            colorThemes={COLOR_THEMES}
-            uiFont={uiFont}
-            setUiFont={setUiFont}
-            uiFontOptions={UI_FONT_OPTIONS}
+          <div
+            aria-hidden={!isNewApplicationOpen}
+            onClick={handleCloseNewApplication}
+            className={`absolute inset-0 z-30 bg-[#1c1b1f]/30 transition-opacity duration-200 ${
+              isNewApplicationOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+            }`}
           />
+          <aside
+            className={`absolute inset-y-0 right-0 z-40 w-full max-w-[560px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-2xl transition-transform duration-300 ease-out ${
+              isNewApplicationOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            <NewApplicationPage
+              isOpen={isNewApplicationOpen}
+              onClose={handleCloseNewApplication}
+              onCreateApplication={handleCreateApplication}
+            />
+          </aside>
         </div>
       </div>
     )
