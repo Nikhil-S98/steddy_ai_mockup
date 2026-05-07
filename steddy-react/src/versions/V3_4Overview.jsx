@@ -1,6 +1,8 @@
-export default function V5Overview({
+export default function V3_4Overview({
   monthlyBreakdownRows,
   keyMetricCompanyRows,
+  currentLeverageLabel,
+  mcaPayoutLabel,
   setActiveMetricTitle,
   setIsMonthlyBreakdownOpen,
   setActiveFlagPanel,
@@ -30,7 +32,7 @@ export default function V5Overview({
               <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
               <div className="mt-3 space-y-2.5">
                 {monthlyBreakdownRows.map((row) => (
-                  <div key={`v3-revenue-${row.month}`} className="flex items-center justify-between text-[11px]">
+                  <div key={`v3p4-revenue-${row.month}`} className="flex items-center justify-between text-[11px]">
                     <span className="text-[#4c4f69]">{row.month}</span>
                     <span className="font-semibold text-[#1c1b1f]">{row.revenue}</span>
                   </div>
@@ -52,20 +54,22 @@ export default function V5Overview({
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">CURRENT LEVERAGE</p>
               <div className="mt-2 flex flex-1 flex-col">
                 <div className="border-b border-[#d9d9d9] pb-3">
-                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">23%</p>
+                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">{currentLeverageLabel}</p>
                 </div>
                 <div className="pt-3">
                   <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">MCA Payout</p>
-                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">$3,345</p>
+                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">{mcaPayoutLabel}</p>
                 </div>
                 <div className="pointer-events-none absolute left-0 top-full z-[130] mt-2 w-full rounded border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                   <div className="space-y-1.5">
-                    {keyMetricCompanyRows.map((row) => (
-                      <div key={`v5-leverage-tooltip-${row.company}`} className="flex items-center justify-between gap-2">
+                    {keyMetricCompanyRows.length ? keyMetricCompanyRows.map((row) => (
+                      <div key={`v3p4-leverage-tooltip-${row.company}`} className="flex items-center justify-between gap-2">
                         <span className="text-[#4c4f69]">{row.company}</span>
                         <span className="font-semibold text-[#1c1b1f]">{`${row.payout}/mo`}</span>
                       </div>
-                    ))}
+                    )) : (
+                      <p className="text-[#4c4f69]">No active withdrawals selected.</p>
+                    )}
                   </div>
                 </div>
               </div>

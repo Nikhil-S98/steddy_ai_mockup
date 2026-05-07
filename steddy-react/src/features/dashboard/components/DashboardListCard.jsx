@@ -157,6 +157,7 @@ export default function DashboardListCard({
   pagedRows,
   tableViewportRef,
   onOpenApplication,
+  onNewApplication,
   currentPage,
   totalPages,
   rangeStart,
@@ -186,6 +187,11 @@ export default function DashboardListCard({
         </div>
         <button
           type="button"
+          onClick={() => {
+            if (cardVariant.key === "applications") {
+              onNewApplication?.()
+            }
+          }}
           className="interactive-pop shrink-0 rounded-md bg-[#3277FF] px-4 py-2 text-xs font-semibold text-[#fafafa] transition hover:opacity-95"
         >
           {cardVariant.createLabel}

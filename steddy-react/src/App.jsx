@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import V1Overview from "./versions/V1Overview"
+import V1_1Overview from "./versions/V1_1Overview"
 import V2Overview from "./versions/V2Overview"
 import V3Overview from "./versions/V3Overview"
-import V4Overview from "./versions/V4Overview"
-import V5Overview from "./versions/V5Overview"
-import V6Overview from "./versions/V6Overview"
-import V7Overview from "./versions/V7Overview"
+import V3_1Overview from "./versions/V3_1Overview"
+import V3_2Overview from "./versions/V3_2Overview"
+import V3_3Overview from "./versions/V3_3Overview"
+import V3_4Overview from "./versions/V3_4Overview"
 import BalancesSection from "./components/BalancesSection"
 import DashboardPage from "./features/dashboard/DashboardPage"
+import NewApplicationPage from "./features/dashboard/NewApplicationPage"
 
 const metrics = [
   {
@@ -525,33 +527,50 @@ const keyMetricCompanyRows = [
 ]
 const VERSION_OPTIONS = [
   { value: "v1", label: "v1" },
+  { value: "v1.1", label: "v1.1" },
   { value: "v2", label: "v2" },
   { value: "v3", label: "v3" },
-  { value: "v4", label: "v4" },
-  { value: "v5", label: "v5" },
-  { value: "v6", label: "v6" },
-  { value: "v7", label: "v7" },
+  { value: "v3.1", label: "v3.1" },
+  { value: "v3.2", label: "v3.2" },
+  { value: "v3.3", label: "v3.3" },
+  { value: "v3.4", label: "v3.4" },
 ]
 
+/** Former v4–v7: shared v3 layout family */
+const V3_POINT_VERSIONS = ["v3.1", "v3.2", "v3.3", "v3.4"]
+
+const LEGACY_VERSION_PATH = {
+  "/v4": "/v3.1",
+  "/v5": "/v3.2",
+  "/v6": "/v3.3",
+  "/v7": "/v3.4",
+}
+
 const getVersionFromPath = (pathname) => {
+  if (pathname === "/v1.1") return "v1.1"
   if (pathname === "/v2") return "v2"
   if (pathname === "/v3") return "v3"
-  if (pathname === "/v4") return "v4"
-  if (pathname === "/v5") return "v5"
-  if (pathname === "/v6") return "v6"
-  if (pathname === "/v7") return "v7"
+  if (pathname === "/v3.1" || pathname === "/v4") return "v3.1"
+  if (pathname === "/v3.2" || pathname === "/v5") return "v3.2"
+  if (pathname === "/v3.3" || pathname === "/v6") return "v3.3"
+  if (pathname === "/v3.4" || pathname === "/v7") return "v3.4"
   return "v1"
 }
 const getPathFromVersion = (version) => {
+  if (version === "v1.1") return "/v1.1"
   if (version === "v2") return "/v2"
   if (version === "v3") return "/v3"
-  if (version === "v4") return "/v4"
-  if (version === "v5") return "/v5"
-  if (version === "v6") return "/v6"
-  if (version === "v7") return "/v7"
+  if (version === "v3.1") return "/v3.1"
+  if (version === "v3.2") return "/v3.2"
+  if (version === "v3.3") return "/v3.3"
+  if (version === "v3.4") return "/v3.4"
   return "/"
 }
-const getViewFromPath = (pathname) => (pathname.endsWith("/dashboard") ? "dashboard" : "application")
+const getViewFromPath = (pathname) => {
+  if (pathname.endsWith("/dashboard/new-application")) return "newApplication"
+  if (pathname.endsWith("/dashboard")) return "dashboard"
+  return "application"
+}
 const TYPOGRAPHY_NORMALIZATION_CSS = `
   .steddy-app,
   .steddy-app *:not(.material-symbols-rounded):not(.material-symbols-sharp) {
@@ -613,6 +632,7 @@ function App() {
   const appRef = useRef(null)
   const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
   const [activeView, setActiveView] = useState(() => getViewFromPath(window.location.pathname))
+  const [dashboardActiveCard, setDashboardActiveCard] = useState("applications")
   const [activeApplicationId, setActiveApplicationId] = useState("777")
   const [colorMode, setColorMode] = useState("light")
   const [uiFont, setUiFont] = useState(() => {
@@ -692,8 +712,7 @@ function App() {
   const totalNetCashFlow = netCashFlowRows.reduce((sum, row) => sum + row.net, 0)
   const netCashFlowIsPositive = totalNetCashFlow >= 0
   const netCashFlowTotalLabel = `${netCashFlowIsPositive ? "+" : "-"}$${formatCurrency(Math.abs(totalNetCashFlow))}`
-  const supportsChipFilters =
-    activeVersion === "v4" || activeVersion === "v5" || activeVersion === "v6" || activeVersion === "v7"
+  const supportsChipFilters = V3_POINT_VERSIONS.includes(activeVersion)
   const selectedPosition = selectedPositionChip
     ? positionsData.find((position) => position.id === selectedPositionChip.positionId) ?? null
     : null
@@ -749,23 +768,23 @@ function App() {
       ]
     }),
   )
-  const v7PayoutByPosition = activeWithdrawals.reduce((acc, withdrawal) => {
+  const v34PayoutByPosition = activeWithdrawals.reduce((acc, withdrawal) => {
     acc[withdrawal.positionId] = (acc[withdrawal.positionId] ?? 0) + withdrawal.monthlyPayout
     return acc
   }, {})
-  const v7KeyMetricCompanyRows = positionsData
+  const v34KeyMetricCompanyRows = positionsData
     .map((position) => {
-      const monthlyPayout = v7PayoutByPosition[position.id] ?? 0
+      const monthlyPayout = v34PayoutByPosition[position.id] ?? 0
       return {
         company: position.title,
         payout: `$${formatCurrency(monthlyPayout)}`,
       }
     })
     .filter((row) => parseMoney(row.payout) > 0)
-  const v7McaPayoutValue = activeWithdrawals.reduce((sum, row) => sum + row.monthlyPayout, 0)
-  const v7CurrentLeverageValue = FUNDING_AMOUNT > 0 ? (v7McaPayoutValue / FUNDING_AMOUNT) * 100 : 0
-  const v7McaPayoutLabel = `$${formatCurrency(v7McaPayoutValue)}`
-  const v7CurrentLeverageLabel = `${Math.round(v7CurrentLeverageValue)}%`
+  const v34McaPayoutValue = activeWithdrawals.reduce((sum, row) => sum + row.monthlyPayout, 0)
+  const v34CurrentLeverageValue = FUNDING_AMOUNT > 0 ? (v34McaPayoutValue / FUNDING_AMOUNT) * 100 : 0
+  const v34McaPayoutLabel = `$${formatCurrency(v34McaPayoutValue)}`
+  const v34CurrentLeverageLabel = `${Math.round(v34CurrentLeverageValue)}%`
   const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
   const isDarkLikeMode =
@@ -963,7 +982,14 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if ((activeVersion !== "v6" && activeVersion !== "v7") || selectedPositionChip) return
+    const nextPath = LEGACY_VERSION_PATH[window.location.pathname]
+    if (nextPath) {
+      window.history.replaceState({}, "", nextPath)
+    }
+  }, [])
+
+  useEffect(() => {
+    if ((activeVersion !== "v3.3" && activeVersion !== "v3.4") || selectedPositionChip) return
     const firstPositionWithWithdrawal = positionsData.find((position) => position.chips.length > 0)
     if (!firstPositionWithWithdrawal) return
     const firstWithdrawal = firstPositionWithWithdrawal.chips[0]
@@ -1002,6 +1028,14 @@ function App() {
     setActiveView("dashboard")
   }
 
+  const handleOpenNewApplication = () => {
+    const nextPath = "/dashboard/new-application"
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, "", nextPath)
+    }
+    setActiveView("newApplication")
+  }
+
   const handleOpenApplication = (applicationId = "777") => {
     const nextPath = getPathFromVersion(activeVersion)
     if (window.location.pathname !== nextPath) {
@@ -1011,27 +1045,50 @@ function App() {
     setActiveView("application")
   }
 
+  const dashboardShellThemeClassName = `steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
+    colorMode === "dark" ? "theme-dark" : ""
+  } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
+    colorMode === "indigo" ? "theme-indigo" : ""
+  } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
+    colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
+  } ${
+    colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
+  } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
+    colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
+  } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
+  }`
+
   if (activeView === "dashboard") {
     return (
-      <div
-        ref={appRef}
-        className={`steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
-          colorMode === "dark" ? "theme-dark" : ""
-        } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
-          colorMode === "indigo" ? "theme-indigo" : ""
-        } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
-          colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
-        } ${
-          colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
-        } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
-          colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
-        } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
-        }`}
-      >
+      <div ref={appRef} className={dashboardShellThemeClassName}>
         <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
         <div className="min-h-0 flex-1">
           <DashboardPage
             onOpenApplication={handleOpenApplication}
+            onNewApplication={handleOpenNewApplication}
+            activeCard={dashboardActiveCard}
+            setActiveCard={setDashboardActiveCard}
+            colorMode={colorMode}
+            setColorMode={setColorMode}
+            colorThemes={COLOR_THEMES}
+            uiFont={uiFont}
+            setUiFont={setUiFont}
+            uiFontOptions={UI_FONT_OPTIONS}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (activeView === "newApplication") {
+    return (
+      <div ref={appRef} className={dashboardShellThemeClassName}>
+        <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
+        <div className="min-h-0 flex-1">
+          <NewApplicationPage
+            onBackToDashboard={handleBackToDashboard}
+            activeCard={dashboardActiveCard}
+            setActiveCard={setDashboardActiveCard}
             colorMode={colorMode}
             setColorMode={setColorMode}
             colorThemes={COLOR_THEMES}
@@ -1048,6 +1105,17 @@ function App() {
     if (activeVersion === "v1") {
       return (
         <V1Overview
+          metrics={metrics}
+          setActiveMetricTitle={setActiveMetricTitle}
+          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+          setActiveFlagPanel={setActiveFlagPanel}
+        />
+      )
+    }
+
+    if (activeVersion === "v1.1") {
+      return (
+        <V1_1Overview
           metrics={metrics}
           setActiveMetricTitle={setActiveMetricTitle}
           setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
@@ -1080,9 +1148,9 @@ function App() {
       )
     }
 
-    if (activeVersion === "v4") {
+    if (activeVersion === "v3.1") {
       return (
-        <V4Overview
+        <V3_1Overview
           monthlyBreakdownRows={monthlyBreakdownRows}
           keyMetricCompanyRows={keyMetricCompanyRows}
           netCashFlowRows={netCashFlowRows}
@@ -1096,51 +1164,39 @@ function App() {
       )
     }
 
-    if (activeVersion === "v5") {
+    if (activeVersion === "v3.2") {
       return (
-        <V5Overview
+        <V3_2Overview
           monthlyBreakdownRows={monthlyBreakdownRows}
           keyMetricCompanyRows={keyMetricCompanyRows}
-          netCashFlowRows={netCashFlowRows}
-          netCashFlowTotalLabel={netCashFlowTotalLabel}
-          netCashFlowIsPositive={netCashFlowIsPositive}
           setActiveMetricTitle={setActiveMetricTitle}
           setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
           setActiveFlagPanel={setActiveFlagPanel}
-          formatCurrency={formatCurrency}
         />
       )
     }
 
-    if (activeVersion === "v6") {
+    if (activeVersion === "v3.3") {
       return (
-        <V6Overview
+        <V3_3Overview
           monthlyBreakdownRows={monthlyBreakdownRows}
           keyMetricCompanyRows={keyMetricCompanyRows}
-          netCashFlowRows={netCashFlowRows}
-          netCashFlowTotalLabel={netCashFlowTotalLabel}
-          netCashFlowIsPositive={netCashFlowIsPositive}
           setActiveMetricTitle={setActiveMetricTitle}
           setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
           setActiveFlagPanel={setActiveFlagPanel}
-          formatCurrency={formatCurrency}
         />
       )
     }
 
     return (
-      <V7Overview
+      <V3_4Overview
         monthlyBreakdownRows={monthlyBreakdownRows}
-        keyMetricCompanyRows={v7KeyMetricCompanyRows}
-        currentLeverageLabel={v7CurrentLeverageLabel}
-        mcaPayoutLabel={v7McaPayoutLabel}
-        netCashFlowRows={netCashFlowRows}
-        netCashFlowTotalLabel={netCashFlowTotalLabel}
-        netCashFlowIsPositive={netCashFlowIsPositive}
+        keyMetricCompanyRows={v34KeyMetricCompanyRows}
+        currentLeverageLabel={v34CurrentLeverageLabel}
+        mcaPayoutLabel={v34McaPayoutLabel}
         setActiveMetricTitle={setActiveMetricTitle}
         setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
         setActiveFlagPanel={setActiveFlagPanel}
-        formatCurrency={formatCurrency}
       />
     )
   }
@@ -1748,7 +1804,7 @@ function App() {
                             </svg>
                           </button>
                         </div>
-                        {activeVersion === "v6" ? (
+                        {activeVersion === "v3.3" ? (
                           <div className="mb-4">
                             <p className={`text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
                               Withdrawals
@@ -1790,7 +1846,7 @@ function App() {
                               on ? "opacity-100" : "opacity-45"
                             }`}
                           >
-                            {activeVersion === "v7" ? (
+                            {activeVersion === "v3.4" ? (
                               <p className={`w-full text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
                                 Withdrawals
                               </p>
@@ -1803,7 +1859,7 @@ function App() {
                                 <div key={chipKey} className="flex w-full items-center justify-start gap-1 text-left">
                                   <span
                                     className={
-                                      activeVersion === "v7"
+                                      activeVersion === "v3.4"
                                         ? `m-0 flex items-center gap-1 rounded-none border-0 bg-transparent text-[9px] transition-colors ${
                                             isActive ? "text-[#3277FF]" : "text-[#1c1b1f]"
                                           }`
@@ -1828,7 +1884,7 @@ function App() {
                                       <span
                                         aria-hidden="true"
                                         className={`relative block h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
-                                          activeVersion === "v7"
+                                          activeVersion === "v3.4"
                                             ? isActive
                                               ? "bg-[#cbd5e1]"
                                               : "bg-[#d9d9d9]"
@@ -1839,7 +1895,7 @@ function App() {
                                       >
                                         <span
                                           className={`block size-3 rounded-full transition-transform ${
-                                            activeVersion === "v7"
+                                            activeVersion === "v3.4"
                                               ? `${isDarkLikeMode ? "bg-[#4c4f69]" : "bg-[#fafafa]"} ${
                                                   isActive ? "translate-x-2.5" : "translate-x-0"
                                                 }`
@@ -1868,7 +1924,7 @@ function App() {
                                       {chip.amount}{" "}
                                       <span
                                         className={
-                                          activeVersion === "v7"
+                                          activeVersion === "v3.4"
                                             ? isActive
                                               ? "text-[rgba(15,23,42,0.72)]"
                                               : "text-[rgba(76,79,105,0.5)]"

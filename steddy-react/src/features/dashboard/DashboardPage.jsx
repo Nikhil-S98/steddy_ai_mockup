@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import DashboardShell from "./components/DashboardShell"
 import DashboardListCard from "./components/DashboardListCard"
 import usePagination from "./hooks/usePagination"
@@ -12,6 +12,9 @@ import {
 
 export default function DashboardPage({
   onOpenApplication,
+  onNewApplication,
+  activeCard,
+  setActiveCard,
   colorMode,
   setColorMode,
   colorThemes,
@@ -19,7 +22,6 @@ export default function DashboardPage({
   setUiFont,
   uiFontOptions,
 }) {
-  const [activeCard, setActiveCard] = useState("applications")
   const tableViewportRef = useRef(null)
 
   const activeRows = useMemo(() => {
@@ -67,6 +69,7 @@ export default function DashboardPage({
             pagedRows={pagedRows}
             tableViewportRef={tableViewportRef}
             onOpenApplication={onOpenApplication}
+            onNewApplication={onNewApplication}
             currentPage={currentPage}
             totalPages={totalPages}
             rangeStart={rangeStart}
