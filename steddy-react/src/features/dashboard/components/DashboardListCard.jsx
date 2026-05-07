@@ -192,9 +192,14 @@ export default function DashboardListCard({
               onNewApplication?.()
             }
           }}
-          className="interactive-pop shrink-0 rounded-md bg-[#3277FF] px-4 py-2 text-xs font-semibold text-[#fafafa] transition hover:opacity-95"
+          className="interactive-pop shrink-0 rounded-md bg-[#3277FF] px-5 py-2.5 text-sm font-semibold text-[#fafafa] transition hover:opacity-95 sm:px-6 sm:py-3 sm:text-base"
         >
-          {cardVariant.createLabel}
+          <span className="flex w-full items-center justify-center gap-1.5">
+            <span aria-hidden="true" className="material-symbols-rounded text-[18px] leading-none">
+              add
+            </span>
+            <span>{cardVariant.createLabel}</span>
+          </span>
         </button>
       </header>
 

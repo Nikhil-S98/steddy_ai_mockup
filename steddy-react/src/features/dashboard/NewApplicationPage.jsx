@@ -5,7 +5,7 @@ const REQUIRED_BANK_FILES = ["Bank Statement - Jan.pdf", "Bank Statement - Feb.p
 
 const STATUS_ICONS = {
   uploaded: { name: "upload", className: "text-[#4e6aa1]" },
-  processing: { name: "pending", className: "text-[#8a6723]" },
+  processing: { name: "sync", className: "text-[#8a6723]" },
   complete: { name: "check_circle", className: "text-[#3277FF]" },
 }
 
@@ -143,9 +143,8 @@ export default function NewApplicationPage({ isOpen, onClose, onCreateApplicatio
         </button>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <div className="min-h-0 flex-1 overflow-y-auto p-4 pr-3">
-          <div className="space-y-3">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <div className="space-y-3">
             <button
               type="button"
               onClick={handleMcaDropMock}
@@ -289,39 +288,44 @@ export default function NewApplicationPage({ isOpen, onClose, onCreateApplicatio
                 </div>
               </div>
             </section>
-          </div>
+
+            <section className="border border-[#d9d9d9] bg-[#fafafa] p-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-[#4c4f69]">Upload Activity</h3>
+              <div className="mt-3 space-y-1.5">
+                {mcaRow ? (
+                  <div className="flex items-center justify-between gap-2 py-1.5">
+                    <p className="truncate text-xs text-[#1c1b1f]">{mcaRow.fileName}</p>
+                    <span
+                      aria-label={mcaRow.status}
+                      className={`material-symbols-rounded shrink-0 text-[16px] ${STATUS_ICONS[mcaRow.status].className} ${
+                        mcaRow.status === "processing" ? "animate-spin" : ""
+                      }`}
+                    >
+                      {STATUS_ICONS[mcaRow.status].name}
+                    </span>
+                  </div>
+                ) : null}
+
+                {bankRows.map((row) => (
+                  <div key={row.fileName} className="flex items-center justify-between gap-2 py-1.5">
+                    <p className="truncate text-xs text-[#1c1b1f]">{row.fileName}</p>
+                    <span
+                      aria-label={row.status}
+                      className={`material-symbols-rounded shrink-0 text-[16px] ${STATUS_ICONS[row.status].className} ${
+                        row.status === "processing" ? "animate-spin" : ""
+                      }`}
+                    >
+                      {STATUS_ICONS[row.status].name}
+                    </span>
+                  </div>
+                ))}
+
+                {!mcaRow ? (
+                  <p className="pt-1 text-[11px] text-[#8b92a1]">Awaiting MCA application form upload.</p>
+                ) : null}
+              </div>
+            </section>
         </div>
-
-        <aside className="hidden w-[230px] shrink-0 border-l border-[#d9d9d9] bg-[#fafafa] p-3 lg:block">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-[#4c4f69]">Upload Activity</h3>
-          <div className="mt-3 space-y-1.5">
-            {mcaRow ? (
-              <div className="flex items-center justify-between gap-2 py-1.5">
-                <p className="truncate text-xs text-[#1c1b1f]">{mcaRow.fileName}</p>
-                <span
-                  aria-label={mcaRow.status}
-                  className={`material-symbols-rounded shrink-0 text-[16px] ${STATUS_ICONS[mcaRow.status].className}`}
-                >
-                  {STATUS_ICONS[mcaRow.status].name}
-                </span>
-              </div>
-            ) : null}
-
-            {bankRows.map((row) => (
-              <div key={row.fileName} className="flex items-center justify-between gap-2 py-1.5">
-                <p className="truncate text-xs text-[#1c1b1f]">{row.fileName}</p>
-                <span
-                  aria-label={row.status}
-                  className={`material-symbols-rounded shrink-0 text-[16px] ${STATUS_ICONS[row.status].className}`}
-                >
-                  {STATUS_ICONS[row.status].name}
-                </span>
-              </div>
-            ))}
-
-            {!mcaRow ? <p className="pt-1 text-[11px] text-[#8b92a1]">Awaiting MCA application form upload.</p> : null}
-          </div>
-        </aside>
       </div>
 
       <footer className="border-t border-[#d9d9d9] bg-[#fafafa] px-5 py-3">

@@ -28,8 +28,8 @@ export default function V3_4Overview({
               }}
               className="interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
             >
-              <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">MONTHLY REVENUE</p>
-              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$174,230</p>
+              <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">AVERAGE MONTHLY REVENUE</p>
+              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$14,586</p>
               <div className="mt-3 space-y-2.5">
                 {monthlyBreakdownRows.map((row) => (
                   <div key={`v3p4-revenue-${row.month}`} className="flex items-center justify-between text-[11px]">
@@ -40,7 +40,7 @@ export default function V3_4Overview({
               </div>
               <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-amber-500">
                 <span className="inline-block size-2 rounded-full bg-current" />
-                Low Revenue
+                Dipping Revenue
               </p>
             </article>
             <article
@@ -107,11 +107,11 @@ export default function V3_4Overview({
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#4c4f69]">Negative Days</span>
-                  <span className="font-semibold text-[#d20f39]">7</span>
+                  <span className="font-semibold text-[#d20f39]">21</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">NSF/Overdraft Fees</span>
-                  <span className="font-semibold text-[#1c1b1f]">$315</span>
+                  <span className="text-[#4c4f69]">Number of Overdrafts</span>
+                  <span className="font-semibold text-[#d20f39]">24</span>
                 </div>
               </div>
               <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#d20f39]">

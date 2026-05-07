@@ -520,6 +520,29 @@ const monthlyBreakdownRows = [
     note: "Short month with consistent paydown and fewer reversal days.",
   },
 ]
+const v11MonthlyBreakdownRows = [
+  {
+    month: "December 2025",
+    revenue: "$15,210",
+    leverage: "5%",
+    mcaPayout: "$10,650",
+    note: "Revenue started higher before dipping into the new year.",
+  },
+  {
+    month: "January 2026",
+    revenue: "$14,586",
+    leverage: "10%",
+    mcaPayout: "$11,240",
+    note: "Monthly revenue settled to the current three-month average.",
+  },
+  {
+    month: "February 2026",
+    revenue: "$13,962",
+    leverage: "8%",
+    mcaPayout: "$10,035",
+    note: "Revenue trended lower again with softer statement inflows.",
+  },
+]
 const keyMetricCompanyRows = [
   { company: "Advance Syndicate", leverage: "10%", payout: "$1,125" },
   { company: "EBF Holdings", leverage: "8%", payout: "$1,050" },
@@ -788,6 +811,8 @@ function App() {
   const v34CurrentLeverageValue = FUNDING_AMOUNT > 0 ? (v34McaPayoutValue / FUNDING_AMOUNT) * 100 : 0
   const v34McaPayoutLabel = `$${formatCurrency(v34McaPayoutValue)}`
   const v34CurrentLeverageLabel = `${Math.round(v34CurrentLeverageValue)}%`
+  const activeMonthlyBreakdownRows =
+    activeVersion === "v1.1" || activeVersion === "v3.4" ? v11MonthlyBreakdownRows : monthlyBreakdownRows
   const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
   const activeUnderwritingStep = 1
   const isDarkLikeMode =
@@ -796,6 +821,7 @@ function App() {
     colorMode === "gruvbox" ||
     colorMode === "ayuMirage" ||
     colorMode === "ayuDark"
+  const usesV34PositionStyles = activeVersion === "v3.4" || activeVersion === "v1.1"
 
   const resetDraftPosition = () => {
     setDraftPosition({
@@ -1015,7 +1041,7 @@ function App() {
 
   const uiFontClass = UI_FONT_CLASS_BY_VALUE[uiFont] ?? ""
 
-  const runPageFadeTransition = (onMidpoint) => {
+  const runPageSlideTransition = (onMidpoint, direction = "forward") => {
     if (isPageTransitioningRef.current) return
     const currentRoot = appRef.current
     if (!currentRoot) {
@@ -1025,10 +1051,15 @@ function App() {
 
     isPageTransitioningRef.current = true
     gsap.killTweensOf(currentRoot)
+    const isBackward = direction === "backward"
+    const exitX = isBackward ? 28 : -28
+    const enterX = isBackward ? -28 : 28
+
     gsap.to(currentRoot, {
+      x: exitX,
       opacity: 0,
-      duration: 0.16,
-      ease: "power1.out",
+      duration: 0.18,
+      ease: "power2.inOut",
       onComplete: () => {
         onMidpoint()
         requestAnimationFrame(() => {
@@ -1041,12 +1072,13 @@ function App() {
           gsap.killTweensOf(nextRoot)
           gsap.fromTo(
             nextRoot,
-            { opacity: 0 },
+            { x: enterX, opacity: 0 },
             {
+              x: 0,
               opacity: 1,
-              duration: 0.22,
-              ease: "power1.inOut",
-              clearProps: "opacity",
+              duration: 0.26,
+              ease: "power2.out",
+              clearProps: "opacity,transform",
               onComplete: () => {
                 isPageTransitioningRef.current = false
               },
@@ -1065,7 +1097,7 @@ function App() {
 
   const handleVersionChange = (event) => {
     const nextVersion = event.target.value
-    runPageFadeTransition(() => {
+    runPageSlideTransition(() => {
       const nextPath = getPathFromVersion(nextVersion)
       if (window.location.pathname !== nextPath) {
         window.history.pushState({}, "", nextPath)
@@ -1076,12 +1108,12 @@ function App() {
   }
 
   const handleBackToDashboard = () => {
-    runPageFadeTransition(() => {
+    runPageSlideTransition(() => {
       if (window.location.pathname !== "/dashboard") {
         window.history.pushState({}, "", "/dashboard")
       }
       setActiveView("dashboard")
-    })
+    }, "backward")
   }
 
   const handleOpenNewApplication = () => {
@@ -1100,7 +1132,7 @@ function App() {
   }
 
   const handleOpenApplication = (applicationId = "777") => {
-    runPageFadeTransition(() => {
+    runPageSlideTransition(() => {
       const nextPath = getPathFromVersion(activeVersion)
       if (window.location.pathname !== nextPath) {
         window.history.pushState({}, "", nextPath)
@@ -1152,7 +1184,7 @@ function App() {
             }`}
           />
           <aside
-            className={`absolute inset-y-0 right-0 z-40 w-full max-w-[560px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-2xl transition-transform duration-300 ease-out ${
+            className={`absolute inset-y-0 right-0 z-40 w-full max-w-[500px] border-l border-[#d9d9d9] bg-[#fafafa] shadow-2xl transition-transform duration-300 ease-out ${
               isNewApplicationOpen ? "translate-x-0" : "translate-x-full"
             }`}
           >
@@ -1183,6 +1215,8 @@ function App() {
       return (
         <V1_1Overview
           metrics={metrics}
+          keyMetricCompanyRows={v34KeyMetricCompanyRows}
+          currentLeverageLabel={v34CurrentLeverageLabel}
           setActiveMetricTitle={setActiveMetricTitle}
           setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
           setActiveFlagPanel={setActiveFlagPanel}
@@ -1912,7 +1946,7 @@ function App() {
                               on ? "opacity-100" : "opacity-45"
                             }`}
                           >
-                            {activeVersion === "v3.4" ? (
+                            {usesV34PositionStyles ? (
                               <p className={`w-full text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
                                 Withdrawals
                               </p>
@@ -1925,7 +1959,7 @@ function App() {
                                 <div key={chipKey} className="flex w-full items-center justify-start gap-1 text-left">
                                   <span
                                     className={
-                                      activeVersion === "v3.4"
+                                      usesV34PositionStyles
                                         ? `m-0 flex items-center gap-1 rounded-none border-0 bg-transparent text-[9px] transition-colors ${
                                             isActive ? "text-[#3277FF]" : "text-[#1c1b1f]"
                                           }`
@@ -1950,7 +1984,7 @@ function App() {
                                       <span
                                         aria-hidden="true"
                                         className={`relative block h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
-                                          activeVersion === "v3.4"
+                                          usesV34PositionStyles
                                             ? isActive
                                               ? "bg-[#cbd5e1]"
                                               : "bg-[#d9d9d9]"
@@ -1961,7 +1995,7 @@ function App() {
                                       >
                                         <span
                                           className={`block size-3 rounded-full transition-transform ${
-                                            activeVersion === "v3.4"
+                                            usesV34PositionStyles
                                               ? `${isDarkLikeMode ? "bg-[#4c4f69]" : "bg-[#fafafa]"} ${
                                                   isActive ? "translate-x-2.5" : "translate-x-0"
                                                 }`
@@ -1990,7 +2024,7 @@ function App() {
                                       {chip.amount}{" "}
                                       <span
                                         className={
-                                          activeVersion === "v3.4"
+                                          usesV34PositionStyles
                                             ? isActive
                                               ? "text-[rgba(15,23,42,0.72)]"
                                               : "text-[rgba(76,79,105,0.5)]"
@@ -2567,7 +2601,7 @@ function App() {
               </p>
 
               <div className="mt-4 space-y-3">
-                {monthlyBreakdownRows.map((row) => (
+                {activeMonthlyBreakdownRows.map((row) => (
                   <article
                     key={row.month}
                     className="rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
