@@ -65,18 +65,18 @@ const transactions = [
   { date: "Mar 25", description: "Sales Deposit", credit: true, value: "$6,430" },
   { date: "Mar 24", description: "Utilities — Electric", credit: false, value: "$438" },
   { date: "Mar 24", description: "Refund — Customer Return", credit: false, value: "$220" },
-  { date: "Mar 24", description: "Returned Item — POS Debit", credit: false, value: "$185" },
+  { date: "Mar 24", description: "Returned Item — EBF Holdings", credit: false, value: "$185" },
   { date: "Mar 23", description: "Marketplace Payout", credit: true, value: "$1,940" },
   { date: "Mar 23", description: "Vehicle Maintenance", credit: false, value: "$745" },
   { date: "Mar 23", description: "Returned Item — Customer ACH", credit: false, value: "$415" },
   { date: "Mar 22", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,560" },
-  { date: "Mar 22", description: "Returned Item — ACH Debit", credit: false, value: "$310" },
+  { date: "Mar 22", description: "Returned Item — Advance Syndicate", credit: false, value: "$310" },
   { date: "Mar 21", description: "Customer Payment — Inv #4622", credit: true, value: "$3,680" },
   { date: "Mar 21", description: "Office Supplies", credit: false, value: "$185" },
   { date: "Mar 21", description: "Returned Item — Check Deposit", credit: false, value: "$525" },
   { date: "Mar 20", description: "Deposit — Equipment Sale", credit: true, value: "$3,400" },
   { date: "Mar 20", description: "Tax Withholding Transfer", credit: false, value: "$1,515" },
-  { date: "Mar 20", description: "Returned Item — ACH Debit", credit: false, value: "$295" },
+  { date: "Mar 20", description: "Returned Item — CFG Merchant Solutions", credit: false, value: "$295" },
   { date: "Mar 19", description: "Service Revenue Deposit", credit: true, value: "$2,875" },
   { date: "Mar 19", description: "Loan Servicing Fee", credit: false, value: "$520" },
   { date: "Mar 19", description: "Returned Item — Remote Deposit", credit: false, value: "$610" },
@@ -88,12 +88,12 @@ const transactions = [
   { date: "Feb 27", description: "Wire Transfer — Vendor", credit: false, value: "$4,200" },
   { date: "Feb 27", description: "Deposit — Stripe Payout", credit: true, value: "$3,120" },
   { date: "Feb 26", description: "Equipment Lease", credit: false, value: "$1,050" },
-  { date: "Feb 26", description: "Returned Item — ACH Debit", credit: false, value: "$275" },
+  { date: "Feb 26", description: "Returned Item — Advance Syndicate", credit: false, value: "$275" },
   { date: "Feb 25", description: "Merchant Cash Advance", credit: false, value: "$2,652" },
   { date: "Feb 25", description: "Sales Deposit", credit: true, value: "$6,890" },
   { date: "Feb 24", description: "Utilities — Electric", credit: false, value: "$412" },
   { date: "Feb 24", description: "Refund — Overpayment", credit: true, value: "$180" },
-  { date: "Feb 24", description: "Returned Item — POS Debit", credit: false, value: "$198" },
+  { date: "Feb 24", description: "Returned Item — EBF Holdings", credit: false, value: "$198" },
   { date: "Feb 23", description: "Insurance Premium", credit: false, value: "$928" },
   { date: "Feb 23", description: "Returned Item — Customer ACH", credit: false, value: "$405" },
   { date: "Feb 22", description: "POS Batch Deposit", credit: true, value: "$2,780" },
@@ -101,7 +101,7 @@ const transactions = [
   { date: "Feb 22", description: "Returned Item — Check Deposit", credit: false, value: "$550" },
   { date: "Feb 21", description: "Card Settlement", credit: true, value: "$1,940" },
   { date: "Feb 21", description: "Loan Servicing Fee", credit: false, value: "$520" },
-  { date: "Feb 21", description: "Returned Item — ACH Debit", credit: false, value: "$315" },
+  { date: "Feb 21", description: "Returned Item — CFG Merchant Solutions", credit: false, value: "$315" },
   { date: "Feb 20", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,160" },
   { date: "Feb 20", description: "Equipment Repair", credit: false, value: "$1,120" },
   { date: "Feb 20", description: "Returned Item — Remote Deposit", credit: false, value: "$620" },
@@ -136,13 +136,13 @@ const transactions = [
   { date: "Jan 23", description: "Vehicle Maintenance", credit: false, value: "$610" },
   { date: "Jan 23", description: "Returned Item — Customer ACH", credit: false, value: "$390" },
   { date: "Jan 22", description: "ACH Deposit — Retail Sales", credit: true, value: "$3,980" },
-  { date: "Jan 22", description: "Returned Item — ACH Debit", credit: false, value: "$245" },
+  { date: "Jan 22", description: "Returned Item — Advance Syndicate", credit: false, value: "$245" },
   { date: "Jan 21", description: "Customer Payment — Inv #4399", credit: true, value: "$3,340" },
   { date: "Jan 21", description: "Office Supplies", credit: false, value: "$132" },
   { date: "Jan 21", description: "Returned Item — Check Deposit", credit: false, value: "$515" },
   { date: "Jan 20", description: "Deposit — Owner Contribution", credit: true, value: "$2,000" },
   { date: "Jan 20", description: "Tax Withholding Transfer", credit: false, value: "$1,420" },
-  { date: "Jan 20", description: "Returned Item — ACH Debit", credit: false, value: "$285" },
+  { date: "Jan 20", description: "Returned Item — EBF Holdings", credit: false, value: "$285" },
   { date: "Jan 19", description: "Service Revenue Deposit", credit: true, value: "$2,430" },
   { date: "Jan 19", description: "Loan Servicing Fee", credit: false, value: "$520" },
   { date: "Jan 19", description: "Returned Item — Remote Deposit", credit: false, value: "$590" },
@@ -528,11 +528,24 @@ const flagDetailPanels = {
         note: "March returned items remained elevated, including multiple ACH debit and customer check returns.",
       },
     ],
-    points: [
-      "Returned item volume is consistent across the three reviewed months rather than isolated to one period.",
-      "Total returned item exposure across January, February, and March is $9,019.",
-      "Recommendation: verify operating balance stability and returned item explanations before final funding.",
+    bouncedPayments: [
+      {
+        position: "Advance Syndicate",
+        count: 3,
+        amount: "$830",
+      },
+      {
+        position: "EBF Holdings",
+        count: 3,
+        amount: "$668",
+      },
+      {
+        position: "CFG Merchant Solutions",
+        count: 2,
+        amount: "$610",
+      },
     ],
+    points: [],
   },
   unicourt: {
     title: "UniCourt Detail",
@@ -1272,11 +1285,11 @@ function App() {
                   <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
                     <div>
                       <p className="text-[#4c4f69]">Payback</p>
-                      <p className="mt-0.5 font-semibold text-[#1c1b1f]">${formatCurrency(paybackTotal)}</p>
+                      <p className="mt-0.5 text-sm font-bold text-[#1c1b1f]">${formatCurrency(paybackTotal)}</p>
                     </div>
                     <div>
                       <p className="text-[#4c4f69]">Total Leverage</p>
-                      <p className="mt-0.5 font-semibold text-[#1c1b1f]">{totalLeverage}%</p>
+                      <p className="mt-0.5 text-sm font-bold text-[#1c1b1f]">{totalLeverage}%</p>
                     </div>
                   </div>
               </div>
@@ -1309,7 +1322,13 @@ function App() {
                     <div className="relative flex h-10 items-center overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
                       <span className={`${FIELD_INNER_SQUARE_CLASS} grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]`}>%</span>
                       <div className="grid min-w-0 flex-1 grid-cols-2 items-center">
-                        <div className="grid h-full place-items-center px-2">
+                        <div className="flex h-full items-center justify-center px-2 text-center text-[12px]">
+                          <span className="font-medium leading-none text-[#1c1b1f]">
+                            {Math.round(v34CurrentLeverageValue)}
+                          </span>
+                        </div>
+                        <div className="flex h-full items-center justify-center gap-1 border-l border-[#d9d9d9] px-2">
+                          <span className="text-[12px] font-medium text-[#3277FF]">+</span>
                           <input
                             type="number"
                             min="0"
@@ -1321,12 +1340,8 @@ function App() {
                                 leverageDelta: Math.min(Math.max(Number(event.target.value) || 0, 0), 50),
                               }))
                             }
-                            className="w-10 bg-transparent p-0 text-center text-[12px] font-medium text-[#1c1b1f] outline-none"
+                            className="w-8 bg-transparent p-0 text-center text-[12px] font-medium text-[#3277FF] outline-none"
                           />
-                        </div>
-                        <div className="flex h-full items-center justify-center gap-1 border-l border-[#d9d9d9] px-2 text-center text-[12px]">
-                          <span className="font-regular text-[#4c4f69]">Total</span>
-                          <span className="font-medium leading-none text-[#1c1b1f]">{totalLeverage}%</span>
                         </div>
                       </div>
                       <div className={`${FIELD_INNER_SQUARE_CLASS} grid h-full w-6 border-l border-[#d9d9d9] bg-[#efefef]`}>
@@ -2440,6 +2455,25 @@ function App() {
                       </div>
                     </div>
                   ))}
+                </div>
+              ) : null}
+
+              {activeFlagPanel && flagDetailPanels[activeFlagPanel].bouncedPayments ? (
+                <div className="mt-4 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">Bounced Payments</p>
+                    <p className="text-[13px] font-semibold text-[#1c1b1f]">8</p>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {flagDetailPanels[activeFlagPanel].bouncedPayments.map((row) => (
+                      <div key={row.position} className="flex items-center justify-between gap-3 text-[12px]">
+                        <span className="text-[#4c4f69]">{row.position}</span>
+                        <span className="font-medium text-[#1c1b1f]">
+                          {row.count} · {row.amount}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : null}
 

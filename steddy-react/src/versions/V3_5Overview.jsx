@@ -99,19 +99,13 @@ export default function V3_5Overview({
               className={MINI_CARD_CLASS}
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">RETURNED ITEMS</p>
-              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">23</p>
-              <div className="mt-3 space-y-2.5">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">January</span>
-                  <span className="font-semibold text-[#1c1b1f]">7</span>
+              <div className="mt-2 flex flex-1 flex-col">
+                <div className="border-b border-[#d9d9d9] pb-3">
+                  <p className="text-3xl font-bold leading-none text-[#1c1b1f]">23</p>
                 </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">February</span>
-                  <span className="font-semibold text-[#1c1b1f]">8</span>
-                </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">March</span>
-                  <span className="font-semibold text-[#1c1b1f]">8</span>
+                <div className="pt-3">
+                  <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">Bounced Payments</p>
+                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">8</p>
                 </div>
               </div>
               <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#d20f39]">
