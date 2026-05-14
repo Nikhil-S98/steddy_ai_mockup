@@ -32,7 +32,7 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
         return (
           <article
             key={`balance-list-${series.month}`}
-            className="card-shadow overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]"
+            className="card-shadow overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]"
           >
             <div className="border-b border-[#d9d9d9] px-3 py-2">
               <div className="flex items-center justify-between gap-2">
@@ -104,7 +104,7 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
       </div>
 
       <div className="space-y-4">
-        <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
+        <div className="card-shadow rounded-lg border border-[#d9d9d9] bg-[#fafafa] p-4">
           <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
             <div className="flex items-center gap-2">
               <span className="h-[2px] w-4 rounded-full" style={{ backgroundColor: balanceChart.primary }} />

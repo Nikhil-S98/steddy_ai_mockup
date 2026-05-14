@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import V3_5Overview from "./versions/V3_5Overview"
 import BalancesSection from "./components/BalancesSection"
+import SidebarFooter from "./components/SidebarFooter"
 import DashboardPage from "./features/dashboard/DashboardPage"
 import NewApplicationPage from "./features/dashboard/NewApplicationPage"
 
@@ -320,17 +321,22 @@ const monthlyBalanceSeries = [
   },
 ]
 
-const BASE_LEVERAGE = 23
-const FUNDING_AMOUNT = 29472
-const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+const DEFAULT_FUNDING_AMOUNT = 29472
+const TERM_UNITS = [
+  { value: "days", label: "Days", multiplier: 1, paymentLabel: "daily" },
+  { value: "weeks", label: "Weeks", multiplier: 7, paymentLabel: "weekly" },
+  { value: "months", label: "Months", multiplier: 30, paymentLabel: "monthly" },
+]
 const UI_FONT_CLASS = "font-ui-inter"
 const HEADER_BUTTON_CLASS =
   "interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]"
 const HEADER_ICON_BUTTON_CLASS =
   "inline-flex h-8 w-8 items-center justify-center text-[#4c4f69]"
 const SIDEBAR_SECTION_CLASS = "border-b border-[#d9d9d9] pb-4"
-const FIELD_SHELL_CLASS = "flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]"
+const FIELD_SHELL_CLASS =
+  "flex h-10 items-center overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]"
 const FIELD_LABEL_CLASS = "mb-1 text-[11px] font-medium text-[#4c4f69]"
+const FIELD_INNER_SQUARE_CLASS = "calculator-square"
 
 /** Daily balance chart — keyed by nav theme */
 const CHART_PALETTE_BY_MODE = {
@@ -470,6 +476,7 @@ function App() {
   const [dashboardActiveCard, setDashboardActiveCard] = useState("applications")
   const [activeApplicationId, setActiveApplicationId] = useState("777")
   const [colorMode, setColorMode] = useState("teal")
+  const [isApplicationSidebarCollapsed, setIsApplicationSidebarCollapsed] = useState(false)
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isApplicationInfoOpen, setIsApplicationInfoOpen] = useState(false)
   const [isAiDecisionOpen, setIsAiDecisionOpen] = useState(false)
@@ -523,21 +530,22 @@ function App() {
   const [editingPaymentIndex, setEditingPaymentIndex] = useState(null)
   const [editingDepositIndex, setEditingDepositIndex] = useState(null)
   const [calculator, setCalculator] = useState({
+    fundingAmount: DEFAULT_FUNDING_AMOUNT,
     leverageDelta: 11,
-    termDays: 15,
+    termValue: 15,
+    termUnit: "days",
     factor: 1.35,
-    frequency: "Daily",
   })
+  const selectedTermUnit = TERM_UNITS.find((unit) => unit.value === calculator.termUnit) ?? TERM_UNITS[0]
+  const termDays = calculator.termValue * selectedTermUnit.multiplier
   const frequencyDivisor = {
-    Daily: calculator.termDays,
-    Weekly: calculator.termDays / 7,
-    "Bi-Weekly": calculator.termDays / 14,
-    Monthly: calculator.termDays / 30,
-  }[calculator.frequency]
+    days: termDays,
+    weeks: termDays / 7,
+    months: termDays / 30,
+  }[calculator.termUnit]
 
-  const paymentAmount = (FUNDING_AMOUNT * calculator.factor) / Math.max(frequencyDivisor, 1)
-  const paybackTotal = FUNDING_AMOUNT * calculator.factor
-  const totalLeverage = BASE_LEVERAGE + calculator.leverageDelta
+  const paymentAmount = (calculator.fundingAmount * calculator.factor) / Math.max(frequencyDivisor, 1)
+  const paybackTotal = calculator.fundingAmount * calculator.factor
   const formatCurrency = (value) =>
     value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
   const supportsChipFilters = true
@@ -607,7 +615,15 @@ function App() {
     })
     .filter((row) => parseMoney(row.payout) > 0)
   const v34McaPayoutValue = activeWithdrawals.reduce((sum, row) => sum + row.monthlyPayout, 0)
-  const v34CurrentLeverageValue = FUNDING_AMOUNT > 0 ? (v34McaPayoutValue / FUNDING_AMOUNT) * 100 : 0
+  const v34CurrentLeverageValue = calculator.fundingAmount > 0 ? (v34McaPayoutValue / calculator.fundingAmount) * 100 : 0
+  const totalLeverageValue = v34CurrentLeverageValue + calculator.leverageDelta
+  const totalLeverage = Math.round(totalLeverageValue)
+  const addedLeverageBarClass = totalLeverageValue > 30 ? "bg-[#d20f39]" : "bg-[#7dd3c7]"
+  const currentLeverageSegmentWidth = `${Math.min(Math.max(v34CurrentLeverageValue, 0), 100)}%`
+  const addedLeverageSegmentWidth = `${Math.min(
+    Math.max(calculator.leverageDelta, 0),
+    Math.max(100 - v34CurrentLeverageValue, 0),
+  )}%`
   const v34McaPayoutLabel = `$${formatCurrency(v34McaPayoutValue)}`
   const v34CurrentLeverageLabel = `${Math.round(v34CurrentLeverageValue)}%`
   const activeMonthlyBreakdownRows = v11MonthlyBreakdownRows
@@ -1030,7 +1046,11 @@ function App() {
               {colorMode === "tealDark" ? "light_mode" : "dark_mode"}
             </span>
           </button>
-          <button className={HEADER_BUTTON_CLASS}>
+          <button
+            type="button"
+            onClick={() => setIsApplicationInfoOpen(true)}
+            className={HEADER_BUTTON_CLASS}
+          >
             Edit
           </button>
           <button className={HEADER_BUTTON_CLASS}>
@@ -1039,12 +1059,16 @@ function App() {
         </div>
       </header>
 
-      <main className="grid h-[calc(100vh-56px)] gap-0 lg:grid-cols-[350px_1fr]">
+      <main
+        className={`grid h-[calc(100vh-56px)] gap-0 transition-[grid-template-columns] duration-200 ${
+          isApplicationSidebarCollapsed ? "lg:grid-cols-[64px_1fr]" : "lg:grid-cols-[300px_1fr]"
+        }`}
+      >
         <aside
           data-animate
-          className="flex h-[calc(100vh-56px)] flex-col border-r border-[#d9d9d9] bg-[#fafafa]"
+          className="flex h-[calc(100vh-56px)] flex-col overflow-hidden border-r border-[#d9d9d9] bg-[#fafafa]"
         >
-          <div className="border-b border-[#d9d9d9] px-4 py-3.5">
+          <div className={`${isApplicationSidebarCollapsed ? "hidden" : ""} px-4 py-3.5`}>
             <div className="flex items-center gap-3">
               <div className="grid size-10 place-items-center rounded-xl border border-[#3277FF] bg-[#e9f0ff]">
                 <svg
@@ -1093,13 +1117,14 @@ function App() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4">
+          <div className={`${isApplicationSidebarCollapsed ? "hidden" : ""} flex-1 overflow-y-auto px-4 py-4`}>
+            <div className="mb-4 border-t border-[#d9d9d9]" />
             <div className={SIDEBAR_SECTION_CLASS}>
               <div className="mb-2 flex items-center justify-between text-xs font-light tracking-[0.06em] text-[#4c4f69]">
                 <span>AI DECISION</span>
                 <span className="tracking-normal">Confidence 94%</span>
               </div>
-              <div className="ai-decision-card rounded-md border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
+              <div className="ai-decision-card rounded-lg border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
                 <button
                   type="button"
                   onClick={() => setIsAiDecisionOpen((prev) => !prev)}
@@ -1127,10 +1152,10 @@ function App() {
                     days flagged for review.
                   </p>
                   <div className="mt-3 grid grid-cols-2 gap-2">
-                    <button className="interactive-pop rounded-md bg-[#3277FF] py-2 text-[13px] font-semibold text-[#fafafa]">
+                    <button className="interactive-pop rounded-lg bg-[#3277FF] py-2 text-[13px] font-semibold text-[#fafafa]">
                       Confirm
                     </button>
-                    <button className="interactive-pop rounded-md border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
+                    <button className="interactive-pop rounded-lg border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
                       Ignore
                     </button>
                   </div>
@@ -1141,13 +1166,13 @@ function App() {
             <div className="pt-4">
               <div className="mb-2">
                 <h3 className="text-xs font-light tracking-[0.06em] text-[#4c4f69]">
-                  OFFER IMPACT
+                  OFFER CALCULATOR
                 </h3>
               </div>
 
-              <div className="rounded-md bg-[#efefef] px-3 py-3">
+              <div className="rounded-lg bg-[#efefef] px-3 py-3">
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">
-                    Estimated {calculator.frequency.toLowerCase()} payment
+                    Estimated {selectedTermUnit.paymentLabel} payment
                   </p>
                   <p className="mt-1 text-2xl font-bold leading-none text-[#1c1b1f]">
                     ${formatCurrency(paymentAmount)}
@@ -1158,161 +1183,229 @@ function App() {
                       <p className="mt-0.5 font-semibold text-[#1c1b1f]">${formatCurrency(paybackTotal)}</p>
                     </div>
                     <div>
-                      <p className="text-[#4c4f69]">Leverage</p>
+                      <p className="text-[#4c4f69]">Total Leverage</p>
                       <p className="mt-0.5 font-semibold text-[#1c1b1f]">{totalLeverage}%</p>
                     </div>
                   </div>
               </div>
 
               <div className="mt-3 space-y-2.5">
-                  <div className="grid grid-cols-[minmax(0,1fr)_108px] gap-2">
+                  <div>
                     <div>
-                      <p className={FIELD_LABEL_CLASS}>FUNDING</p>
+                      <p className={FIELD_LABEL_CLASS}>FUNDING AMOUNT</p>
                       <div className={FIELD_SHELL_CLASS}>
-                        <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">$</span>
-                        <span className="px-2 text-[12px] font-medium text-[#1c1b1f]">
-                          {formatCurrency(FUNDING_AMOUNT)}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <p className={FIELD_LABEL_CLASS}>FREQUENCY</p>
-                      <div className="relative">
-                        <select
-                          value={calculator.frequency}
-                          onChange={(event) =>
-                            setCalculator((prev) => ({ ...prev, frequency: event.target.value }))
-                          }
-                          className="h-10 w-full appearance-none rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 pr-6 text-[12px] font-medium text-[#1c1b1f]"
-                        >
-                          {FREQUENCIES.map((frequency) => (
-                            <option key={frequency} value={frequency}>
-                              {frequency}
-                            </option>
-                          ))}
-                        </select>
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
-                        >
-                          ⌄
-                        </span>
+                        <span className={`${FIELD_INNER_SQUARE_CLASS} grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]`}>$</span>
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          value={formatCurrency(calculator.fundingAmount)}
+                          onChange={(event) => {
+                            const nextFundingAmount = Number(event.target.value.replace(/[^0-9.]/g, ""))
+                            setCalculator((prev) => ({
+                              ...prev,
+                              fundingAmount: Number.isFinite(nextFundingAmount) ? nextFundingAmount : 0,
+                            }))
+                          }}
+                          className="min-w-0 flex-1 bg-transparent px-2 text-[12px] font-medium text-[#1c1b1f] outline-none"
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <p className={FIELD_LABEL_CLASS}>LEVERAGE</p>
-                    <div className={FIELD_SHELL_CLASS}>
-                      <button
-                        type="button"
-                        className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                        onClick={() =>
-                          setCalculator((prev) => ({
-                            ...prev,
-                            leverageDelta: Math.max(prev.leverageDelta - 1, 0),
-                          }))
-                        }
-                      >
-                        -
-                      </button>
-                      <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
-                        {BASE_LEVERAGE}% base + <span className="text-[#3277FF]">{calculator.leverageDelta}%</span>
-                      </span>
-                      <button
-                        type="button"
-                        className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                        onClick={() =>
-                          setCalculator((prev) => ({
-                            ...prev,
-                            leverageDelta: Math.min(prev.leverageDelta + 1, 50),
-                          }))
-                        }
-                      >
-                        +
-                      </button>
+                    <p className={FIELD_LABEL_CLASS}>ADDED LEVERAGE</p>
+                    <div className="relative flex h-10 items-center overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
+                      <span className={`${FIELD_INNER_SQUARE_CLASS} grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]`}>%</span>
+                      <div className="flex min-w-0 flex-1 items-center justify-between gap-2 px-2">
+                        <input
+                          type="number"
+                          min="0"
+                          max="50"
+                          value={calculator.leverageDelta}
+                          onChange={(event) =>
+                            setCalculator((prev) => ({
+                              ...prev,
+                              leverageDelta: Math.min(Math.max(Number(event.target.value) || 0, 0), 50),
+                            }))
+                          }
+                          className="w-10 bg-transparent p-0 text-[12px] font-medium text-[#1c1b1f] outline-none"
+                        />
+                        <div className="flex items-baseline justify-end gap-1 text-right text-[12px]">
+                          <span className="font-regular text-[#4c4f69]">Total</span>
+                          <span className="font-medium leading-none text-[#1c1b1f]">{totalLeverage}%</span>
+                        </div>
+                      </div>
+                      <div className={`${FIELD_INNER_SQUARE_CLASS} grid h-full w-6 border-l border-[#d9d9d9] bg-[#efefef]`}>
+                        <button
+                          type="button"
+                          className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center border-b border-[#d9d9d9] text-[#4c4f69]`}
+                          onClick={() =>
+                            setCalculator((prev) => ({
+                              ...prev,
+                              leverageDelta: Math.min(prev.leverageDelta + 1, 50),
+                            }))
+                          }
+                        >
+                          <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_up</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center text-[#4c4f69]`}
+                          onClick={() =>
+                            setCalculator((prev) => ({
+                              ...prev,
+                              leverageDelta: Math.max(prev.leverageDelta - 1, 0),
+                            }))
+                          }
+                        >
+                          <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_down</span>
+                        </button>
+                      </div>
+                      <div className="absolute bottom-0 left-7 right-6 h-1 bg-[#d9d9d9]">
+                        <div className="flex h-full">
+                          <div className="h-full bg-[#3277FF]" style={{ width: currentLeverageSegmentWidth }} />
+                          <div className={`h-full ${addedLeverageBarClass}`} style={{ width: addedLeverageSegmentWidth }} />
+                        </div>
+                        <span className="absolute left-[30%] top-0 h-full w-px -translate-x-1/2 bg-[#d20f39]" />
+                      </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <p className={FIELD_LABEL_CLASS}>TERM</p>
-                      <div className={FIELD_SHELL_CLASS}>
-                        <button
-                          type="button"
-                          className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                          onClick={() =>
-                            setCalculator((prev) => ({ ...prev, termDays: Math.max(prev.termDays - 1, 1) }))
+                      <p className={FIELD_LABEL_CLASS}>TERM ({selectedTermUnit.label.toUpperCase()})</p>
+                      <div className="flex h-10 overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
+                        <input
+                          type="number"
+                          min="1"
+                          max="120"
+                          value={calculator.termValue}
+                          onChange={(event) =>
+                            setCalculator((prev) => ({
+                              ...prev,
+                              termValue: Math.min(Math.max(Number(event.target.value) || 1, 1), 120),
+                            }))
                           }
-                        >
-                          -
-                        </button>
-                        <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
-                          {calculator.termDays} days
-                        </span>
-                        <button
-                          type="button"
-                          className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                          onClick={() =>
-                            setCalculator((prev) => ({ ...prev, termDays: Math.min(prev.termDays + 1, 120) }))
-                          }
-                        >
-                          +
-                        </button>
+                          className="min-w-0 flex-1 bg-transparent px-2 text-center text-[12px] font-medium text-[#1c1b1f] outline-none"
+                        />
+                        <div className={`${FIELD_INNER_SQUARE_CLASS} grid w-6 border-l border-[#d9d9d9] bg-[#efefef]`}>
+                          <button
+                            type="button"
+                            className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center border-b border-[#d9d9d9] text-[#4c4f69]`}
+                            onClick={() =>
+                              setCalculator((prev) => ({ ...prev, termValue: Math.min(prev.termValue + 1, 120) }))
+                            }
+                          >
+                            <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_up</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center text-[#4c4f69]`}
+                            onClick={() =>
+                              setCalculator((prev) => ({ ...prev, termValue: Math.max(prev.termValue - 1, 1) }))
+                            }
+                          >
+                            <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_down</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div>
                       <p className={FIELD_LABEL_CLASS}>FACTOR</p>
-                      <div className={FIELD_SHELL_CLASS}>
-                        <button
-                          type="button"
-                          className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                          onClick={() =>
+                      <div className="flex h-10 overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
+                        <input
+                          type="number"
+                          min="1"
+                          max="2"
+                          step="0.01"
+                          value={calculator.factor}
+                          onChange={(event) =>
                             setCalculator((prev) => ({
                               ...prev,
-                              factor: Math.max(Number((prev.factor - 0.01).toFixed(2)), 1),
+                              factor: Math.min(Math.max(Number(event.target.value) || 1, 1), 2),
                             }))
                           }
-                        >
-                          -
-                        </button>
-                        <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
-                          {calculator.factor.toFixed(2)}
-                        </span>
-                        <button
-                          type="button"
-                          className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                          onClick={() =>
-                            setCalculator((prev) => ({
-                              ...prev,
-                              factor: Math.min(Number((prev.factor + 0.01).toFixed(2)), 2),
-                            }))
-                          }
-                        >
-                          +
-                        </button>
+                          className="min-w-0 flex-1 bg-transparent px-2 text-center text-[12px] font-medium text-[#1c1b1f] outline-none"
+                        />
+                        <div className={`${FIELD_INNER_SQUARE_CLASS} grid w-6 border-l border-[#d9d9d9] bg-[#efefef]`}>
+                          <button
+                            type="button"
+                            className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center border-b border-[#d9d9d9] text-[#4c4f69]`}
+                            onClick={() =>
+                              setCalculator((prev) => ({
+                                ...prev,
+                                factor: Math.min(Number((prev.factor + 0.01).toFixed(2)), 2),
+                              }))
+                            }
+                          >
+                            <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_up</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center text-[#4c4f69]`}
+                            onClick={() =>
+                              setCalculator((prev) => ({
+                                ...prev,
+                                factor: Math.max(Number((prev.factor - 0.01).toFixed(2)), 1),
+                              }))
+                            }
+                          >
+                            <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_down</span>
+                          </button>
+                        </div>
                       </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className={FIELD_LABEL_CLASS}>TERM FREQUENCY</p>
+                    <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
+                      {TERM_UNITS.map((unit) => {
+                        const isSelected = calculator.termUnit === unit.value
+                        return (
+                          <button
+                            key={unit.value}
+                            type="button"
+                            onClick={() => setCalculator((prev) => ({ ...prev, termUnit: unit.value }))}
+                            className={`${FIELD_INNER_SQUARE_CLASS} h-9 border-r border-[#d9d9d9] text-[11px] font-medium last:border-r-0 ${
+                              isSelected ? "bg-[#efefef] text-[#1c1b1f]" : "text-[#4c4f69]"
+                            }`}
+                          >
+                            {unit.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-[#d9d9d9] pt-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button className="interactive-pop flex items-center justify-center rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
+                        <span className="inline-flex items-center justify-center gap-1.5">
+                          <span aria-hidden="true" className="material-symbols-sharp text-[16px] leading-[1]">
+                            done
+                          </span>
+                          <span>Approve</span>
+                        </span>
+                      </button>
+                      <button className="interactive-pop flex items-center justify-center rounded-lg border border-[#d20f39] bg-[#d20f39] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
+                        <span className="inline-flex items-center justify-center gap-1.5">
+                          <span aria-hidden="true" className="material-symbols-sharp text-[16px] leading-[1]">
+                            close
+                          </span>
+                          <span>Decline</span>
+                        </span>
+                      </button>
                     </div>
                   </div>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-[#d9d9d9] bg-[#fafafa] p-4">
-            <div className="grid grid-cols-2 gap-2">
-              <button className="interactive-pop rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
-                <span className="inline-flex items-center gap-1.5">
-                  <span aria-hidden="true" className="material-symbols-sharp text-[16px] leading-none">
-                    done
-                  </span>
-                  <span>Approve</span>
-                </span>
-              </button>
-              <button className="interactive-pop rounded-lg border border-[#d20f39] bg-[#d20f39] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
-                ✕ Decline
-              </button>
-            </div>
-          </div>
+          <SidebarFooter
+            collapsed={isApplicationSidebarCollapsed}
+            onToggleCollapse={() => setIsApplicationSidebarCollapsed((prev) => !prev)}
+          />
         </aside>
 
         <section
@@ -1432,9 +1525,9 @@ function App() {
               </div>
 
               <div className="relative">
-                <div className="card-shadow pointer-events-none absolute inset-0 rounded border border-[#d9d9d9] bg-[#e9f0ff]/50"></div>
+                <div className="card-shadow pointer-events-none absolute inset-0 rounded-lg border border-[#d9d9d9] bg-[#e9f0ff]/50"></div>
                 <div className="relative z-10 grid gap-4 xl:grid-cols-3">
-                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]">
+                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
                     <p className="bg-[#e9f0ff] px-4 py-2 text-[11px] text-[#4c4f69]">
                       Currently active positions: {positionsData.length}
                     </p>
@@ -1612,7 +1705,7 @@ function App() {
                     )})}
                     </div>
                   </div>
-                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
+                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
                     <div className="min-h-0 flex-1 overflow-y-auto">
                       <table className="w-full border-collapse text-left text-sm">
                         <thead>
@@ -1891,22 +1984,22 @@ function App() {
                 </div>
               </div>
 
-              <div className="mt-3 rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+              <div className="mt-3 px-1 py-2">
                 <p className="text-[10px] font-semibold tracking-wide text-[#4c4f69]">FILES UPLOADED</p>
-                <ul className="mt-2 space-y-2 text-[12px] text-[#1c1b1f]">
-                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                <ul className="mt-2 space-y-1.5 text-[12px] text-[#1c1b1f]">
+                  <li className="flex items-center justify-between gap-2 py-1.5">
                     <span>Bank Statement - Dec 2025.pdf</span>
                     <span className="text-[10px] text-[#4c4f69]">Verified</span>
                   </li>
-                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                  <li className="flex items-center justify-between gap-2 py-1.5">
                     <span>Bank Statement - Jan 2026.pdf</span>
                     <span className="text-[10px] text-[#4c4f69]">Uploaded</span>
                   </li>
-                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                  <li className="flex items-center justify-between gap-2 py-1.5">
                     <span>Bank Statement - Feb 2026.pdf</span>
                     <span className="text-[10px] text-[#4c4f69]">Uploaded</span>
                   </li>
-                  <li className="flex items-center justify-between rounded border border-[#d9d9d9] bg-[#efefef] px-2.5 py-2">
+                  <li className="flex items-center justify-between gap-2 py-1.5">
                     <span>Application Form.pdf</span>
                     <span className="text-[10px] text-[#4c4f69]">Verified</span>
                   </li>
@@ -2277,7 +2370,7 @@ function App() {
                 <div className="space-y-2 px-4 py-3 text-[12px]">
                   <div className="flex items-center justify-between">
                     <span className="text-[#4c4f69]">Funding Amount</span>
-                    <span className="font-medium text-[#1c1b1f]">${formatCurrency(FUNDING_AMOUNT)}</span>
+                    <span className="font-medium text-[#1c1b1f]">${formatCurrency(calculator.fundingAmount)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#4c4f69]">Payback Amount</span>
@@ -2290,12 +2383,14 @@ function App() {
                   <div className="flex items-center justify-between">
                     <span className="text-[#4c4f69]">Payment</span>
                     <span className="font-medium text-[#1c1b1f]">
-                      ${formatCurrency(paymentAmount)} / {calculator.frequency}
+                      ${formatCurrency(paymentAmount)} / {selectedTermUnit.label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#4c4f69]">Term</span>
-                    <span className="font-medium text-[#1c1b1f]">{calculator.termDays} days</span>
+                    <span className="font-medium text-[#1c1b1f]">
+                      {calculator.termValue} {selectedTermUnit.label.toLowerCase()}
+                    </span>
                   </div>
                 </div>
               </div>

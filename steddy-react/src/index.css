@@ -10,7 +10,7 @@
 
 :root {
   --steddy-font-ui: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --steddy-radius-surface: 0.75rem;
+  --steddy-radius-surface: 0.625rem;
   --steddy-radius-control: 0.375rem;
   font-family: var(--steddy-font-ui);
   color: #1c1b1f;
@@ -81,6 +81,18 @@ button {
   cursor: pointer;
 }
 
+.steddy-app input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.steddy-app input[type="number"]::-webkit-outer-spin-button,
+.steddy-app input[type="number"]::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 @layer base {
   .material-symbols-rounded {
     font-family: "Material Symbols Rounded";
@@ -128,29 +140,12 @@ button {
   transform: translateY(0) scale(0.995);
 }
 
-.rounded,
-.rounded-md,
-.rounded-lg,
-.rounded-xl {
-  border-radius: var(--steddy-radius-surface) !important;
-}
-
-.steddy-app button.rounded,
-.steddy-app button.rounded-md,
-.steddy-app button.rounded-lg,
-.steddy-app button.rounded-xl,
-.steddy-app select.rounded,
-.steddy-app select.rounded-md,
-.steddy-app select.rounded-lg,
-.steddy-app select.rounded-xl,
-.steddy-app input.rounded,
-.steddy-app input.rounded-md,
-.steddy-app input.rounded-lg,
-.steddy-app input.rounded-xl {
-  border-radius: var(--steddy-radius-control) !important;
+.steddy-app .calculator-square {
+  border-radius: 0 !important;
 }
 
 .card-shadow {
+  border-radius: var(--steddy-radius-surface);
   box-shadow: none !important;
   border-color: var(--steddy-border) !important;
 }

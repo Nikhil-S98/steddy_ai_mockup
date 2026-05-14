@@ -1,5 +1,5 @@
-const MINI_CARD_CLASS = "interactive-pop flex h-full flex-col rounded border border-[#d9d9d9] bg-[#fafafa] p-4"
-const COMPACT_CARD_CLASS = "interactive-pop h-full min-h-0 rounded border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
+const MINI_CARD_CLASS = "interactive-pop flex h-full flex-col rounded-lg border border-[#d9d9d9] bg-[#fafafa] p-4"
+const COMPACT_CARD_CLASS = "interactive-pop h-full min-h-0 rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-3"
 const SECTION_HEADING_CLASS = "mb-4 flex items-center gap-2"
 
 export default function V3_5Overview({
@@ -64,7 +64,7 @@ export default function V3_5Overview({
                   <p className="text-[10px] uppercase tracking-wide text-[#4c4f69]">MCA Payout</p>
                   <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">{mcaPayoutLabel}</p>
                 </div>
-                <div className="pointer-events-none absolute left-0 top-full z-[130] mt-2 w-full rounded border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                <div className="pointer-events-none absolute left-0 top-full z-[130] mt-2 w-full rounded-lg border border-[#d9d9d9] bg-[#fafafa] p-3 text-[11px] text-[#1c1b1f] opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                   <div className="space-y-1.5">
                     {keyMetricCompanyRows.length ? keyMetricCompanyRows.map((row) => (
                       <div key={`v3p4-leverage-tooltip-${row.company}`} className="flex items-center justify-between gap-2">
