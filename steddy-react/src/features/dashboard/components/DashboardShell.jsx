@@ -28,16 +28,7 @@ const navIcon = {
 
 const SIDEBAR_WIDTH_CLASS = "w-[248px] sm:w-[260px]"
 
-const sidebarSelectClass =
-  "box-border h-9 w-full min-w-0 appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-xs font-medium text-[#4c4f69]"
-
 export default function DashboardShell({
-  colorMode,
-  setColorMode,
-  colorThemes,
-  uiFont,
-  setUiFont,
-  uiFontOptions,
   activeCard,
   setActiveCard,
   onCardSelect,
@@ -89,48 +80,6 @@ export default function DashboardShell({
             })}
           </ul>
         </nav>
-        <div className="shrink-0 space-y-2 border-t border-[#d9d9d9] px-2 py-3 sm:px-2.5">
-          <div className="relative">
-            <select
-              value={uiFont}
-              onChange={(event) => setUiFont(event.target.value)}
-              aria-label="Choose UI font"
-              className={sidebarSelectClass}
-            >
-              {uiFontOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
-            >
-              ⌄
-            </span>
-          </div>
-          <div className="relative">
-            <select
-              value={colorMode}
-              onChange={(event) => setColorMode(event.target.value)}
-              aria-label="Choose color theme"
-              className={sidebarSelectClass}
-            >
-              {colorThemes.map((themeOption) => (
-                <option key={themeOption.value} value={themeOption.value}>
-                  {themeOption.label}
-                </option>
-              ))}
-            </select>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
-            >
-              ⌄
-            </span>
-          </div>
-        </div>
       </aside>
 
       <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-[#e9f0ff] px-4 pb-6 pt-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">

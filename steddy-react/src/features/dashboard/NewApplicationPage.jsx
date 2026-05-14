@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 const MCA_FILE_NAME = "MCA Application Form.pdf"
 const REQUIRED_BANK_FILES = ["Bank Statement - Jan.pdf", "Bank Statement - Feb.pdf", "Bank Statement - Mar.pdf"]
@@ -45,7 +45,7 @@ export default function NewApplicationPage({ isOpen, onClose, onCreateApplicatio
     bankRows.length === REQUIRED_BANK_FILES.length && bankRows.every((row) => row.status === "complete")
   const canCreateApplication = isMcaComplete && allBankStatementsComplete
 
-  const clearActiveTimers = () => {
+  const clearActiveTimers = useCallback(() => {
     if (mcaIntervalRef.current) {
       window.clearInterval(mcaIntervalRef.current)
       mcaIntervalRef.current = null
@@ -54,23 +54,24 @@ export default function NewApplicationPage({ isOpen, onClose, onCreateApplicatio
       window.clearInterval(bankIntervalRef.current)
       bankIntervalRef.current = null
     }
-  }
+  }, [])
 
-  const resetDrawerState = () => {
+  const resetDrawerState = useCallback(() => {
     clearActiveTimers()
     setMcaRow(null)
     setBankRows([])
     setFormValues(EMPTY_FORM_VALUES)
-  }
+  }, [clearActiveTimers])
 
   useEffect(() => {
     return () => clearActiveTimers()
-  }, [])
+  }, [clearActiveTimers])
 
   useEffect(() => {
     if (isOpen) return
-    resetDrawerState()
-  }, [isOpen])
+    const frameId = window.requestAnimationFrame(resetDrawerState)
+    return () => window.cancelAnimationFrame(frameId)
+  }, [isOpen, resetDrawerState])
 
   const handleMcaDropMock = () => {
     clearActiveTimers()

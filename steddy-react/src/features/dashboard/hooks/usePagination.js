@@ -16,7 +16,8 @@ export default function usePagination(rows, pageSize) {
   const canGoNext = currentPage < totalPages
 
   useEffect(() => {
-    setCurrentPage(1)
+    const frameId = window.requestAnimationFrame(() => setCurrentPage(1))
+    return () => window.cancelAnimationFrame(frameId)
   }, [rows])
 
   return {

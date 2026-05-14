@@ -1,4 +1,3 @@
-import { useState } from "react"
 import {
   Area,
   CartesianGrid,
@@ -12,8 +11,6 @@ import {
 } from "recharts"
 
 export default function BalancesSection({ balanceData, monthlyBalanceSeries, balanceChart }) {
-  const [balanceDesignVersion, setBalanceDesignVersion] = useState("v1")
-
   const renderMonthlyBalanceLists = (useSplitColumns) => (
     <div className="grid gap-3 lg:grid-cols-3">
       {monthlyBalanceSeries.map((series) => {
@@ -104,228 +101,108 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
           />
         </svg>
         <h3 className="text-base font-bold leading-none text-[#1c1b1f]">Daily Balances</h3>
-        <div className="relative ml-1">
-          <select
-            value={balanceDesignVersion}
-            onChange={(event) => setBalanceDesignVersion(event.target.value)}
-            aria-label="Choose balances design version"
-            className="h-7 min-w-[74px] appearance-none rounded border border-[#4c4f69] bg-[#fafafa] px-2 pr-5 text-[10px] font-medium text-[#4c4f69]"
-          >
-            <option value="v1">v1</option>
-            <option value="v2">v2</option>
-          </select>
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
-          >
-            ⌄
-          </span>
-        </div>
       </div>
 
-      {balanceDesignVersion === "v1" ? (
-        <div className="space-y-4">
-          <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
-            <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
-              <div className="flex items-center gap-2">
-                <span className="h-[2px] w-4 rounded-full" style={{ backgroundColor: balanceChart.primary }} />
-                <span>Current</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-4 border-t-2 border-dashed"
-                  style={{ borderTopColor: balanceChart.secondary }}
-                />
-                <span>With Offer</span>
-              </div>
+      <div className="space-y-4">
+        <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
+          <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
+            <div className="flex items-center gap-2">
+              <span className="h-[2px] w-4 rounded-full" style={{ backgroundColor: balanceChart.primary }} />
+              <span>Current</span>
             </div>
-            <div className="h-[240px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                  <defs>
-                    <linearGradient id="current-balance-fill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={balanceChart.primary} stopOpacity={0.22} />
-                      <stop offset="100%" stopColor={balanceChart.primary} stopOpacity={0.0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    stroke={balanceChart.grid}
-                    strokeDasharray="0"
-                    strokeOpacity={0.9}
-                    horizontal
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="date"
-                    interval={2}
-                    minTickGap={28}
-                    axisLine={false}
-                    tickLine={false}
-                    tickMargin={10}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
-                  />
-                  <YAxis
-                    domain={[-30, "auto"]}
-                    allowDataOverflow
-                    axisLine={false}
-                    tickLine={false}
-                    tickCount={6}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
-                    tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
-                  />
-                  <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="2 4" strokeOpacity={0.9} />
-                  <Tooltip
-                    formatter={(value) => `$${value}k`}
-                    labelStyle={{ fontSize: 10, fontWeight: 600, marginBottom: 2 }}
-                    itemStyle={{ fontSize: 10, padding: 0 }}
-                    contentStyle={{
-                      border: "1px solid #d9d9d9",
-                      borderRadius: "8px",
-                      boxShadow: "none",
-                      backgroundColor: "#fafafa",
-                      padding: "6px 8px",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="current"
-                    stroke="none"
-                    fill="url(#current-balance-fill)"
-                    fillOpacity={1}
-                    baseValue={0}
-                    isAnimationActive={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="current"
-                    stroke={balanceChart.primary}
-                    strokeWidth={2}
-                    strokeOpacity={1}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    activeDot={{ r: 3, fill: balanceChart.primary, strokeWidth: 0 }}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="withOffer"
-                    stroke={balanceChart.secondary}
-                    strokeWidth={2}
-                    strokeDasharray="5 3"
-                    strokeOpacity={1}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    dot={false}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
+            <div className="flex items-center gap-2">
+              <span
+                className="w-4 border-t-2 border-dashed"
+                style={{ borderTopColor: balanceChart.secondary }}
+              />
+              <span>With Offer</span>
             </div>
           </div>
-
-          {renderMonthlyBalanceLists(true)}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="card-shadow rounded border border-[#d9d9d9] bg-[#fafafa] p-4">
-            <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
-              <div className="flex items-center gap-2">
-                <span className="h-[2px] w-4 rounded-full" style={{ backgroundColor: balanceChart.primary }} />
-                <span>Current</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-4 border-t-2 border-dashed"
-                  style={{ borderTopColor: balanceChart.secondary }}
+          <div className="h-[240px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                <defs>
+                  <linearGradient id="current-balance-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={balanceChart.primary} stopOpacity={0.22} />
+                    <stop offset="100%" stopColor={balanceChart.primary} stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  stroke={balanceChart.grid}
+                  strokeDasharray="0"
+                  strokeOpacity={0.9}
+                  horizontal
+                  vertical={false}
                 />
-                <span>With Offer</span>
-              </div>
-            </div>
-            <div className="h-[240px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                  <defs>
-                    <linearGradient id="current-balance-fill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={balanceChart.primary} stopOpacity={0.42} />
-                      <stop offset="100%" stopColor={balanceChart.primary} stopOpacity={0.08} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    stroke={balanceChart.grid}
-                    strokeDasharray="0"
-                    strokeOpacity={0.9}
-                    horizontal
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="date"
-                    interval={2}
-                    minTickGap={28}
-                    axisLine={false}
-                    tickLine={false}
-                    tickMargin={10}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
-                  />
-                  <YAxis
-                    domain={[-30, "auto"]}
-                    allowDataOverflow
-                    axisLine={false}
-                    tickLine={false}
-                    tickCount={6}
-                    tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
-                    tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
-                  />
-                  <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="2 4" strokeOpacity={0.9} />
-                  <Tooltip
-                    formatter={(value) => `$${value}k`}
-                    labelStyle={{ fontSize: 10, fontWeight: 600, marginBottom: 2 }}
-                    itemStyle={{ fontSize: 10, padding: 0 }}
-                    contentStyle={{
-                      border: "1px solid #d9d9d9",
-                      borderRadius: "8px",
-                      boxShadow: "none",
-                      backgroundColor: "#fafafa",
-                      padding: "6px 8px",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="current"
-                    stroke="none"
-                    fill="url(#current-balance-fill)"
-                    fillOpacity={1}
-                    baseValue={0}
-                    isAnimationActive={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="current"
-                    stroke={balanceChart.primary}
-                    strokeWidth={3}
-                    strokeOpacity={1}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    activeDot={{ r: 3, fill: balanceChart.primary, strokeWidth: 0 }}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="withOffer"
-                    stroke={balanceChart.secondary}
-                    strokeWidth={2.4}
-                    strokeDasharray="5 3"
-                    strokeOpacity={1}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    dot={false}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
+                <XAxis
+                  dataKey="date"
+                  interval={2}
+                  minTickGap={28}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
+                />
+                <YAxis
+                  domain={[-30, "auto"]}
+                  allowDataOverflow
+                  axisLine={false}
+                  tickLine={false}
+                  tickCount={6}
+                  tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
+                  tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
+                />
+                <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="2 4" strokeOpacity={0.9} />
+                <Tooltip
+                  formatter={(value) => `$${value}k`}
+                  labelStyle={{ fontSize: 10, fontWeight: 600, marginBottom: 2 }}
+                  itemStyle={{ fontSize: 10, padding: 0 }}
+                  contentStyle={{
+                    border: "1px solid #d9d9d9",
+                    borderRadius: "8px",
+                    boxShadow: "none",
+                    backgroundColor: "#fafafa",
+                    padding: "6px 8px",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="current"
+                  stroke="none"
+                  fill="url(#current-balance-fill)"
+                  fillOpacity={1}
+                  baseValue={0}
+                  isAnimationActive={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="current"
+                  stroke={balanceChart.primary}
+                  strokeWidth={2}
+                  strokeOpacity={1}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  activeDot={{ r: 3, fill: balanceChart.primary, strokeWidth: 0 }}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="withOffer"
+                  stroke={balanceChart.secondary}
+                  strokeWidth={2}
+                  strokeDasharray="5 3"
+                  strokeOpacity={1}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  dot={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
           </div>
-
-          {renderMonthlyBalanceLists(false)}
         </div>
-      )}
+
+        {renderMonthlyBalanceLists(true)}
+      </div>
     </section>
   )
 }

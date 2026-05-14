@@ -1,39 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
-import V1Overview from "./versions/V1Overview"
-import V1_1Overview from "./versions/V1_1Overview"
-import V2Overview from "./versions/V2Overview"
-import V3Overview from "./versions/V3Overview"
-import V3_1Overview from "./versions/V3_1Overview"
-import V3_2Overview from "./versions/V3_2Overview"
-import V3_3Overview from "./versions/V3_3Overview"
-import V3_4Overview from "./versions/V3_4Overview"
+import V3_5Overview from "./versions/V3_5Overview"
 import BalancesSection from "./components/BalancesSection"
 import DashboardPage from "./features/dashboard/DashboardPage"
 import NewApplicationPage from "./features/dashboard/NewApplicationPage"
-
-const metrics = [
-  {
-    title: "MONTHLY REVENUE",
-    value: "$14,586",
-    note: "Low Revenue",
-    tone: "text-amber-500",
-    icon: "https://www.figma.com/api/mcp/asset/7ae86bdb-10b7-4c23-9f15-9bf21da238b0",
-  },
-  {
-    title: "CURRENT LEVERAGE",
-    value: "23%",
-    note: "Acceptable Range",
-    tone: "text-[#3277FF]",
-    icon: "https://www.figma.com/api/mcp/asset/713d8352-e35a-4f6e-93c8-c944bf041395",
-  },
-  {
-    title: "MONTHLY MCA PAYOUT",
-    value: "$3,345",
-    note: "Paying $167.25 daily",
-    tone: "text-[#4c4f69]",
-  },
-]
 
 const initialPositions = [
   {
@@ -353,83 +323,23 @@ const monthlyBalanceSeries = [
 const BASE_LEVERAGE = 23
 const FUNDING_AMOUNT = 29472
 const FREQUENCIES = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
-const UI_FONT_OPTIONS = [
-  { value: "grotesk", label: "Schibsted Grotesk" },
-  { value: "helvetica", label: "Helvetica" },
-  { value: "helvetica-neue", label: "Helvetica Neue" },
-  { value: "inter", label: "Inter" },
-  { value: "dm-sans", label: "DM Sans" },
-  { value: "ibm-plex-sans", label: "IBM Plex Sans" },
-  { value: "ibm-plex-mono", label: "IBM Plex Mono" },
-  { value: "geist", label: "Geist" },
-  { value: "outfit", label: "Outfit" },
-  { value: "roboto", label: "Roboto" },
-  { value: "roboto-mono", label: "Roboto Mono" },
-  { value: "space-mono", label: "Space Mono" },
-]
-
-const VALID_UI_FONT_KEYS = new Set(UI_FONT_OPTIONS.map((option) => option.value))
-
-const UI_FONT_CLASS_BY_VALUE = {
-  helvetica: "font-ui-helvetica",
-  "helvetica-neue": "font-ui-helvetica-neue",
-  inter: "font-ui-inter",
-  "dm-sans": "font-ui-dm-sans",
-  "ibm-plex-sans": "font-ui-ibm-plex-sans",
-  "ibm-plex-mono": "font-ui-ibm-plex-mono",
-  geist: "font-ui-geist",
-  outfit: "font-ui-outfit",
-  roboto: "font-ui-roboto",
-  "roboto-mono": "font-ui-roboto-mono",
-  "space-mono": "font-ui-space-mono",
-}
-
-const COLOR_THEMES = [
-  { value: "light", label: "Light" },
-  { value: "teal", label: "Teal" },
-  { value: "green", label: "Green" },
-  { value: "indigo", label: "Indigo" },
-  { value: "tealDark", label: "Teal Dark" },
-  { value: "dark", label: "Dark" },
-  { value: "gruvboxLight", label: "Gruvbox Light" },
-  { value: "gruvbox", label: "Gruvbox Dark" },
-  { value: "ayuLight", label: "Ayu Light" },
-  { value: "ayuMirage", label: "Ayu Mirage" },
-  { value: "ayuDark", label: "Ayu Dark" },
-]
+const UI_FONT_CLASS = "font-ui-inter"
+const HEADER_BUTTON_CLASS =
+  "interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]"
+const HEADER_ICON_BUTTON_CLASS =
+  "inline-flex h-8 w-8 items-center justify-center text-[#4c4f69]"
+const SIDEBAR_SECTION_CLASS = "border-b border-[#d9d9d9] pb-4"
+const FIELD_SHELL_CLASS = "flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]"
+const FIELD_LABEL_CLASS = "mb-1 text-[11px] font-medium text-[#4c4f69]"
 
 /** Daily balance chart — keyed by nav theme */
 const CHART_PALETTE_BY_MODE = {
-  light: {
-    primary: "#3277FF",
-    secondary: "#94a3b8",
-    grid: "#eef2f7",
-    tooltipCursor: "#dbe6ff",
-    refLine: "#fca5a5",
-    axisTick: "#94a3b8",
-  },
   teal: {
     primary: "#1a8f88",
     secondary: "#64748b",
     grid: "#e2e8f0",
     tooltipCursor: "rgba(26, 143, 136, 0.28)",
     refLine: "#fca5a5",
-    axisTick: "#64748b",
-  },
-  green: {
-    primary: "#16a34a",
-    secondary: "#64748b",
-    grid: "#f1f5f9",
-    tooltipCursor: "rgba(22, 163, 74, 0.28)",
-    refLine: "#ef4444",
-    axisTick: "#64748b",
-  },
-  indigo: {
-    primary: "#4f46e5",
-    secondary: "#64748b",
-    grid: "#f1f5f9",
-    tooltipCursor: "rgba(79, 70, 229, 0.22)",
-    refLine: "#ef4444",
     axisTick: "#64748b",
   },
   tealDark: {
@@ -440,54 +350,6 @@ const CHART_PALETTE_BY_MODE = {
     refLine: "#fb7185",
     axisTick: "#94a3b8",
   },
-  dark: {
-    primary: "#6ea8ff",
-    secondary: "#94a3b8",
-    grid: "#2a3f5c",
-    tooltipCursor: "rgba(110, 168, 255, 0.35)",
-    refLine: "#fb7185",
-    axisTick: "#94a3b8",
-  },
-  gruvboxLight: {
-    primary: "#458588",
-    secondary: "#665c54",
-    grid: "#ebdbb2",
-    tooltipCursor: "rgba(69, 133, 136, 0.28)",
-    refLine: "#cc241d",
-    axisTick: "#665c54",
-  },
-  gruvbox: {
-    primary: "#83a598",
-    secondary: "#a89984",
-    grid: "#3c3836",
-    tooltipCursor: "rgba(131, 165, 152, 0.35)",
-    refLine: "#fb4934",
-    axisTick: "#a89984",
-  },
-  ayuLight: {
-    primary: "#399ee6",
-    secondary: "#8a9199",
-    grid: "#e8ecf0",
-    tooltipCursor: "rgba(57, 158, 230, 0.28)",
-    refLine: "#e5474f",
-    axisTick: "#8a9199",
-  },
-  ayuMirage: {
-    primary: "#73d0ff",
-    secondary: "#9ea6b7",
-    grid: "#2a3142",
-    tooltipCursor: "rgba(115, 208, 255, 0.35)",
-    refLine: "#f28779",
-    axisTick: "#9ea6b7",
-  },
-  ayuDark: {
-    primary: "#59c2ff",
-    secondary: "#8791a3",
-    grid: "#1b2230",
-    tooltipCursor: "rgba(89, 194, 255, 0.35)",
-    refLine: "#f26d78",
-    axisTick: "#8791a3",
-  },
 }
 const underwritingSteps = [
   "Submitted",
@@ -496,29 +358,6 @@ const underwritingSteps = [
   "Signed",
   "Final Underwriting",
   "Funded",
-]
-const monthlyBreakdownRows = [
-  {
-    month: "December 2025",
-    revenue: "$52,410",
-    leverage: "5%",
-    mcaPayout: "$10,650",
-    note: "Seasonal equipment demand drove higher card deposits.",
-  },
-  {
-    month: "January 2026",
-    revenue: "$61,780",
-    leverage: "10%",
-    mcaPayout: "$11,240",
-    note: "Collections improved while payouts stayed stable.",
-  },
-  {
-    month: "February 2026",
-    revenue: "$60,040",
-    leverage: "8%",
-    mcaPayout: "$10,035",
-    note: "Short month with consistent paydown and fewer reversal days.",
-  },
 ]
 const v11MonthlyBreakdownRows = [
   {
@@ -543,52 +382,23 @@ const v11MonthlyBreakdownRows = [
     note: "Revenue trended lower again with softer statement inflows.",
   },
 ]
-const keyMetricCompanyRows = [
-  { company: "Advance Syndicate", leverage: "10%", payout: "$1,125" },
-  { company: "EBF Holdings", leverage: "8%", payout: "$1,050" },
-  { company: "CFG Merchant Solutions", leverage: "5%", payout: "$1,170" },
-]
-const VERSION_OPTIONS = [
-  { value: "v1", label: "v1" },
-  { value: "v1.1", label: "v1.1" },
-  { value: "v2", label: "v2" },
-  { value: "v3", label: "v3" },
-  { value: "v3.1", label: "v3.1" },
-  { value: "v3.2", label: "v3.2" },
-  { value: "v3.3", label: "v3.3" },
-  { value: "v3.4", label: "v3.4" },
-]
-
-/** Former v4–v7: shared v3 layout family */
-const V3_POINT_VERSIONS = ["v3.1", "v3.2", "v3.3", "v3.4"]
-
 const LEGACY_VERSION_PATH = {
-  "/v4": "/v3.1",
-  "/v5": "/v3.2",
-  "/v6": "/v3.3",
-  "/v7": "/v3.4",
+  "/": "/v3.5",
+  "/v1": "/v3.5",
+  "/v1.1": "/v3.5",
+  "/v2": "/v3.5",
+  "/v3": "/v3.5",
+  "/v3.1": "/v3.5",
+  "/v3.2": "/v3.5",
+  "/v3.3": "/v3.5",
+  "/v3.4": "/v3.5",
+  "/v4": "/v3.5",
+  "/v5": "/v3.5",
+  "/v6": "/v3.5",
+  "/v7": "/v3.5",
 }
 
-const getVersionFromPath = (pathname) => {
-  if (pathname === "/v1.1") return "v1.1"
-  if (pathname === "/v2") return "v2"
-  if (pathname === "/v3") return "v3"
-  if (pathname === "/v3.1" || pathname === "/v4") return "v3.1"
-  if (pathname === "/v3.2" || pathname === "/v5") return "v3.2"
-  if (pathname === "/v3.3" || pathname === "/v6") return "v3.3"
-  if (pathname === "/v3.4" || pathname === "/v7") return "v3.4"
-  return "v1"
-}
-const getPathFromVersion = (version) => {
-  if (version === "v1.1") return "/v1.1"
-  if (version === "v2") return "/v2"
-  if (version === "v3") return "/v3"
-  if (version === "v3.1") return "/v3.1"
-  if (version === "v3.2") return "/v3.2"
-  if (version === "v3.3") return "/v3.3"
-  if (version === "v3.4") return "/v3.4"
-  return "/"
-}
+const getApplicationPath = () => "/v3.5"
 const getViewFromPath = (pathname) => {
   if (pathname.endsWith("/dashboard/new-application")) return "dashboard"
   if (pathname.endsWith("/dashboard")) return "dashboard"
@@ -655,21 +465,11 @@ function App() {
   const appRef = useRef(null)
   const isPageTransitioningRef = useRef(false)
   const isNewApplicationPath = window.location.pathname.endsWith("/dashboard/new-application")
-  const [activeVersion, setActiveVersion] = useState(() => getVersionFromPath(window.location.pathname))
   const [activeView, setActiveView] = useState(() => getViewFromPath(window.location.pathname))
   const [isNewApplicationOpen, setIsNewApplicationOpen] = useState(() => isNewApplicationPath)
   const [dashboardActiveCard, setDashboardActiveCard] = useState("applications")
   const [activeApplicationId, setActiveApplicationId] = useState("777")
-  const [colorMode, setColorMode] = useState("light")
-  const [uiFont, setUiFont] = useState(() => {
-    try {
-      const stored = window.localStorage.getItem("steddy-ui-font")
-      if (stored && VALID_UI_FONT_KEYS.has(stored)) return stored
-    } catch {
-      /* ignore */
-    }
-    return "grotesk"
-  })
+  const [colorMode, setColorMode] = useState("teal")
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isApplicationInfoOpen, setIsApplicationInfoOpen] = useState(false)
   const [isAiDecisionOpen, setIsAiDecisionOpen] = useState(false)
@@ -696,7 +496,17 @@ function App() {
     Object.fromEntries(initialPositions.map((position) => [position.id, true])),
   )
   const [activePositionChips, setActivePositionChips] = useState({})
-  const [selectedPositionChip, setSelectedPositionChip] = useState(null)
+  const [selectedPositionChip, setSelectedPositionChip] = useState(() => {
+    const firstPositionWithWithdrawal = initialPositions.find((position) => position.chips.length > 0)
+    const firstWithdrawal = firstPositionWithWithdrawal?.chips[0]
+    if (!firstPositionWithWithdrawal || !firstWithdrawal) return null
+    return {
+      positionId: firstPositionWithWithdrawal.id,
+      chipIndex: 0,
+      amount: firstWithdrawal.amount,
+      meta: firstWithdrawal.meta,
+    }
+  })
   const [transactionsSearchQuery, setTransactionsSearchQuery] = useState("")
   const [transactionsAccountFilter, setTransactionsAccountFilter] = useState("all")
   const [transactionsMonthFilter, setTransactionsMonthFilter] = useState("all")
@@ -730,18 +540,7 @@ function App() {
   const totalLeverage = BASE_LEVERAGE + calculator.leverageDelta
   const formatCurrency = (value) =>
     value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
-  const netCashFlowRows = [
-    { month: "December 2025", net: -420 },
-    { month: "January 2026", net: 120 },
-    { month: "February 2026", net: -860 },
-  ]
-  const totalNetCashFlow = netCashFlowRows.reduce((sum, row) => sum + row.net, 0)
-  const netCashFlowIsPositive = totalNetCashFlow >= 0
-  const netCashFlowTotalLabel = `${netCashFlowIsPositive ? "+" : "-"}$${formatCurrency(Math.abs(totalNetCashFlow))}`
-  const supportsChipFilters = V3_POINT_VERSIONS.includes(activeVersion)
-  const selectedPosition = selectedPositionChip
-    ? positionsData.find((position) => position.id === selectedPositionChip.positionId) ?? null
-    : null
+  const supportsChipFilters = true
   const filteredTransactions =
     supportsChipFilters && selectedPositionChip
       ? weeklyDeductionTransactions.filter(
@@ -811,17 +610,11 @@ function App() {
   const v34CurrentLeverageValue = FUNDING_AMOUNT > 0 ? (v34McaPayoutValue / FUNDING_AMOUNT) * 100 : 0
   const v34McaPayoutLabel = `$${formatCurrency(v34McaPayoutValue)}`
   const v34CurrentLeverageLabel = `${Math.round(v34CurrentLeverageValue)}%`
-  const activeMonthlyBreakdownRows =
-    activeVersion === "v1.1" || activeVersion === "v3.4" ? v11MonthlyBreakdownRows : monthlyBreakdownRows
-  const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.light
+  const activeMonthlyBreakdownRows = v11MonthlyBreakdownRows
+  const balanceChart = CHART_PALETTE_BY_MODE[colorMode] ?? CHART_PALETTE_BY_MODE.teal
   const activeUnderwritingStep = 1
-  const isDarkLikeMode =
-    colorMode === "dark" ||
-    colorMode === "tealDark" ||
-    colorMode === "gruvbox" ||
-    colorMode === "ayuMirage" ||
-    colorMode === "ayuDark"
-  const usesV34PositionStyles = activeVersion === "v3.4" || activeVersion === "v1.1"
+  const isDarkLikeMode = colorMode === "tealDark"
+  const usesV34PositionStyles = true
 
   const resetDraftPosition = () => {
     setDraftPosition({
@@ -1002,8 +795,6 @@ function App() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const parsedVersion = getVersionFromPath(window.location.pathname)
-      setActiveVersion(parsedVersion)
       setActiveView(getViewFromPath(window.location.pathname))
       setIsNewApplicationOpen(window.location.pathname.endsWith("/dashboard/new-application"))
     }
@@ -1018,28 +809,10 @@ function App() {
     }
   }, [])
 
-  useEffect(() => {
-    if ((activeVersion !== "v3.3" && activeVersion !== "v3.4") || selectedPositionChip) return
-    const firstPositionWithWithdrawal = positionsData.find((position) => position.chips.length > 0)
-    if (!firstPositionWithWithdrawal) return
-    const firstWithdrawal = firstPositionWithWithdrawal.chips[0]
-    setSelectedPositionChip({
-      positionId: firstPositionWithWithdrawal.id,
-      chipIndex: 0,
-      amount: firstWithdrawal.amount,
-      meta: firstWithdrawal.meta,
-    })
-  }, [activeVersion, positionsData, selectedPositionChip])
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem("steddy-ui-font", uiFont)
-    } catch {
-      /* ignore */
-    }
-  }, [uiFont])
-
-  const uiFontClass = UI_FONT_CLASS_BY_VALUE[uiFont] ?? ""
+  const appThemeClass = colorMode === "tealDark" ? "theme-teal-dark" : "theme-teal"
+  const toggleTealTheme = () => {
+    setColorMode((currentMode) => (currentMode === "tealDark" ? "teal" : "tealDark"))
+  }
 
   const runPageSlideTransition = (onMidpoint, direction = "forward") => {
     if (isPageTransitioningRef.current) return
@@ -1095,18 +868,6 @@ function App() {
     })
   }
 
-  const handleVersionChange = (event) => {
-    const nextVersion = event.target.value
-    runPageSlideTransition(() => {
-      const nextPath = getPathFromVersion(nextVersion)
-      if (window.location.pathname !== nextPath) {
-        window.history.pushState({}, "", nextPath)
-      }
-      setActiveView("application")
-      setActiveVersion(nextVersion)
-    })
-  }
-
   const handleBackToDashboard = () => {
     runPageSlideTransition(() => {
       if (window.location.pathname !== "/dashboard") {
@@ -1133,7 +894,7 @@ function App() {
 
   const handleOpenApplication = (applicationId = "777") => {
     runPageSlideTransition(() => {
-      const nextPath = getPathFromVersion(activeVersion)
+      const nextPath = getApplicationPath()
       if (window.location.pathname !== nextPath) {
         window.history.pushState({}, "", nextPath)
       }
@@ -1146,18 +907,7 @@ function App() {
     handleOpenApplication("777")
   }
 
-  const dashboardShellThemeClassName = `steddy-app flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
-    colorMode === "dark" ? "theme-dark" : ""
-  } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
-    colorMode === "indigo" ? "theme-indigo" : ""
-  } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
-    colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
-  } ${
-    colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
-  } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
-    colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
-  } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
-  }`
+  const dashboardShellThemeClassName = `steddy-app ${UI_FONT_CLASS} ${appThemeClass} flex h-screen w-full flex-col overflow-hidden bg-[#fafafa] text-[#1c1b1f]`
 
   if (activeView === "dashboard") {
     return (
@@ -1169,12 +919,6 @@ function App() {
             onNewApplication={handleOpenNewApplication}
             activeCard={dashboardActiveCard}
             setActiveCard={setDashboardActiveCard}
-            colorMode={colorMode}
-            setColorMode={setColorMode}
-            colorThemes={COLOR_THEMES}
-            uiFont={uiFont}
-            setUiFont={setUiFont}
-            uiFontOptions={UI_FONT_OPTIONS}
           />
           <div
             aria-hidden={!isNewApplicationOpen}
@@ -1199,128 +943,27 @@ function App() {
     )
   }
 
-  const renderVersionOverview = () => {
-    if (activeVersion === "v1") {
-      return (
-        <V1Overview
-          metrics={metrics}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-        />
-      )
-    }
-
-    if (activeVersion === "v1.1") {
-      return (
-        <V1_1Overview
-          metrics={metrics}
-          keyMetricCompanyRows={v34KeyMetricCompanyRows}
-          currentLeverageLabel={v34CurrentLeverageLabel}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-        />
-      )
-    }
-
-    if (activeVersion === "v2") {
-      return (
-        <V2Overview
-          monthlyBreakdownRows={monthlyBreakdownRows}
-          keyMetricCompanyRows={keyMetricCompanyRows}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-        />
-      )
-    }
-
-    if (activeVersion === "v3") {
-      return (
-        <V3Overview
-          monthlyBreakdownRows={monthlyBreakdownRows}
-          keyMetricCompanyRows={keyMetricCompanyRows}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-        />
-      )
-    }
-
-    if (activeVersion === "v3.1") {
-      return (
-        <V3_1Overview
-          monthlyBreakdownRows={monthlyBreakdownRows}
-          keyMetricCompanyRows={keyMetricCompanyRows}
-          netCashFlowRows={netCashFlowRows}
-          netCashFlowTotalLabel={netCashFlowTotalLabel}
-          netCashFlowIsPositive={netCashFlowIsPositive}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-          formatCurrency={formatCurrency}
-        />
-      )
-    }
-
-    if (activeVersion === "v3.2") {
-      return (
-        <V3_2Overview
-          monthlyBreakdownRows={monthlyBreakdownRows}
-          keyMetricCompanyRows={keyMetricCompanyRows}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-        />
-      )
-    }
-
-    if (activeVersion === "v3.3") {
-      return (
-        <V3_3Overview
-          monthlyBreakdownRows={monthlyBreakdownRows}
-          keyMetricCompanyRows={keyMetricCompanyRows}
-          setActiveMetricTitle={setActiveMetricTitle}
-          setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-          setActiveFlagPanel={setActiveFlagPanel}
-        />
-      )
-    }
-
-    return (
-      <V3_4Overview
-        monthlyBreakdownRows={monthlyBreakdownRows}
-        keyMetricCompanyRows={v34KeyMetricCompanyRows}
-        currentLeverageLabel={v34CurrentLeverageLabel}
-        mcaPayoutLabel={v34McaPayoutLabel}
-        setActiveMetricTitle={setActiveMetricTitle}
-        setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
-        setActiveFlagPanel={setActiveFlagPanel}
-      />
-    )
-  }
+  const renderVersionOverview = () => (
+    <V3_5Overview
+      monthlyBreakdownRows={activeMonthlyBreakdownRows}
+      keyMetricCompanyRows={v34KeyMetricCompanyRows}
+      currentLeverageLabel={v34CurrentLeverageLabel}
+      mcaPayoutLabel={v34McaPayoutLabel}
+      setActiveMetricTitle={setActiveMetricTitle}
+      setIsMonthlyBreakdownOpen={setIsMonthlyBreakdownOpen}
+      setActiveFlagPanel={setActiveFlagPanel}
+    />
+  )
 
   return (
     <div
       ref={appRef}
-      className={`steddy-app h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f] ${uiFontClass} ${
-        colorMode === "dark" ? "theme-dark" : ""
-      } ${colorMode === "teal" ? "theme-teal" : ""} ${colorMode === "green" ? "theme-green" : ""} ${
-        colorMode === "indigo" ? "theme-indigo" : ""
-      } ${colorMode === "gruvbox" ? "theme-gruvbox" : ""} ${
-        colorMode === "tealDark" ? "theme-dark theme-teal theme-teal-dark" : ""
-      } ${
-        colorMode === "gruvboxLight" ? "theme-gruvbox-light" : ""
-      } ${colorMode === "ayuLight" ? "theme-ayu-light" : ""} ${
-        colorMode === "ayuMirage" ? "theme-ayu-mirage" : ""
-      } ${colorMode === "ayuDark" ? "theme-ayu-dark" : ""
-      }`}
+      className={`steddy-app ${UI_FONT_CLASS} ${appThemeClass} h-screen w-full overflow-hidden bg-[#fafafa] text-[#1c1b1f]`}
     >
       <style>{TYPOGRAPHY_NORMALIZATION_CSS}</style>
       <header
         data-animate
-        className="flex h-16 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-6 lg:px-10"
+        className="flex h-14 items-center justify-between border-b border-[#d9d9d9] bg-[#fafafa] px-4 sm:px-5 lg:px-8"
       >
         <div className="flex items-center gap-2">
           <button
@@ -1336,26 +979,6 @@ function App() {
           <h1 className="text-base font-semibold tracking-tight text-[#1c1b1f] sm:text-lg">
             Application #{activeApplicationId}
           </h1>
-          <div className="relative">
-            <select
-              value={activeVersion}
-              onChange={handleVersionChange}
-              aria-label="Choose page version"
-              className="h-7 min-w-[56px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-5 text-[11px] font-medium text-[#4c4f69]"
-            >
-              {VERSION_OPTIONS.map((version) => (
-                <option key={version.value} value={version.value}>
-                  {version.label}
-                </option>
-              ))}
-            </select>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
-            >
-              ⌄
-            </span>
-          </div>
         </div>
 
         <div className="hidden items-center xl:flex">
@@ -1386,7 +1009,7 @@ function App() {
                 </div>
                 {index < underwritingSteps.length - 1 ? (
                   <span
-                    className={`mx-2 h-[1px] w-6 ${
+                    className={`mx-1.5 h-[1px] w-5 ${
                       index < activeUnderwritingStep ? "bg-[#0f9f9a]" : "bg-[#d9d9d9]"
                     }`}
                   />
@@ -1397,61 +1020,31 @@ function App() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="relative">
-            <select
-              value={uiFont}
-              onChange={(event) => setUiFont(event.target.value)}
-              aria-label="Choose UI font"
-              className="h-8 min-w-[170px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-xs font-medium text-[#4c4f69]"
-            >
-              {UI_FONT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
-            >
-              ⌄
+          <button
+            type="button"
+            onClick={toggleTealTheme}
+            aria-label={colorMode === "tealDark" ? "Switch to teal light mode" : "Switch to teal dark mode"}
+            className={HEADER_ICON_BUTTON_CLASS}
+          >
+            <span aria-hidden="true" className="material-symbols-rounded text-[18px] leading-none">
+              {colorMode === "tealDark" ? "light_mode" : "dark_mode"}
             </span>
-          </div>
-          <div className="relative">
-            <select
-              value={colorMode}
-              onChange={(event) => setColorMode(event.target.value)}
-              aria-label="Choose color theme"
-              className="h-8 min-w-[170px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-xs font-medium text-[#4c4f69]"
-            >
-              {COLOR_THEMES.map((themeOption) => (
-                <option key={themeOption.value} value={themeOption.value}>
-                  {themeOption.label}
-                </option>
-              ))}
-            </select>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
-            >
-              ⌄
-            </span>
-          </div>
-          <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
+          </button>
+          <button className={HEADER_BUTTON_CLASS}>
             Edit
           </button>
-          <button className="interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]">
+          <button className={HEADER_BUTTON_CLASS}>
             Export
           </button>
         </div>
       </header>
 
-      <main className="grid h-[calc(100vh-64px)] gap-0 lg:grid-cols-[370px_1fr]">
+      <main className="grid h-[calc(100vh-56px)] gap-0 lg:grid-cols-[350px_1fr]">
         <aside
           data-animate
-          className="flex h-[calc(100vh-64px)] flex-col border-r border-[#d9d9d9] bg-[#fafafa]"
+          className="flex h-[calc(100vh-56px)] flex-col border-r border-[#d9d9d9] bg-[#fafafa]"
         >
-          <div className="border-b border-[#d9d9d9] px-5 py-4">
+          <div className="border-b border-[#d9d9d9] px-4 py-3.5">
             <div className="flex items-center gap-3">
               <div className="grid size-10 place-items-center rounded-xl border border-[#3277FF] bg-[#e9f0ff]">
                 <svg
@@ -1500,8 +1093,8 @@ function App() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 py-4">
-            <div className="border-b border-[#d9d9d9] pb-4">
+          <div className="flex-1 overflow-y-auto px-4 py-4">
+            <div className={SIDEBAR_SECTION_CLASS}>
               <div className="mb-2 flex items-center justify-between text-xs font-light tracking-[0.06em] text-[#4c4f69]">
                 <span>AI DECISION</span>
                 <span className="tracking-normal">Confidence 94%</span>
@@ -1548,98 +1141,83 @@ function App() {
             <div className="pt-4">
               <div className="mb-2">
                 <h3 className="text-xs font-light tracking-[0.06em] text-[#4c4f69]">
-                  OFFER CALCULATOR
+                  OFFER IMPACT
                 </h3>
               </div>
 
-              <div className="space-y-2.5">
-                <div>
-                  <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FUNDING AMOUNT</p>
-                  <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                    <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">$</span>
-                    <span className="px-2 text-[12px] font-medium text-[#1c1b1f]">
-                      {formatCurrency(FUNDING_AMOUNT)}
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">LEVERAGE</p>
-                  <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                    <button
-                      type="button"
-                      className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                      onClick={() =>
-                        setCalculator((prev) => ({
-                          ...prev,
-                          leverageDelta: Math.max(prev.leverageDelta - 1, 0),
-                        }))
-                      }
-                    >
-                      −
-                    </button>
-                    <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
-                      {BASE_LEVERAGE} + <span className="text-[#3277FF]">{calculator.leverageDelta}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                      onClick={() =>
-                        setCalculator((prev) => ({
-                          ...prev,
-                          leverageDelta: Math.min(prev.leverageDelta + 1, 50),
-                        }))
-                      }
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">TERM (DAYS)</p>
-                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                      <button
-                        type="button"
-                        className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                        onClick={() =>
-                          setCalculator((prev) => ({ ...prev, termDays: Math.max(prev.termDays - 1, 1) }))
-                        }
-                      >
-                        −
-                      </button>
-                      <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
-                        {calculator.termDays}
-                      </span>
-                      <button
-                        type="button"
-                        className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
-                        onClick={() =>
-                          setCalculator((prev) => ({ ...prev, termDays: Math.min(prev.termDays + 1, 120) }))
-                        }
-                      >
-                        +
-                      </button>
+              <div className="rounded-md bg-[#efefef] px-3 py-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">
+                    Estimated {calculator.frequency.toLowerCase()} payment
+                  </p>
+                  <p className="mt-1 text-2xl font-bold leading-none text-[#1c1b1f]">
+                    ${formatCurrency(paymentAmount)}
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+                    <div>
+                      <p className="text-[#4c4f69]">Payback</p>
+                      <p className="mt-0.5 font-semibold text-[#1c1b1f]">${formatCurrency(paybackTotal)}</p>
+                    </div>
+                    <div>
+                      <p className="text-[#4c4f69]">Leverage</p>
+                      <p className="mt-0.5 font-semibold text-[#1c1b1f]">{totalLeverage}%</p>
                     </div>
                   </div>
+              </div>
+
+              <div className="mt-3 space-y-2.5">
+                  <div className="grid grid-cols-[minmax(0,1fr)_108px] gap-2">
+                    <div>
+                      <p className={FIELD_LABEL_CLASS}>FUNDING</p>
+                      <div className={FIELD_SHELL_CLASS}>
+                        <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">$</span>
+                        <span className="px-2 text-[12px] font-medium text-[#1c1b1f]">
+                          {formatCurrency(FUNDING_AMOUNT)}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className={FIELD_LABEL_CLASS}>FREQUENCY</p>
+                      <div className="relative">
+                        <select
+                          value={calculator.frequency}
+                          onChange={(event) =>
+                            setCalculator((prev) => ({ ...prev, frequency: event.target.value }))
+                          }
+                          className="h-10 w-full appearance-none rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 pr-6 text-[12px] font-medium text-[#1c1b1f]"
+                        >
+                          {FREQUENCIES.map((frequency) => (
+                            <option key={frequency} value={frequency}>
+                              {frequency}
+                            </option>
+                          ))}
+                        </select>
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
+                        >
+                          ⌄
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
-                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FACTOR</p>
-                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
+                    <p className={FIELD_LABEL_CLASS}>LEVERAGE</p>
+                    <div className={FIELD_SHELL_CLASS}>
                       <button
                         type="button"
                         className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
                         onClick={() =>
                           setCalculator((prev) => ({
                             ...prev,
-                            factor: Math.max(Number((prev.factor - 0.01).toFixed(2)), 1),
+                            leverageDelta: Math.max(prev.leverageDelta - 1, 0),
                           }))
                         }
                       >
-                        −
+                        -
                       </button>
                       <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
-                        {calculator.factor.toFixed(2)}
+                        {BASE_LEVERAGE}% base + <span className="text-[#3277FF]">{calculator.leverageDelta}%</span>
                       </span>
                       <button
                         type="button"
@@ -1647,7 +1225,7 @@ function App() {
                         onClick={() =>
                           setCalculator((prev) => ({
                             ...prev,
-                            factor: Math.min(Number((prev.factor + 0.01).toFixed(2)), 2),
+                            leverageDelta: Math.min(prev.leverageDelta + 1, 50),
                           }))
                         }
                       >
@@ -1655,57 +1233,67 @@ function App() {
                       </button>
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">PAYMENT</p>
-                    <div className="flex h-10 items-center overflow-hidden rounded-md border border-[#d9d9d9] bg-[#fafafa]">
-                      <span className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]">$</span>
-                      <span className="px-2 text-[12px] font-medium text-[#1c1b1f]">
-                        {formatCurrency(paymentAmount)}
-                      </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className={FIELD_LABEL_CLASS}>TERM</p>
+                      <div className={FIELD_SHELL_CLASS}>
+                        <button
+                          type="button"
+                          className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                          onClick={() =>
+                            setCalculator((prev) => ({ ...prev, termDays: Math.max(prev.termDays - 1, 1) }))
+                          }
+                        >
+                          -
+                        </button>
+                        <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
+                          {calculator.termDays} days
+                        </span>
+                        <button
+                          type="button"
+                          className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                          onClick={() =>
+                            setCalculator((prev) => ({ ...prev, termDays: Math.min(prev.termDays + 1, 120) }))
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <p className={FIELD_LABEL_CLASS}>FACTOR</p>
+                      <div className={FIELD_SHELL_CLASS}>
+                        <button
+                          type="button"
+                          className="grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                          onClick={() =>
+                            setCalculator((prev) => ({
+                              ...prev,
+                              factor: Math.max(Number((prev.factor - 0.01).toFixed(2)), 1),
+                            }))
+                          }
+                        >
+                          -
+                        </button>
+                        <span className="flex-1 text-center text-[12px] font-medium text-[#1c1b1f]">
+                          {calculator.factor.toFixed(2)}
+                        </span>
+                        <button
+                          type="button"
+                          className="grid h-full w-7 place-items-center border-l border-[#d9d9d9] bg-[#efefef] text-[13px] text-[#4c4f69]"
+                          onClick={() =>
+                            setCalculator((prev) => ({
+                              ...prev,
+                              factor: Math.min(Number((prev.factor + 0.01).toFixed(2)), 2),
+                            }))
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <p className="mb-1 text-[11px] font-medium text-[#4c4f69]">FREQUENCY</p>
-                    <div className="relative">
-                      <select
-                        value={calculator.frequency}
-                        onChange={(event) =>
-                          setCalculator((prev) => ({ ...prev, frequency: event.target.value }))
-                        }
-                        className="h-10 w-full appearance-none rounded-md border border-[#d9d9d9] bg-[#fafafa] px-2 pr-6 text-[12px] font-medium text-[#1c1b1f]"
-                      >
-                        {FREQUENCIES.map((frequency) => (
-                          <option key={frequency} value={frequency}>
-                            {frequency}
-                          </option>
-                        ))}
-                      </select>
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#4c4f69]"
-                      >
-                        ⌄
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-md border border-[#d9d9d9] bg-[#efefef] px-3 py-2">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-[#4c4f69]">Payback Total</span>
-                    <span className="text-[12px] font-semibold text-[#1c1b1f]">
-                      ${formatCurrency(paybackTotal)}
-                    </span>
-                  </div>
-                  <div className="mt-1 flex items-center justify-between text-[11px]">
-                    <span className="text-[#4c4f69]">Total Leverage</span>
-                    <span className="text-[12px] font-semibold text-[#1c1b1f]">{totalLeverage}%</span>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
@@ -1729,7 +1317,7 @@ function App() {
 
         <section
           data-animate
-          className="h-[calc(100vh-64px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-6 lg:p-8"
+          className="h-[calc(100vh-56px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-5 lg:p-7"
         >
           <div className="w-full space-y-4 sm:space-y-6 lg:space-y-8">
             {renderVersionOverview()}
@@ -1904,43 +1492,6 @@ function App() {
                             </svg>
                           </button>
                         </div>
-                        {activeVersion === "v3.3" ? (
-                          <div className="mb-4">
-                            <p className={`text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
-                              Withdrawals
-                            </p>
-                            {position.chips.length ? (
-                              position.chips.map((chip, chipIndex) => (
-                                <button
-                                  key={`${position.id}-withdrawal-${chipIndex}`}
-                                  type="button"
-                                  onClick={() =>
-                                    setSelectedPositionChip({
-                                      positionId: position.id,
-                                      chipIndex,
-                                      amount: chip.amount,
-                                      meta: chip.meta,
-                                    })
-                                  }
-                                  className={`block rounded px-1 py-0.5 text-[10px] transition-colors ${
-                                    selectedPositionChip?.positionId === position.id &&
-                                    selectedPositionChip?.chipIndex === chipIndex
-                                      ? "bg-[#3277FF] text-[#fafafa]"
-                                      : on
-                                        ? "text-[#4c4f69] hover:bg-[#efefef]"
-                                        : "text-[#9b9bb0]"
-                                  }`}
-                                >
-                                  {chip.amount} | {chip.meta.toLowerCase()}
-                                </button>
-                              ))
-                            ) : (
-                              <p className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
-                                No withdrawals added
-                              </p>
-                            )}
-                          </div>
-                        ) : (
                           <div
                             className={`mb-4 flex flex-col items-start gap-1.5 text-[10px] transition-opacity ${
                               on ? "opacity-100" : "opacity-45"
@@ -2044,7 +1595,6 @@ function App() {
                               )
                             })}
                           </div>
-                        )}
                         <p className={`text-[11px] font-medium ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>Deposits</p>
                         {position.deposits.length ? (
                           position.deposits.map((deposit) => (

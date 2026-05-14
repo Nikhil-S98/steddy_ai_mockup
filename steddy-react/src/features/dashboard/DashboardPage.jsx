@@ -16,12 +16,6 @@ export default function DashboardPage({
   onNewApplication,
   activeCard,
   setActiveCard,
-  colorMode,
-  setColorMode,
-  colorThemes,
-  uiFont,
-  setUiFont,
-  uiFontOptions,
 }) {
   const tableViewportRef = useRef(null)
   const listCardContainerRef = useRef(null)
@@ -104,12 +98,6 @@ export default function DashboardPage({
   return (
     <div className="h-full min-h-0 flex flex-col">
       <DashboardShell
-        colorMode={colorMode}
-        setColorMode={setColorMode}
-        colorThemes={colorThemes}
-        uiFont={uiFont}
-        setUiFont={setUiFont}
-        uiFontOptions={uiFontOptions}
         activeCard={activeCard}
         setActiveCard={setActiveCard}
         onCardSelect={handleSidebarCardChange}
