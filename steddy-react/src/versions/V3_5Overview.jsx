@@ -18,7 +18,7 @@ export default function V3_5Overview({
           <div className="mb-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <span aria-hidden="true" className="material-symbols-rounded text-[#4c4f69]">
-                query_stats
+                bar_chart_4_bars
               </span>
               <h3 className="text-base font-bold leading-none">Key Financial Metrics</h3>
             </div>
@@ -98,29 +98,25 @@ export default function V3_5Overview({
               onClick={() => setActiveFlagPanel("irregularities")}
               className={MINI_CARD_CLASS}
             >
-              <p className="text-sm font-semibold leading-none text-[#1c1b1f]">Irregularities</p>
-              <div className="mt-2 border-t border-[#d9d9d9]" />
-              <div className="mt-2 space-y-2.5">
+              <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">RETURNED ITEMS</p>
+              <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">23</p>
+              <div className="mt-3 space-y-2.5">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">Missed Payments</span>
-                  <span className="font-semibold text-[#1c1b1f]">3</span>
+                  <span className="text-[#4c4f69]">January</span>
+                  <span className="font-semibold text-[#1c1b1f]">7</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">NSFs</span>
-                  <span className="font-semibold text-[#1c1b1f]">5</span>
+                  <span className="text-[#4c4f69]">February</span>
+                  <span className="font-semibold text-[#1c1b1f]">8</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">Negative Days</span>
-                  <span className="font-semibold text-[#d20f39]">21</span>
-                </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4c4f69]">Number of Overdrafts</span>
-                  <span className="font-semibold text-[#d20f39]">24</span>
+                  <span className="text-[#4c4f69]">March</span>
+                  <span className="font-semibold text-[#1c1b1f]">8</span>
                 </div>
               </div>
               <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#d20f39]">
                 <span className="inline-block size-2 rounded-full bg-current" />
-                High amount of negative days
+                Returned item activity present
               </p>
             </article>
             <div className="grid h-full gap-3 lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)]">

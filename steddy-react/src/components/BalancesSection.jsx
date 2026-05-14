@@ -12,7 +12,7 @@ import {
 
 export default function BalancesSection({ balanceData, monthlyBalanceSeries, balanceChart }) {
   const renderMonthlyBalanceLists = (useSplitColumns) => (
-    <div className="grid gap-3 lg:grid-cols-3">
+    <div className="grid gap-5 lg:grid-cols-3">
       {monthlyBalanceSeries.map((series) => {
         const [monthName, year] = series.month.split(" ")
         const monthNumber = new Date(`${monthName} 1, ${year}`).getMonth() + 1
@@ -34,7 +34,7 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
             key={`balance-list-${series.month}`}
             className="card-shadow overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]"
           >
-            <div className="border-b border-[#d9d9d9] px-3 py-2">
+            <div className="border-b border-[#d9d9d9] px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-xs font-semibold text-[#1c1b1f]">{series.month}</h4>
                 {negativeDaysCount > 0 ? (
@@ -44,10 +44,10 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                 ) : null}
               </div>
             </div>
-            <div className={useSplitColumns ? "grid gap-10 px-3 py-2 lg:grid-cols-3" : "px-3 py-2"}>
+            <div className={useSplitColumns ? "grid gap-12 px-4 py-3 lg:grid-cols-3" : "px-4 py-3"}>
               {ledgerColumns.map((columnRows, columnIndex) => (
                 <div key={`${series.month}-column-${columnIndex}`} className="min-w-0">
-                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#d9d9d9] pb-1 text-[8px] font-semibold uppercase tracking-wide text-[#4c4f69]">
+                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#d9d9d9] pb-1.5 text-[8px] font-semibold uppercase tracking-wide text-[#4c4f69]">
                     <span>Date</span>
                     <span className="text-right whitespace-nowrap">Balance ($)</span>
                   </div>
@@ -55,12 +55,12 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                     {columnRows.map((entry, idx) => (
                       (() => {
                         const isNegative = entry.balance < 0
-                        const rowTone = isNegative ? "text-[#c2410c]" : "text-[#4c4f69]"
+                        const rowTone = isNegative ? "text-[#b91c1c]" : "text-[#4c4f69]"
                         const valueTone = isNegative ? "text-[#b91c1c]" : "text-[#1c1b1f]"
                         return (
                       <div
                         key={`list-${series.month}-${columnIndex}-${entry.day}-${idx}`}
-                        className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#efefef] py-1 text-[10px] last:border-b-0"
+                        className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-b border-[#efefef] py-1.5 text-[10px] last:border-b-0"
                       >
                         <span className={rowTone}>
                           {String(monthNumber).padStart(2, "0")}/{String(Number(entry.day)).padStart(2, "0")}

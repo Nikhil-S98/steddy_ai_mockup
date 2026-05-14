@@ -49,32 +49,104 @@ const initialPositions = [
 ]
 
 const transactions = [
+  { date: "Mar 31", description: "Customer Payment — Inv #4638", credit: true, value: "$7,920" },
+  { date: "Mar 31", description: "Payroll — 12 employees", credit: false, value: "$12,400" },
+  { date: "Mar 30", description: "Deposit — Stripe Payout", credit: true, value: "$3,845" },
+  { date: "Mar 30", description: "Rapid Capital ACH", credit: false, value: "$890" },
+  { date: "Mar 29", description: "Wire Transfer — Parts Supplier", credit: false, value: "$4,780" },
+  { date: "Mar 29", description: "POS Batch Deposit", credit: true, value: "$2,965" },
+  { date: "Mar 28", description: "Fuel Expense", credit: false, value: "$318" },
+  { date: "Mar 28", description: "Online Sales Transfer", credit: true, value: "$2,740" },
+  { date: "Mar 27", description: "Equipment Lease", credit: false, value: "$1,050" },
+  { date: "Mar 27", description: "Customer Wire", credit: true, value: "$5,850" },
+  { date: "Mar 26", description: "Insurance Premium", credit: false, value: "$928" },
+  { date: "Mar 26", description: "Card Settlement", credit: true, value: "$2,215" },
+  { date: "Mar 25", description: "Merchant Cash Advance", credit: false, value: "$2,652" },
+  { date: "Mar 25", description: "Sales Deposit", credit: true, value: "$6,430" },
+  { date: "Mar 24", description: "Utilities — Electric", credit: false, value: "$438" },
+  { date: "Mar 24", description: "Refund — Customer Return", credit: false, value: "$220" },
+  { date: "Mar 24", description: "Returned Item — POS Debit", credit: false, value: "$185" },
+  { date: "Mar 23", description: "Marketplace Payout", credit: true, value: "$1,940" },
+  { date: "Mar 23", description: "Vehicle Maintenance", credit: false, value: "$745" },
+  { date: "Mar 23", description: "Returned Item — Customer ACH", credit: false, value: "$415" },
+  { date: "Mar 22", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,560" },
+  { date: "Mar 22", description: "Returned Item — ACH Debit", credit: false, value: "$310" },
+  { date: "Mar 21", description: "Customer Payment — Inv #4622", credit: true, value: "$3,680" },
+  { date: "Mar 21", description: "Office Supplies", credit: false, value: "$185" },
+  { date: "Mar 21", description: "Returned Item — Check Deposit", credit: false, value: "$525" },
+  { date: "Mar 20", description: "Deposit — Equipment Sale", credit: true, value: "$3,400" },
+  { date: "Mar 20", description: "Tax Withholding Transfer", credit: false, value: "$1,515" },
+  { date: "Mar 20", description: "Returned Item — ACH Debit", credit: false, value: "$295" },
+  { date: "Mar 19", description: "Service Revenue Deposit", credit: true, value: "$2,875" },
+  { date: "Mar 19", description: "Loan Servicing Fee", credit: false, value: "$520" },
+  { date: "Mar 19", description: "Returned Item — Remote Deposit", credit: false, value: "$610" },
+  { date: "Mar 18", description: "Returned Item — ACH Debit", credit: false, value: "$340" },
+  { date: "Mar 18", description: "Returned Item — Customer Check", credit: false, value: "$475" },
   { date: "Feb 28", description: "Customer Payment — Inv #4521", credit: true, value: "$8,450" },
   { date: "Feb 28", description: "Rapid Capital ACH", credit: false, value: "$890" },
   { date: "Feb 28", description: "Payroll — 12 employees", credit: false, value: "$12,400" },
   { date: "Feb 27", description: "Wire Transfer — Vendor", credit: false, value: "$4,200" },
   { date: "Feb 27", description: "Deposit — Stripe Payout", credit: true, value: "$3,120" },
   { date: "Feb 26", description: "Equipment Lease", credit: false, value: "$1,050" },
-  { date: "Feb 26", description: "ACH Return — NSF", credit: false, value: "$275" },
+  { date: "Feb 26", description: "Returned Item — ACH Debit", credit: false, value: "$275" },
   { date: "Feb 25", description: "Merchant Cash Advance", credit: false, value: "$2,652" },
   { date: "Feb 25", description: "Sales Deposit", credit: true, value: "$6,890" },
   { date: "Feb 24", description: "Utilities — Electric", credit: false, value: "$412" },
   { date: "Feb 24", description: "Refund — Overpayment", credit: true, value: "$180" },
+  { date: "Feb 24", description: "Returned Item — POS Debit", credit: false, value: "$198" },
   { date: "Feb 23", description: "Insurance Premium", credit: false, value: "$928" },
+  { date: "Feb 23", description: "Returned Item — Customer ACH", credit: false, value: "$405" },
   { date: "Feb 22", description: "POS Batch Deposit", credit: true, value: "$2,780" },
   { date: "Feb 22", description: "Fuel Expense", credit: false, value: "$265" },
+  { date: "Feb 22", description: "Returned Item — Check Deposit", credit: false, value: "$550" },
   { date: "Feb 21", description: "Card Settlement", credit: true, value: "$1,940" },
   { date: "Feb 21", description: "Loan Servicing Fee", credit: false, value: "$520" },
+  { date: "Feb 21", description: "Returned Item — ACH Debit", credit: false, value: "$315" },
   { date: "Feb 20", description: "ACH Deposit — Retail Sales", credit: true, value: "$4,160" },
   { date: "Feb 20", description: "Equipment Repair", credit: false, value: "$1,120" },
+  { date: "Feb 20", description: "Returned Item — Remote Deposit", credit: false, value: "$620" },
   { date: "Feb 19", description: "Online Sales Transfer", credit: true, value: "$2,305" },
   { date: "Feb 19", description: "Office Supplies", credit: false, value: "$148" },
+  { date: "Feb 19", description: "Returned Item — Customer Check", credit: false, value: "$480" },
   { date: "Feb 18", description: "Customer Wire", credit: true, value: "$5,400" },
   { date: "Feb 18", description: "Insurance Adjustment", credit: false, value: "$342" },
+  { date: "Feb 18", description: "Returned Item — ACH Debit", credit: false, value: "$365" },
   { date: "Feb 17", description: "Marketplace Payout", credit: true, value: "$1,685" },
   { date: "Feb 17", description: "Vehicle Maintenance", credit: false, value: "$690" },
   { date: "Feb 16", description: "Weekend Deposit", credit: true, value: "$2,110" },
   { date: "Feb 16", description: "Tax Withholding Transfer", credit: false, value: "$1,470" },
+  { date: "Jan 31", description: "Customer Payment — Inv #4418", credit: true, value: "$7,780" },
+  { date: "Jan 31", description: "Payroll — 12 employees", credit: false, value: "$12,400" },
+  { date: "Jan 30", description: "Deposit — Stripe Payout", credit: true, value: "$3,265" },
+  { date: "Jan 30", description: "Rapid Capital ACH", credit: false, value: "$890" },
+  { date: "Jan 29", description: "Wire Transfer — Vendor", credit: false, value: "$3,950" },
+  { date: "Jan 29", description: "POS Batch Deposit", credit: true, value: "$2,640" },
+  { date: "Jan 28", description: "Fuel Expense", credit: false, value: "$286" },
+  { date: "Jan 28", description: "Online Sales Transfer", credit: true, value: "$2,195" },
+  { date: "Jan 27", description: "Equipment Lease", credit: false, value: "$1,050" },
+  { date: "Jan 27", description: "Customer Wire", credit: true, value: "$4,950" },
+  { date: "Jan 26", description: "Insurance Premium", credit: false, value: "$928" },
+  { date: "Jan 26", description: "Card Settlement", credit: true, value: "$1,765" },
+  { date: "Jan 25", description: "Merchant Cash Advance", credit: false, value: "$2,652" },
+  { date: "Jan 25", description: "Sales Deposit", credit: true, value: "$6,120" },
+  { date: "Jan 24", description: "Utilities — Electric", credit: false, value: "$395" },
+  { date: "Jan 24", description: "Refund — Overpayment", credit: true, value: "$145" },
+  { date: "Jan 24", description: "Returned Item — POS Debit", credit: false, value: "$176" },
+  { date: "Jan 23", description: "Marketplace Payout", credit: true, value: "$1,520" },
+  { date: "Jan 23", description: "Vehicle Maintenance", credit: false, value: "$610" },
+  { date: "Jan 23", description: "Returned Item — Customer ACH", credit: false, value: "$390" },
+  { date: "Jan 22", description: "ACH Deposit — Retail Sales", credit: true, value: "$3,980" },
+  { date: "Jan 22", description: "Returned Item — ACH Debit", credit: false, value: "$245" },
+  { date: "Jan 21", description: "Customer Payment — Inv #4399", credit: true, value: "$3,340" },
+  { date: "Jan 21", description: "Office Supplies", credit: false, value: "$132" },
+  { date: "Jan 21", description: "Returned Item — Check Deposit", credit: false, value: "$515" },
+  { date: "Jan 20", description: "Deposit — Owner Contribution", credit: true, value: "$2,000" },
+  { date: "Jan 20", description: "Tax Withholding Transfer", credit: false, value: "$1,420" },
+  { date: "Jan 20", description: "Returned Item — ACH Debit", credit: false, value: "$285" },
+  { date: "Jan 19", description: "Service Revenue Deposit", credit: true, value: "$2,430" },
+  { date: "Jan 19", description: "Loan Servicing Fee", credit: false, value: "$520" },
+  { date: "Jan 19", description: "Returned Item — Remote Deposit", credit: false, value: "$590" },
+  { date: "Jan 18", description: "Returned Item — Customer Check", credit: false, value: "$455" },
 ]
 const weeklyDeductionTransactions = [
   {
@@ -432,6 +504,36 @@ const TYPOGRAPHY_NORMALIZATION_CSS = `
   }
 `
 const flagDetailPanels = {
+  irregularities: {
+    title: "Returned Items Detail",
+    subtitle: "Monthly returned debit and deposit activity",
+    status: "23 returned items identified",
+    monthlyBreakdown: [
+      {
+        month: "January",
+        count: 7,
+        amount: "$2,656",
+        note: "Returned ACH debits and customer checks concentrated in the final two weeks of January.",
+      },
+      {
+        month: "February",
+        count: 8,
+        amount: "$3,208",
+        note: "Returned items continued across ACH debit, POS debit, customer ACH, and remote deposit activity.",
+      },
+      {
+        month: "March",
+        count: 8,
+        amount: "$3,155",
+        note: "March returned items remained elevated, including multiple ACH debit and customer check returns.",
+      },
+    ],
+    points: [
+      "Returned item volume is consistent across the three reviewed months rather than isolated to one period.",
+      "Total returned item exposure across January, February, and March is $9,019.",
+      "Recommendation: verify operating balance stability and returned item explanations before final funding.",
+    ],
+  },
   unicourt: {
     title: "UniCourt Detail",
     subtitle: "Litigation docket and case-tracking signal",
@@ -503,17 +605,7 @@ function App() {
     Object.fromEntries(initialPositions.map((position) => [position.id, true])),
   )
   const [activePositionChips, setActivePositionChips] = useState({})
-  const [selectedPositionChip, setSelectedPositionChip] = useState(() => {
-    const firstPositionWithWithdrawal = initialPositions.find((position) => position.chips.length > 0)
-    const firstWithdrawal = firstPositionWithWithdrawal?.chips[0]
-    if (!firstPositionWithWithdrawal || !firstWithdrawal) return null
-    return {
-      positionId: firstPositionWithWithdrawal.id,
-      chipIndex: 0,
-      amount: firstWithdrawal.amount,
-      meta: firstWithdrawal.meta,
-    }
-  })
+  const [selectedPositionChip, setSelectedPositionChip] = useState(null)
   const [transactionsSearchQuery, setTransactionsSearchQuery] = useState("")
   const [transactionsAccountFilter, setTransactionsAccountFilter] = useState("all")
   const [transactionsMonthFilter, setTransactionsMonthFilter] = useState("all")
@@ -1174,7 +1266,7 @@ function App() {
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">
                     Estimated {selectedTermUnit.paymentLabel} payment
                   </p>
-                  <p className="mt-1 text-2xl font-bold leading-none text-[#1c1b1f]">
+                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">
                     ${formatCurrency(paymentAmount)}
                   </p>
                   <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
@@ -1189,7 +1281,7 @@ function App() {
                   </div>
               </div>
 
-              <div className="mt-3 space-y-2.5">
+              <div className="mt-4 space-y-4">
                   <div>
                     <div>
                       <p className={FIELD_LABEL_CLASS}>FUNDING AMOUNT</p>
@@ -1216,21 +1308,23 @@ function App() {
                     <p className={FIELD_LABEL_CLASS}>ADDED LEVERAGE</p>
                     <div className="relative flex h-10 items-center overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
                       <span className={`${FIELD_INNER_SQUARE_CLASS} grid h-full w-7 place-items-center border-r border-[#d9d9d9] bg-[#efefef] text-[12px] text-[#4c4f69]`}>%</span>
-                      <div className="flex min-w-0 flex-1 items-center justify-between gap-2 px-2">
-                        <input
-                          type="number"
-                          min="0"
-                          max="50"
-                          value={calculator.leverageDelta}
-                          onChange={(event) =>
-                            setCalculator((prev) => ({
-                              ...prev,
-                              leverageDelta: Math.min(Math.max(Number(event.target.value) || 0, 0), 50),
-                            }))
-                          }
-                          className="w-10 bg-transparent p-0 text-[12px] font-medium text-[#1c1b1f] outline-none"
-                        />
-                        <div className="flex items-baseline justify-end gap-1 text-right text-[12px]">
+                      <div className="grid min-w-0 flex-1 grid-cols-2 items-center">
+                        <div className="grid h-full place-items-center px-2">
+                          <input
+                            type="number"
+                            min="0"
+                            max="50"
+                            value={calculator.leverageDelta}
+                            onChange={(event) =>
+                              setCalculator((prev) => ({
+                                ...prev,
+                                leverageDelta: Math.min(Math.max(Number(event.target.value) || 0, 0), 50),
+                              }))
+                            }
+                            className="w-10 bg-transparent p-0 text-center text-[12px] font-medium text-[#1c1b1f] outline-none"
+                          />
+                        </div>
+                        <div className="flex h-full items-center justify-center gap-1 border-l border-[#d9d9d9] px-2 text-center text-[12px]">
                           <span className="font-regular text-[#4c4f69]">Total</span>
                           <span className="font-medium leading-none text-[#1c1b1f]">{totalLeverage}%</span>
                         </div>
@@ -1271,7 +1365,7 @@ function App() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
                       <p className={FIELD_LABEL_CLASS}>TERM ({selectedTermUnit.label.toUpperCase()})</p>
                       <div className="flex h-10 overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
@@ -1378,8 +1472,8 @@ function App() {
                     </div>
                   </div>
 
-                  <div className="border-t border-[#d9d9d9] pt-3">
-                    <div className="grid grid-cols-2 gap-2">
+                  <div className="border-t border-[#d9d9d9] pt-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <button className="interactive-pop flex items-center justify-center rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                         <span className="inline-flex items-center justify-center gap-1.5">
                           <span aria-hidden="true" className="material-symbols-sharp text-[16px] leading-[1]">
@@ -1477,24 +1571,30 @@ function App() {
                         ⌄
                       </span>
                     </div>
-                    <div className="relative shrink-0">
-                      <select
-                        value={transactionsMonthFilter}
-                        onChange={(event) => setTransactionsMonthFilter(event.target.value)}
-                        aria-label="Filter transactions by month"
-                        className="h-7 min-w-[72px] appearance-none rounded border border-[#4c4f69] bg-[#fafafa] px-2 pr-5 text-[10px] font-medium text-[#4c4f69]"
-                      >
-                        <option value="all">Month</option>
-                        <option value="jan">Jan</option>
-                        <option value="feb">Feb</option>
-                        <option value="mar">Mar</option>
-                      </select>
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[#4c4f69]"
-                      >
-                        ⌄
-                      </span>
+                    <div
+                      className="grid h-7 shrink-0 grid-cols-4 overflow-hidden rounded border border-[#d9d9d9] bg-[#fafafa]"
+                      aria-label="Filter transactions by month"
+                    >
+                      {[
+                        ["all", "All"],
+                        ["jan", "Jan"],
+                        ["feb", "Feb"],
+                        ["mar", "Mar"],
+                      ].map(([value, label]) => {
+                        const isSelected = transactionsMonthFilter === value
+                        return (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => setTransactionsMonthFilter(value)}
+                            className={`h-full min-w-9 border-r border-[#d9d9d9] px-2 text-[10px] font-medium last:border-r-0 ${
+                              isSelected ? "bg-[#efefef] text-[#1c1b1f]" : "text-[#4c4f69]"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        )
+                      })}
                     </div>
                     <div className="relative shrink-0">
                       <select
@@ -1517,6 +1617,13 @@ function App() {
                   </div>
                   <button
                     type="button"
+                    onClick={() => {
+                      setSelectedPositionChip(null)
+                      setTransactionsSearchQuery("")
+                      setTransactionsAccountFilter("all")
+                      setTransactionsMonthFilter("all")
+                      setTransactionsDirectionFilter("all")
+                    }}
                     className="interactive-pop shrink-0 text-sm font-normal text-[#3277FF] transition hover:text-[#2566d9]"
                   >
                     View all transactions
@@ -2316,6 +2423,25 @@ function App() {
                   {activeFlagPanel ? flagDetailPanels[activeFlagPanel].status : ""}
                 </p>
               </div>
+
+              {activeFlagPanel && flagDetailPanels[activeFlagPanel].monthlyBreakdown ? (
+                <div className="mt-4 space-y-2">
+                  {flagDetailPanels[activeFlagPanel].monthlyBreakdown.map((row) => (
+                    <div key={row.month} className="rounded-md border border-[#d9d9d9] bg-[#fafafa] px-4 py-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-[#1c1b1f]">{row.month}</p>
+                          <p className="mt-1 text-[11px] leading-relaxed text-[#4c4f69]">{row.note}</p>
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <p className="text-lg font-bold leading-none text-[#1c1b1f]">{row.count}</p>
+                          <p className="mt-1 text-[10px] text-[#4c4f69]">{row.amount}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
 
               <div className="mt-4 space-y-2">
                 {(activeFlagPanel ? flagDetailPanels[activeFlagPanel].points : []).map((point) => (
