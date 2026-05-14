@@ -92,7 +92,7 @@ export default function V3_5Overview({
             </span>
             <h3 className="text-base font-bold leading-none">Flags</h3>
           </div>
-          <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-3">
+          <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)]">
             <article
               data-v3-mini-card="true"
               onClick={() => setActiveFlagPanel("irregularities")}
