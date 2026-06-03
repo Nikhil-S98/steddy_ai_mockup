@@ -1,4 +1,4 @@
-export const defaultHistoryClasses = "default-history-chip-solid border-transparent"
+export const defaultHistoryClasses = "border-amber-200 bg-amber-50 text-amber-700"
 
 const applicationRows = [
   {
@@ -226,7 +226,3 @@ export const allApplicationRows = Array.from({ length: TOTAL_APPLICATIONS }, (_,
   return copy
 })
 
-export const getStatusClasses = (tone) => {
-  if (tone === "review") return "border-[#b8d4ff] bg-[#eaf2ff] text-[#3277FF]"
-  return "border-[#f5c2cb] bg-[#fee2e2] text-[#b42318]"
-}

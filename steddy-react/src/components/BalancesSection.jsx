@@ -1,7 +1,6 @@
 import {
-  Area,
   CartesianGrid,
-  ComposedChart,
+  LineChart,
   Line,
   ReferenceLine,
   ResponsiveContainer,
@@ -84,7 +83,7 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
 
   return (
     <section data-animate>
-      <div className="section-label-row mb-3 flex items-center gap-2">
+      <div className="mb-4 flex items-center gap-2">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -100,59 +99,34 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
             strokeLinejoin="round"
           />
         </svg>
-        <h3 className="text-base font-bold leading-none text-[#1c1b1f]">Daily Balances</h3>
+        <h3 className="text-base font-bold leading-none text-[#1c1b1f]">Balances</h3>
       </div>
 
       <div className="space-y-4">
-        <div className="card-shadow rounded-lg border border-[#d9d9d9] bg-[#fafafa] p-4">
-          <div className="mb-3 flex items-center gap-5 text-sm font-medium text-[#4c4f69]">
-            <div className="flex items-center gap-2">
-              <span className="h-[2px] w-4 rounded-full" style={{ backgroundColor: balanceChart.primary }} />
-              <span>Current</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                className="w-4 border-t-2 border-dashed"
-                style={{ borderTopColor: balanceChart.secondary }}
-              />
-              <span>With Offer</span>
-            </div>
+        <div className="rounded-lg border border-[#d9d9d9] bg-[#fafafa] p-3">
+          <div className="mb-1 flex items-center gap-2">
+            <span className="h-0.5 w-5 bg-[#039e94]" />
+            <span className="text-xs text-[#4c4f69]">Current Balance</span>
           </div>
-          <div className="h-[240px] w-full">
+          <div className="h-[220px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={balanceData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                <defs>
-                  <linearGradient id="current-balance-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={balanceChart.primary} stopOpacity={0.22} />
-                    <stop offset="100%" stopColor={balanceChart.primary} stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  stroke={balanceChart.grid}
-                  strokeDasharray="0"
-                  strokeOpacity={0.9}
-                  horizontal
-                  vertical={false}
-                />
+              <LineChart data={balanceData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                 <XAxis
                   dataKey="date"
-                  interval={2}
-                  minTickGap={28}
-                  axisLine={false}
-                  tickLine={false}
-                  tickMargin={10}
-                  tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
+                  tickFormatter={(v) => v}
+                  interval="preserveStartEnd"
+                  minTickGap={30}
+                  tick={{ fontSize: 10 }}
                 />
                 <YAxis
                   domain={[-30, "auto"]}
                   allowDataOverflow
-                  axisLine={false}
-                  tickLine={false}
-                  tickCount={6}
-                  tick={{ fill: balanceChart.axisTick, fontSize: 11 }}
                   tickFormatter={(value) => (value === 0 ? "$0" : `${value < 0 ? "-" : ""}$${Math.abs(value)}k`)}
+                  tick={{ fontSize: 10 }}
+                  width={50}
                 />
-                <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="2 4" strokeOpacity={0.9} />
+                <ReferenceLine y={0} stroke="#d20f39" strokeDasharray="4 3" strokeWidth={1.5} />
                 <Tooltip
                   formatter={(value) => `$${value}k`}
                   labelStyle={{ fontSize: 10, fontWeight: 600, marginBottom: 2 }}
@@ -165,38 +139,15 @@ export default function BalancesSection({ balanceData, monthlyBalanceSeries, bal
                     padding: "6px 8px",
                   }}
                 />
-                <Area
-                  type="monotone"
-                  dataKey="current"
-                  stroke="none"
-                  fill="url(#current-balance-fill)"
-                  fillOpacity={1}
-                  baseValue={0}
-                  isAnimationActive={false}
-                />
                 <Line
                   type="monotone"
                   dataKey="current"
-                  stroke={balanceChart.primary}
+                  stroke="#039e94"
                   strokeWidth={2}
-                  strokeOpacity={1}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  activeDot={{ r: 3, fill: balanceChart.primary, strokeWidth: 0 }}
                   dot={false}
+                  activeDot={{ r: 4, fill: "#039e94" }}
                 />
-                <Line
-                  type="monotone"
-                  dataKey="withOffer"
-                  stroke={balanceChart.secondary}
-                  strokeWidth={2}
-                  strokeDasharray="5 3"
-                  strokeOpacity={1}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  dot={false}
-                />
-              </ComposedChart>
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>

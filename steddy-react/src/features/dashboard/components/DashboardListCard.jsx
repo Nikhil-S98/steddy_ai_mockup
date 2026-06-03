@@ -2,8 +2,22 @@ import {
   ACCOUNT_STATUS_OPTIONS,
   APPLICATION_STATUS_OPTIONS,
   defaultHistoryClasses,
-  getStatusClasses,
 } from "../data/dashboardData"
+
+function statusPillStyle(color) {
+  return {
+    backgroundColor: `${color}18`,
+    color,
+    border: `1px solid ${color}38`,
+  }
+}
+
+const STATUS_COLOR = {
+  review: "#039e94",
+  declined: "#C62828",
+  active: "#039e94",
+  inactive: "#C62828",
+}
 
 const SORT_OPTIONS = ["Latest Updated", "Newest Created", "Oldest Created"]
 
@@ -19,12 +33,14 @@ function StatusGlyph({ name }) {
 }
 
 function ApplicationStatusChip({ status }) {
+  const color = STATUS_COLOR[status.tone] ?? "#64748b"
   const icon =
     status.tone === "review" ? <StatusGlyph name="rate_review" /> : status.tone === "declined" ? <StatusGlyph name="cancel" /> : null
 
   return (
     <span
-      className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${getStatusClasses(status.tone)}`}
+      className="inline-flex items-center gap-0.5 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[9px] font-medium"
+      style={statusPillStyle(color)}
     >
       {icon}
       {status.label}
@@ -50,20 +66,22 @@ const ROW_HEIGHT_CLASS = "h-16"
 const CELL_PAD_CLASS = "align-middle px-2 py-1.5"
 
 function AccountRow({ row, isLast }) {
-  const statusClasses =
-    row.status === "active" ? getStatusClasses("review") : getStatusClasses("declined")
+  const color = STATUS_COLOR[row.status] ?? "#64748b"
 
   return (
     <tr className={`${ROW_HEIGHT_CLASS} ${!isLast ? "border-b border-[#d9d9d9]" : ""}`}>
       <td className="w-[1%] px-0 py-0 align-middle" />
-      <td className={`min-w-0 ${CELL_PAD_CLASS} text-[11px] font-medium text-[#3277FF]`}>
+      <td className={`min-w-0 ${CELL_PAD_CLASS} text-[11px] font-medium text-[#1c1b1f]`}>
         <span className="block truncate">{row.email}</span>
       </td>
       <td className={`min-w-0 ${CELL_PAD_CLASS} text-[11px] text-[#1c1b1f]`}>
         <span className="block truncate">{row.companyName}</span>
       </td>
       <td className={`${CELL_PAD_CLASS} text-center`}>
-        <span className={`inline-flex whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${statusClasses}`}>
+        <span
+          className="inline-flex whitespace-nowrap rounded-full px-1.5 py-0.5 text-[9px] font-medium"
+          style={statusPillStyle(color)}
+        >
           {row.status}
         </span>
       </td>
@@ -104,7 +122,7 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
         {row.isoEmail && row.isoEmail !== "—" ? (
           <a
             href={`mailto:${row.isoEmail}`}
-            className="font-medium text-[#3277FF] underline-offset-2 transition hover:text-[#2462d8] hover:underline"
+            className="font-medium text-[#039e94] underline-offset-2 transition hover:text-[#027a71] hover:underline"
           >
             {isoDisplayName}
           </a>
@@ -116,7 +134,7 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
         {row.underwriterEmail && row.underwriterEmail !== "—" ? (
           <a
             href={`mailto:${row.underwriterEmail}`}
-            className="font-medium text-[#3277FF] underline-offset-2 transition hover:text-[#2462d8] hover:underline"
+            className="font-medium text-[#039e94] underline-offset-2 transition hover:text-[#027a71] hover:underline"
           >
             {underwriterDisplayName}
           </a>
@@ -179,7 +197,7 @@ export default function DashboardListCard({
             <h2 className="text-xl font-semibold leading-tight tracking-tight text-[#1c1b1f] sm:text-4xl">
               {cardVariant.title}
             </h2>
-            <span className="inline-flex items-center whitespace-nowrap rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-1.5 py-0.5 text-[9px] font-semibold text-[#3277FF]">
+            <span className="inline-flex items-center whitespace-nowrap rounded-full border border-[#a3d9d7] bg-[#e6f7f6] px-1.5 py-0.5 text-[9px] font-semibold text-[#039e94]">
               {activeRows.length}
             </span>
           </div>
@@ -192,7 +210,7 @@ export default function DashboardListCard({
               onNewApplication?.()
             }
           }}
-          className="interactive-pop shrink-0 rounded-md bg-[#3277FF] px-5 py-2.5 text-sm font-semibold text-[#fafafa] transition hover:opacity-95 sm:px-6 sm:py-3 sm:text-base"
+          className="interactive-pop shrink-0 rounded-md bg-[#039e94] px-5 py-2.5 text-sm font-semibold text-[#fafafa] transition hover:bg-[#027a71] sm:px-6 sm:py-3 sm:text-base"
         >
           <span className="flex w-full items-center justify-center gap-1.5">
             <span aria-hidden="true" className="material-symbols-rounded text-[18px] leading-none">
@@ -204,13 +222,13 @@ export default function DashboardListCard({
       </header>
 
       <div className="mt-4">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             placeholder={cardVariant.searchPlaceholder}
-            className="box-border h-8 w-full max-w-[930px] rounded border border-[#4c4f69] bg-[#fafafa] px-2 text-[11px] font-medium leading-none text-[#1c1b1f] placeholder:text-[rgba(76,79,105,0.6)] focus:border-[#3277FF] focus:outline-none"
+            className="box-border h-8 min-w-0 flex-1 rounded border border-[#d3d7de] bg-[#fafafa] px-2 text-[11px] font-medium leading-none text-[#1c1b1f] placeholder:text-[rgba(76,79,105,0.6)] focus:border-[#039e94] focus:outline-none"
           />
-          <div className="ml-auto flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <ApplicantSelect>
               <select className="h-8 min-w-[120px] appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-2 pr-7 text-[11px] font-medium text-[#4c4f69]">
                 {statusOptions.map((option) => (

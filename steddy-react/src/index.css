@@ -67,8 +67,8 @@ body {
   --steddy-primary: #2dd4bf;
   --steddy-primary-strong: #5eead4;
   --steddy-primary-contrast: #0d1418;
-  --steddy-danger: #fb7185;
-  --steddy-danger-soft: rgba(251, 113, 133, 0.16);
+  --steddy-danger: #d20f39;
+  --steddy-danger-soft: rgba(210, 15, 57, 0.16);
   --steddy-warning: #fcd34d;
   --steddy-focus: rgba(45, 212, 191, 0.35);
 }
@@ -244,17 +244,16 @@ button {
   color: var(--steddy-muted-soft) !important;
 }
 
-.steddy-app .flag-chip-open,
-.steddy-app .flag-chip-open.text-\[\#b42318\] {
-  background: var(--steddy-danger) !important;
-  border-color: var(--steddy-danger) !important;
-  color: var(--steddy-primary-contrast) !important;
+.steddy-app.theme-teal-dark .flag-chip-open {
+  background: rgba(210, 15, 57, 0.15) !important;
+  border-color: rgba(210, 15, 57, 0.35) !important;
+  color: var(--steddy-danger) !important;
 }
 
-.steddy-app .flag-chip-clean {
-  background: var(--steddy-primary) !important;
-  border-color: var(--steddy-primary) !important;
-  color: var(--steddy-primary-contrast) !important;
+.steddy-app.theme-teal-dark .flag-chip-clean {
+  background: rgba(45, 212, 191, 0.12) !important;
+  border-color: rgba(45, 212, 191, 0.3) !important;
+  color: var(--steddy-primary) !important;
 }
 
 .default-history-chip-solid {
@@ -276,4 +275,53 @@ button {
   font-size: 1.125rem;
   line-height: 1;
   font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+}
+
+/* ── Primary teal text/bg (uses CSS var so it brightens in dark mode) ─── */
+.steddy-app .text-\[\#039e94\],
+.steddy-app .text-\[\#027a71\] {
+  color: var(--steddy-primary) !important;
+}
+
+/* ── Subtle surface variants → map to surface-subtle ─────────────────── */
+.steddy-app .bg-\[\#f5f5f7\],
+.steddy-app .bg-\[\#f5f5f5\],
+.steddy-app .bg-\[\#f5f6f8\],
+.steddy-app .bg-\[\#eceff4\],
+.steddy-app .bg-\[\#e3e5eb\] {
+  background: var(--steddy-surface-subtle) !important;
+}
+
+/* ── Hover backgrounds ────────────────────────────────────────────────── */
+.steddy-app .hover\:bg-\[\#efefef\]:hover,
+.steddy-app .hover\:bg-\[\#f5f5f5\]:hover,
+.steddy-app .hover\:bg-\[\#eceff4\]:hover {
+  background: var(--steddy-surface-subtle) !important;
+}
+
+/* ── Inactive toggle track ─────────────────────────────────────────────── */
+.steddy-app .bg-\[\#d9d9d9\] {
+  background: var(--steddy-border) !important;
+}
+
+/* ── Very muted text ───────────────────────────────────────────────────── */
+.steddy-app .text-\[\#9b9bb0\],
+.steddy-app .text-\[\#8b8ba0\] {
+  color: var(--steddy-muted-soft) !important;
+}
+
+/* ── Light teal tint surfaces (dark-mode only) ─────────────────────────── */
+.steddy-app.theme-teal-dark .bg-\[\#e6f7f6\] {
+  background: rgba(45, 212, 191, 0.1) !important;
+}
+.steddy-app.theme-teal-dark .bg-\[\#e6f7f6\]\/45 {
+  background: rgba(45, 212, 191, 0.06) !important;
+}
+
+/* ── Teal borders (dark-mode only) ────────────────────────────────────── */
+.steddy-app.theme-teal-dark .border-\[\#a3d9d7\] {
+  border-color: rgba(45, 212, 191, 0.3) !important;
+}
+.steddy-app.theme-teal-dark .hover\:border-\[\#a3d9d7\]:hover {
+  border-color: rgba(45, 212, 191, 0.45) !important;
 }

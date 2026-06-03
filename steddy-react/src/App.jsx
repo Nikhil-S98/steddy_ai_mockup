@@ -1097,9 +1097,9 @@ function App() {
               arrow_back
             </span>
           </button>
-          <h1 className="text-base font-semibold tracking-tight text-[#1c1b1f] sm:text-lg">
-            Application #{activeApplicationId}
-          </h1>
+          <span className="text-sm text-[#4c4f69]">
+            Applications
+          </span>
         </div>
 
         <div className="hidden items-center xl:flex">
@@ -1112,16 +1112,16 @@ function App() {
                   <span
                     className={`grid size-3.5 place-items-center rounded-full border text-[9px] leading-none ${
                       isCompleted
-                        ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                        ? "border-[#039e94] bg-[#039e94] text-[#fafafa]"
                         : isActive
-                          ? "border-[#3277FF] bg-[#fafafa] text-transparent"
+                          ? "border-[#039e94] bg-[#fafafa] text-transparent"
                           : "border-[#c8ced9] bg-[#fafafa] text-transparent"
                     }`}
                   />
                   <span
                     className={`text-[11px] ${
                       isCompleted || isActive
-                        ? "font-medium text-[#3277FF]"
+                        ? "font-medium text-[#039e94]"
                         : "underwriting-step-inactive text-[rgba(76,79,105,0.55)]"
                     }`}
                   >
@@ -1158,9 +1158,6 @@ function App() {
           >
             Edit
           </button>
-          <button className={HEADER_BUTTON_CLASS}>
-            Export
-          </button>
         </div>
       </header>
 
@@ -1175,12 +1172,12 @@ function App() {
         >
           <div className={`${isApplicationSidebarCollapsed ? "hidden" : ""} px-4 py-3.5`}>
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-xl border border-[#3277FF] bg-[#e9f0ff]">
+              <div className="grid size-10 place-items-center rounded-xl border border-[#039e94] bg-[#e6f7f6]">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="size-5 text-[#3277FF]"
+                  className="size-5 text-[#039e94]"
                   aria-hidden="true"
                 >
                   <path
@@ -1213,7 +1210,7 @@ function App() {
                   </button>
                 </div>
                 <div className="mt-1 flex items-center gap-1.5 text-[11px]">
-                  <span className="rounded bg-[#e9f0ff] px-2 py-0.5 font-medium text-[#3277FF]">
+                  <span className="rounded bg-[#e6f7f6] px-2 py-0.5 font-medium text-[#039e94]">
                     • Review
                   </span>
                   <span className="text-[#4c4f69]">{applicationInfo.ownerName}</span>
@@ -1229,15 +1226,15 @@ function App() {
                 <span>AI DECISION</span>
                 <span className="tracking-normal">Confidence 94%</span>
               </div>
-              <div className="ai-decision-card rounded-lg border border-[#d9d9d9] bg-[#e9f0ff]/45 p-3">
+              <div className="ai-decision-card rounded-lg border border-[#d9d9d9] bg-[#e6f7f6]/45 p-3">
                 <button
                   type="button"
                   onClick={() => setIsAiDecisionOpen((prev) => !prev)}
-                  className="flex w-full items-center justify-between gap-2 text-left text-[#3277FF]"
+                  className="flex w-full items-center justify-between gap-2 text-left text-[#039e94]"
                   aria-expanded={isAiDecisionOpen}
                 >
                   <span className="flex items-center gap-2">
-                    <span className="grid size-5 place-items-center rounded-full bg-[#3277FF] text-[#fafafa]">
+                    <span className="grid size-5 place-items-center rounded-full bg-[#039e94] text-[#fafafa]">
                       <span aria-hidden="true" className="material-symbols-sharp text-[12px] leading-none">
                         done
                       </span>
@@ -1257,7 +1254,7 @@ function App() {
                     days flagged for review.
                   </p>
                   <div className="mt-3 grid grid-cols-2 gap-2">
-                    <button className="interactive-pop rounded-lg bg-[#3277FF] py-2 text-[13px] font-semibold text-[#fafafa]">
+                    <button className="interactive-pop rounded-lg bg-[#039e94] py-2 text-[13px] font-semibold text-[#fafafa]">
                       Confirm
                     </button>
                     <button className="interactive-pop rounded-lg border border-[#d9d9d9] bg-[#fafafa] py-2 text-[13px] font-semibold text-[#1c1b1f]">
@@ -1328,7 +1325,7 @@ function App() {
                           </span>
                         </div>
                         <div className="flex h-full items-center justify-center gap-1 border-l border-[#d9d9d9] px-2">
-                          <span className="text-[12px] font-medium text-[#3277FF]">+</span>
+                          <span className="text-[12px] font-medium text-[#039e94]">+</span>
                           <input
                             type="number"
                             min="0"
@@ -1340,7 +1337,7 @@ function App() {
                                 leverageDelta: Math.min(Math.max(Number(event.target.value) || 0, 0), 50),
                               }))
                             }
-                            className="w-8 bg-transparent p-0 text-center text-[12px] font-medium text-[#3277FF] outline-none"
+                            className="w-8 bg-transparent p-0 text-center text-[12px] font-medium text-[#039e94] outline-none"
                           />
                         </div>
                       </div>
@@ -1372,7 +1369,7 @@ function App() {
                       </div>
                       <div className="absolute bottom-0 left-7 right-6 h-1 bg-[#d9d9d9]">
                         <div className="flex h-full">
-                          <div className="h-full bg-[#3277FF]" style={{ width: currentLeverageSegmentWidth }} />
+                          <div className="h-full bg-[#039e94]" style={{ width: currentLeverageSegmentWidth }} />
                           <div className={`h-full ${addedLeverageBarClass}`} style={{ width: addedLeverageSegmentWidth }} />
                         </div>
                         <span className="absolute left-[30%] top-0 h-full w-px -translate-x-1/2 bg-[#d20f39]" />
@@ -1489,7 +1486,7 @@ function App() {
 
                   <div className="border-t border-[#d9d9d9] pt-4">
                     <div className="grid grid-cols-2 gap-3">
-                      <button className="interactive-pop flex items-center justify-center rounded-lg bg-[#3277FF] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
+                      <button className="interactive-pop flex items-center justify-center rounded-lg bg-[#039e94] px-4 py-2.5 text-[14px] font-semibold text-[#fafafa]">
                         <span className="inline-flex items-center justify-center gap-1.5">
                           <span aria-hidden="true" className="material-symbols-sharp text-[16px] leading-[1]">
                             done
@@ -1519,7 +1516,7 @@ function App() {
 
         <section
           data-animate
-          className="h-[calc(100vh-56px)] overflow-y-auto bg-[#e9f0ff] p-4 sm:p-5 lg:p-7"
+          className="h-[calc(100vh-56px)] overflow-y-auto bg-[#efefef] p-4 sm:p-5 lg:p-7"
         >
           <div className="w-full space-y-4 sm:space-y-6 lg:space-y-8">
             {renderVersionOverview()}
@@ -1639,7 +1636,7 @@ function App() {
                       setTransactionsMonthFilter("all")
                       setTransactionsDirectionFilter("all")
                     }}
-                    className="interactive-pop shrink-0 text-sm font-normal text-[#3277FF] transition hover:text-[#2566d9]"
+                    className="interactive-pop shrink-0 text-sm font-normal text-[#039e94] transition hover:text-[#2566d9]"
                   >
                     View all transactions
                   </button>
@@ -1647,10 +1644,11 @@ function App() {
               </div>
 
               <div className="relative">
-                <div className="card-shadow pointer-events-none absolute inset-0 rounded-lg border border-[#d9d9d9] bg-[#e9f0ff]/50"></div>
+                <div className="pointer-events-none absolute inset-0 rounded-lg border border-[#d9d9d9] bg-[#fafafa]"></div>
                 <div className="relative z-10 grid gap-4 xl:grid-cols-3">
-                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
-                    <p className="bg-[#e9f0ff] px-4 py-2 text-[11px] text-[#4c4f69]">
+                  <div className="h-[485px]">
+                  <div className="flex h-full flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
+                    <p className="shrink-0 bg-[#efefef] px-4 py-2.5 text-[11px] text-[#4c4f69]">
                       Currently active positions: {positionsData.length}
                     </p>
                     <div className="min-h-0 flex-1 overflow-y-auto">
@@ -1665,7 +1663,7 @@ function App() {
                           <button
                             type="button"
                             aria-label={`Edit ${position.title}`}
-                            className="interactive-pop rounded p-1 text-[#4c4f69] transition hover:bg-[#efefef] hover:text-[#3277FF]"
+                            className="interactive-pop rounded p-1 text-[#4c4f69] transition hover:bg-[#efefef] hover:text-[#039e94]"
                             onClick={() => openEditPositionEditor(position)}
                           >
                             <svg
@@ -1722,16 +1720,14 @@ function App() {
                               const isActive = Boolean(activePositionChips[chipKey])
                               const pulledAmount = ((position.id.length * 7 + (chipIndex + 1) * 13) % 60) + 1
                               return (
-                                <div key={chipKey} className="flex w-full items-center justify-start gap-1 text-left">
+                                <div key={chipKey} className={`flex w-full items-center gap-2 text-[11px] transition-opacity duration-150 ${!isActive ? "opacity-45" : ""}`}>
                                   <span
                                     className={
                                       usesV34PositionStyles
-                                        ? `m-0 flex items-center gap-1 rounded-none border-0 bg-transparent text-[9px] transition-colors ${
-                                            isActive ? "text-[#3277FF]" : "text-[#1c1b1f]"
-                                          }`
+                                        ? "m-0 flex items-center gap-2 rounded-none border-0 bg-transparent transition-colors"
                                         : `m-0 flex items-center gap-1 rounded-full border px-1.5 py-1 text-[9px] transition-colors ${
                                             isActive
-                                              ? "border-[#3277FF] bg-[#3277FF] text-[#fafafa]"
+                                              ? "border-[#039e94] bg-[#039e94] text-[#fafafa]"
                                               : "border-[#d9d9d9] bg-[#efefef] text-[#1c1b1f]"
                                           }`
                                     }
@@ -1749,24 +1745,19 @@ function App() {
                                     >
                                       <span
                                         aria-hidden="true"
-                                        className={`relative block h-3.5 w-5.5 rounded-full p-[1px] transition-colors ${
+                                        className={`relative block h-3.5 w-6 rounded-full p-[1px] transition-colors ${
                                           usesV34PositionStyles
                                             ? isActive
-                                              ? "bg-[#cbd5e1]"
+                                              ? "bg-[#039e94]"
                                               : "bg-[#d9d9d9]"
                                             : isActive
                                               ? "bg-[#fafafa]/50"
-                                              : "bg-[#3277FF]/40"
+                                              : "bg-[#039e94]/40"
                                         }`}
                                       >
                                         <span
-                                          className={`block size-3 rounded-full transition-transform ${
-                                            usesV34PositionStyles
-                                              ? `${isDarkLikeMode ? "bg-[#4c4f69]" : "bg-[#fafafa]"} ${
-                                                  isActive ? "translate-x-2.5" : "translate-x-0"
-                                                }`
-                                              : `bg-[#fafafa] ${isActive ? "translate-x-2.5" : "translate-x-0"}`
-                                          }`}
+                                          className={`block size-3 rounded-full shadow-sm transition-transform ${isActive ? "translate-x-2.5" : "translate-x-0"}`}
+                                          style={{ backgroundColor: "#ffffff" }}
                                         />
                                       </span>
                                     </button>
@@ -1787,13 +1778,13 @@ function App() {
                                       }
                                       className="rounded-sm p-0 text-left"
                                     >
-                                      {chip.amount}{" "}
+                                      <span className={usesV34PositionStyles ? `font-medium ${isActive ? "text-[#1c1b1f]" : "text-[#4c4f69]"}` : ""}>
+                                        {chip.amount}
+                                      </span>{" "}
                                       <span
                                         className={
                                           usesV34PositionStyles
-                                            ? isActive
-                                              ? "text-[rgba(15,23,42,0.72)]"
-                                              : "text-[rgba(76,79,105,0.5)]"
+                                            ? `font-normal ${isActive ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`
                                             : isActive
                                               ? "text-[#dbe6ff]"
                                               : "text-[rgba(76,79,105,0.5)]"
@@ -1803,7 +1794,7 @@ function App() {
                                       </span>
                                     </button>
                                   </span>
-                                  <span className={`text-[10px] ${on ? "text-[#4c4f69]" : "text-[#9b9bb0]"}`}>
+                                  <span className="text-[10px] text-[#9b9bb0]">
                                     | pulled {pulledAmount} times
                                   </span>
                                 </div>
@@ -1827,18 +1818,20 @@ function App() {
                     )})}
                     </div>
                   </div>
-                  <div className="card-shadow flex min-h-[485px] max-h-[485px] flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa] xl:col-span-2">
+                  </div>
+                  <div className="h-[485px] xl:col-span-2">
+                  <div className="flex h-full flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa]">
                     <div className="min-h-0 flex-1 overflow-y-auto">
-                      <table className="w-full border-collapse text-left text-sm">
+                      <table className="w-full border-collapse text-left">
                         <thead>
-                          <tr className="text-[11px] font-medium uppercase tracking-wide text-[#4c4f69]">
-                            <th className="sticky top-0 z-10 whitespace-nowrap bg-[#e9f0ff] px-4 py-2.5 font-medium">
+                          <tr className="text-[11px] font-medium text-[#4c4f69]">
+                            <th className="sticky top-0 z-10 whitespace-nowrap border-b border-[#d9d9d9] bg-[#efefef] px-4 py-2.5 font-medium">
                               Date
                             </th>
-                            <th className="sticky top-0 z-10 bg-[#e9f0ff] px-4 py-2.5 font-medium">
+                            <th className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#efefef] px-4 py-2.5 font-medium">
                               Description
                             </th>
-                            <th className="sticky top-0 z-10 whitespace-nowrap bg-[#e9f0ff] px-4 py-2.5 text-right font-medium">
+                            <th className="sticky top-0 z-10 whitespace-nowrap border-b border-[#d9d9d9] bg-[#fafafa] px-4 py-2.5 text-right font-medium">
                               Amount
                             </th>
                           </tr>
@@ -1847,15 +1840,15 @@ function App() {
                           {visibleTransactions.map((row, i) => (
                             <tr
                               key={`${row.date}-${row.description}-${i}`}
-                              className="border-b border-[#efefef] last:border-b-0"
+                              className="border-b border-[#efefef] last:border-b-0 hover:bg-[#f5f5f5]"
                             >
                               <td className="whitespace-nowrap px-4 py-2.5 text-xs text-[#4c4f69]">
                                 {row.date}
                               </td>
                               <td className="px-4 py-2.5 text-xs text-[#1c1b1f]">{row.description}</td>
                               <td
-                                className={`whitespace-nowrap px-4 py-2.5 text-right text-xs font-normal tabular-nums ${
-                                  row.credit ? "text-[#3277FF]" : "text-[#d20f39]"
+                                className={`whitespace-nowrap px-4 py-2.5 text-right text-xs font-medium tabular-nums ${
+                                  row.credit ? "text-[#039e94]" : "text-[#d20f39]"
                                 }`}
                               >
                                 {row.credit ? "+" : "−"}
@@ -1875,6 +1868,7 @@ function App() {
                         </tbody>
                       </table>
                     </div>
+                  </div>
                   </div>
                 </div>
               </div>
@@ -2137,7 +2131,7 @@ function App() {
                   disabled={!isEditingApplicationInfo}
                   className={`rounded px-4 py-2 text-[12px] font-semibold ${
                     isEditingApplicationInfo
-                      ? "bg-[#3277FF] text-[#fafafa]"
+                      ? "bg-[#039e94] text-[#fafafa]"
                       : "bg-[#e3e5eb] text-[#9b9bb0]"
                   }`}
                 >
@@ -2236,7 +2230,7 @@ function App() {
                         {chip.amount} <span className="text-[rgba(76,79,105,0.6)]">{chip.meta}</span>
                         <button
                           type="button"
-                          className="text-[#4c4f69] hover:text-[#3277FF]"
+                          className="text-[#4c4f69] hover:text-[#039e94]"
                           onClick={() => editDraftPayment(index)}
                         >
                           ✎
@@ -2294,7 +2288,7 @@ function App() {
                         <span className="flex items-center gap-1">
                           <button
                             type="button"
-                            className="text-[#4c4f69] hover:text-[#3277FF]"
+                            className="text-[#4c4f69] hover:text-[#039e94]"
                             onClick={() => editDraftDeposit(index)}
                           >
                             ✎
@@ -2318,7 +2312,7 @@ function App() {
               <button
                 type="button"
                 onClick={savePosition}
-                className="interactive-pop w-full rounded-md bg-[#3277FF] py-2.5 text-[12px] font-semibold text-[#fafafa]"
+                className="interactive-pop w-full rounded-md bg-[#039e94] py-2.5 text-[12px] font-semibold text-[#fafafa]"
               >
                 {editingPositionId ? "Save Position" : "Create Position"}
               </button>
@@ -2564,7 +2558,7 @@ function App() {
                 <p className="mb-2 text-[10px] font-semibold tracking-wide text-[#4c4f69]">ACTIONS</p>
                 <button
                   type="button"
-                  className="interactive-pop w-full rounded-md bg-[#3277FF] px-4 py-2.5 text-[12px] font-semibold text-[#fafafa]"
+                  className="interactive-pop w-full rounded-md bg-[#039e94] px-4 py-2.5 text-[12px] font-semibold text-[#fafafa]"
                 >
                   Send Contract via DocuSign
                 </button>

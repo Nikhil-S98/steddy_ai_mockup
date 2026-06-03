@@ -77,7 +77,7 @@ export default function V3_5Overview({
                   </div>
                 </div>
               </div>
-              <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#3277FF]">
+              <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#039e94]">
                 <span className="inline-block size-2 rounded-full bg-current" />
                 Acceptable Range
               </p>
@@ -92,11 +92,11 @@ export default function V3_5Overview({
             </span>
             <h3 className="text-base font-bold leading-none">Flags</h3>
           </div>
-          <div className="grid flex-1 items-stretch gap-3 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="grid min-h-0 flex-1 items-stretch gap-3 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)]">
+            {/* Returned Items */}
             <article
-              data-v3-mini-card="true"
               onClick={() => setActiveFlagPanel("irregularities")}
-              className={MINI_CARD_CLASS}
+              className="flex h-full flex-col rounded-lg border border-[#d9d9d9] bg-[#fafafa] p-4 cursor-pointer transition hover:border-[#a3d9d7]"
             >
               <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">RETURNED ITEMS</p>
               <div className="mt-2 flex flex-1 flex-col">
@@ -108,64 +108,74 @@ export default function V3_5Overview({
                   <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">8</p>
                 </div>
               </div>
-              <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-[#d20f39]">
+              <p
+                className="mt-auto flex items-center gap-1.5 pt-4 text-xs"
+                style={{ color: "#d20f39" }}
+              >
                 <span className="inline-block size-2 rounded-full bg-current" />
-                Returned item activity present
+                Returned items present
               </p>
             </article>
-            <div className="grid h-full gap-3 lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)]">
+
+            {/* Fraud + DataMerch stacked */}
+            <div className="grid gap-3 lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)]">
               <article
                 onClick={() => setActiveFlagPanel("fraud")}
-                className={COMPACT_CARD_CLASS}
+                className="h-full min-h-0 rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-3 cursor-pointer transition hover:border-[#a3d9d7]"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold leading-none text-[#1c1b1f]">Potential Fraud Alerts</p>
-                  <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                  <span
+                    className="flag-chip-open rounded-full border px-2 py-0.5 text-[10px] font-medium"
+                    style={{ backgroundColor: "#fee2e2", borderColor: "#f5c2cb", color: "#b42318" }}
+                  >
                     1 alert
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-[#d20f39]">Bank statement authenticity mismatch detected.</p>
+                <p className="mt-2 text-xs text-[#4c4f69]">Bank statement authenticity mismatch detected.</p>
               </article>
               <article
                 onClick={() => setActiveFlagPanel("datamerch")}
-                className={COMPACT_CARD_CLASS}
+                className="h-full min-h-0 rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-3 cursor-pointer transition hover:border-[#a3d9d7]"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold leading-none text-[#1c1b1f]">DataMerch</p>
-                  <span className="flag-chip-clean rounded-full border border-[#b8d4ff] bg-[#eaf2ff] px-2 py-0.5 text-[10px] font-medium text-[#3277FF]">
+                  <span
+                    className="flag-chip-clean rounded-full border px-2 py-0.5 text-[10px] font-medium"
+                    style={{ backgroundColor: "#e6f7f6", borderColor: "#a3d9d7", color: "#039e94" }}
+                  >
                     clean
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-[#4c4f69]">
-                  No postings were returned. The merchant was searched 23 times.
-                </p>
+                <p className="mt-2 text-xs text-[#4c4f69]">No postings were returned.</p>
               </article>
             </div>
 
+            {/* UniCourt */}
             <article
               onClick={() => setActiveFlagPanel("unicourt")}
-              className={`${COMPACT_CARD_CLASS} min-h-full`}
+              className="h-full min-h-0 rounded-lg border border-[#d9d9d9] bg-[#fafafa] px-4 py-3 cursor-pointer transition hover:border-[#a3d9d7]"
             >
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold leading-none text-[#1c1b1f]">UniCourt</p>
-                <span className="flag-chip-open rounded-full border border-[#f5c2cb] bg-[#fee2e2] px-2 py-0.5 text-[10px] font-medium text-[#b42318]">
+                <span
+                  className="flag-chip-open rounded-full border px-2 py-0.5 text-[10px] font-medium"
+                  style={{ backgroundColor: "#fee2e2", borderColor: "#f5c2cb", color: "#b42318" }}
+                >
                   3 open
                 </span>
               </div>
-              <p className="mt-2 text-xs text-[#4c4f69]">Litigation search returned three active dockets.</p>
-              <ul className="mt-3 space-y-1.5 text-[11px] leading-4 text-[#4c4f69]">
+              <p className="mt-2 text-xs text-[#4c4f69]">Litigation search returned 3 active dockets.</p>
+              <ul className="mt-3 flex-1 space-y-1.5">
                 <li>
-                  <p className="font-semibold text-[#1c1b1f]">Atlas Funding v. Riverstone Auto Group</p>
-                  <p className="mt-0.5">Breach of contract</p>
+                  <p className="text-[11px] font-semibold leading-4 text-[#1c1b1f]">Atlas Funding v. Riverstone Auto Group</p>
+                  <p className="text-[10px] leading-4 text-[#4c4f69]">Supreme Court, New York County</p>
                 </li>
                 <li>
-                  <p className="font-semibold text-[#1c1b1f]">Merchant Capital Partners v. Horizon Plumbing</p>
-                  <p className="mt-0.5">Judgment filing</p>
+                  <p className="text-[11px] font-semibold leading-4 text-[#1c1b1f]">Merchant Capital Partners v. Horizon Plumbing</p>
+                  <p className="text-[10px] leading-4 text-[#4c4f69]">Civil Court, Kings County</p>
                 </li>
-                <li>
-                  <p className="font-semibold text-[#1c1b1f]">Summit Advance Group v. Blue Harbor Services</p>
-                  <p className="mt-0.5">UCC enforcement</p>
-                </li>
+                <li className="text-[10px] text-[#4c4f69]">+1 more</li>
               </ul>
             </article>
           </div>
