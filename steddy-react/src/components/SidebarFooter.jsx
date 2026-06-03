@@ -5,7 +5,19 @@ export default function SidebarFooter({ collapsed = false, onToggleCollapse }) {
       <div
         className={`${collapsed ? "justify-center" : "justify-between border-t border-[#d9d9d9] pt-3"} flex items-center gap-2 px-2 py-1.5`}
       >
-        {collapsed ? null : <p className="text-[11px] font-medium text-[#4c4f69]">© 2024 Steddy</p>}
+        {collapsed ? null : (
+          <div className="flex items-center gap-2">
+            <p className="text-[11px] font-medium text-[#4c4f69]">© 2024 Steddy</p>
+            <a
+              href="design-system.html"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[10px] font-medium text-[#9b9bb0] hover:text-[#039e94] transition-colors"
+            >
+              Design System
+            </a>
+          </div>
+        )}
         <button
           type="button"
           onClick={onToggleCollapse}
