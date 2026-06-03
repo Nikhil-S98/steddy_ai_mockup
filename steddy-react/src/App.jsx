@@ -480,7 +480,8 @@ const getApplicationPath = () => "/v3.5"
 const getViewFromPath = (pathname) => {
   if (pathname.endsWith("/dashboard/new-application")) return "dashboard"
   if (pathname.endsWith("/dashboard")) return "dashboard"
-  return "application"
+  if (pathname.endsWith("/application")) return "application"
+  return "dashboard"
 }
 const TYPOGRAPHY_NORMALIZATION_CSS = `
   .steddy-app,
