@@ -2,8 +2,8 @@ export const defaultHistoryClasses = "border-amber-200 bg-amber-50 text-amber-70
 
 const applicationRows = [
   {
-    company: "Wicked Ranch Holdings",
-    owner: "Brandon Aubrey",
+    company: "Pinecrest Logistics LLC",
+    owner: "Marcus Webb",
     isoEmail: "john@steddyfunds.com",
     isoName: "Steddy Funds",
     underwriterEmail: "john@steddyfunds.com",
@@ -16,8 +16,8 @@ const applicationRows = [
     updatedTime: "11:24 AM",
   },
   {
-    company: "OD GENERAL SERVICES CORP",
-    owner: "Osmany Delgado",
+    company: "DELTA GENERAL SERVICES CORP",
+    owner: "Carlos Rivera",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "—",
@@ -30,8 +30,8 @@ const applicationRows = [
     updatedTime: "11:22 AM",
   },
   {
-    company: "T & T Machine INC",
-    owner: "Dennis Desender",
+    company: "B & B Machine INC",
+    owner: "Kevin Harmon",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -44,8 +44,8 @@ const applicationRows = [
     updatedTime: "11:10 AM",
   },
   {
-    company: "Sci Trucking And Repair INC",
-    owner: "Miranda Purcell",
+    company: "Apex Trucking And Repair INC",
+    owner: "Sandra Torres",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -58,8 +58,8 @@ const applicationRows = [
     updatedTime: "10:52 AM",
   },
   {
-    company: "Vtechprosolutions Wireless",
-    owner: "Jaymani Soorgepaul",
+    company: "Nextech Solutions Wireless",
+    owner: "Priya Patel",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -72,8 +72,8 @@ const applicationRows = [
     updatedTime: "10:50 AM",
   },
   {
-    company: "Stit Properties LLC",
-    owner: "Robert Brown",
+    company: "Crest Properties LLC",
+    owner: "Thomas Grant",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -86,8 +86,8 @@ const applicationRows = [
     updatedTime: "10:49 AM",
   },
   {
-    company: "Vivian Segui DBA ...",
-    owner: "Vivian Segui",
+    company: "Laura Vance DBA ...",
+    owner: "Laura Vance",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -100,8 +100,8 @@ const applicationRows = [
     updatedTime: "10:47 AM",
   },
   {
-    company: "Victor Zeines dds",
-    owner: "Victor Zeines",
+    company: "Michael Holt DDS",
+    owner: "Michael Holt",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -114,8 +114,8 @@ const applicationRows = [
     updatedTime: "10:46 AM",
   },
   {
-    company: "Insurance Pro's Inc",
-    owner: "Larnie Smith",
+    company: "Coverage Plus Inc",
+    owner: "Brian Mitchell",
     isoEmail: "john@steddyfunds.com",
     isoName: "Steddy Funds",
     underwriterEmail: "john@steddyfunds.com",
@@ -128,8 +128,8 @@ const applicationRows = [
     updatedTime: "10:44 AM",
   },
   {
-    company: "Esverde USA LLC",
-    owner: "Gerardo Cantu Elizarraras",
+    company: "Verdant USA LLC",
+    owner: "Eduardo Castillo",
     isoEmail: "steddyadmin@steddy.com",
     isoName: "",
     underwriterEmail: "john@steddyfunds.com",
@@ -144,27 +144,27 @@ const applicationRows = [
 ]
 
 export const brokersRows = [
-  { email: "adam11@steddyfunds.com", companyName: "Steddy Funds", status: "inactive", created: "Mar 25, 2026" },
-  { email: "toni@steddy.com", companyName: "steddy", status: "active", created: "Mar 25, 2026" },
-  { email: "gabby@steddy.com", companyName: "Steddy", status: "active", created: "Mar 24, 2026" },
-  { email: "tim@steddyfunds.com", companyName: "Steddy", status: "inactive", created: "Feb 17, 2026" },
-  { email: "john@steddy.com", companyName: "Steddy", status: "active", created: "Feb 10, 2026" },
-  { email: "starsong@steddy.com", companyName: "Starsong", status: "active", created: "Feb 10, 2026" },
-  { email: "dead@steddy.com", companyName: "steddy", status: "inactive", created: "Feb 10, 2026" },
-  { email: "steddybroker5@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
-  { email: "steddybroker4@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
-  { email: "steddybroker3@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
-  { email: "steddybroker2@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
-  { email: "steddybroker@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
+  { email: "broker1@steddyfunds.com", companyName: "Steddy Funds", status: "inactive", created: "Mar 25, 2026" },
+  { email: "broker2@steddy.com", companyName: "Steddy", status: "active", created: "Mar 25, 2026" },
+  { email: "broker3@steddy.com", companyName: "Steddy", status: "active", created: "Mar 24, 2026" },
+  { email: "broker4@steddyfunds.com", companyName: "Steddy", status: "inactive", created: "Feb 17, 2026" },
+  { email: "broker5@steddy.com", companyName: "Steddy", status: "active", created: "Feb 10, 2026" },
+  { email: "broker6@starsong.com", companyName: "Starsong", status: "active", created: "Feb 10, 2026" },
+  { email: "broker7@steddy.com", companyName: "Steddy", status: "inactive", created: "Feb 10, 2026" },
+  { email: "broker8@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
+  { email: "broker9@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
+  { email: "broker10@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
+  { email: "broker11@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
+  { email: "broker12@steddy.com", companyName: "Steddy", status: "active", created: "Dec 16, 2025" },
 ]
 
 export const underwriterRows = [
-  { email: "gabby@steddyfunds.com", companyName: "Steddy Funds", status: "active", created: "Apr 27, 2026" },
-  { email: "timothy@steddy.com", companyName: "Steddy Funds", status: "active", created: "Apr 20, 2026" },
-  { email: "tim@steddy.com", companyName: "Steddy Funds", status: "active", created: "Mar 27, 2026" },
-  { email: "toniuw@steddy.com", companyName: "Steddy Funds", status: "active", created: "Mar 26, 2026" },
-  { email: "nikhil@steddy.com", companyName: "Steddy Funds", status: "active", created: "Mar 26, 2026" },
-  { email: "john@steddyfunds.com", companyName: "Steddy Funds", status: "active", created: "Mar 26, 2026" },
+  { email: "uw1@steddyfunds.com", companyName: "Steddy Funds", status: "active", created: "Apr 27, 2026" },
+  { email: "uw2@steddy.com", companyName: "Steddy Funds", status: "active", created: "Apr 20, 2026" },
+  { email: "uw3@steddy.com", companyName: "Steddy Funds", status: "active", created: "Mar 27, 2026" },
+  { email: "uw4@steddy.com", companyName: "Steddy Funds", status: "active", created: "Mar 26, 2026" },
+  { email: "uw5@steddy.com", companyName: "Steddy Funds", status: "active", created: "Mar 26, 2026" },
+  { email: "uw6@steddyfunds.com", companyName: "Steddy Funds", status: "active", created: "Mar 26, 2026" },
 ]
 
 export const APPLICATION_STATUS_OPTIONS = [

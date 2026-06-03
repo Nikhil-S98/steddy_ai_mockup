@@ -32,7 +32,7 @@ export default function V3_5Overview({
               }}
               className={MINI_CARD_CLASS}
             >
-              <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">AVERAGE MONTHLY REVENUE</p>
+              <p className="text-[11px] font-normal tracking-wide text-[#4c4f69]">MONTHLY REV.</p>
               <p className="mt-2 text-3xl font-bold leading-none text-[#1c1b1f]">$14,586</p>
               <div className="mt-3 space-y-2.5">
                 {monthlyBreakdownRows.map((row) => (

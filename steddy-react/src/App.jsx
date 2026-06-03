@@ -600,8 +600,8 @@ function App() {
   const [activeFlagPanel, setActiveFlagPanel] = useState(null)
   const [activeMetricTitle, setActiveMetricTitle] = useState("MONTHLY REVENUE")
   const [applicationInfo, setApplicationInfo] = useState({
-    companyName: "Green Farm Equipment",
-    ownerName: "Judy Green",
+    companyName: "Maplewood Supply Co.",
+    ownerName: "Carol Novak",
     ein: "20-2573652",
     email: "",
     phoneCountryCode: "+1",
