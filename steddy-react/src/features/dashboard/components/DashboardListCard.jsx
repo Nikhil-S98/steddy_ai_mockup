@@ -101,9 +101,8 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
   const rowBg = hasUnreadHighlight ? "bg-[#fafafa]" : "bg-[#f5f5f7]"
 
   return (
-    <tr className={`${ROW_HEIGHT_CLASS} ${!isLast ? "border-b border-[#d9d9d9]" : ""}`}>
-      <td className={`w-[1%] p-0 align-middle ${rowBg}`} />
-      <td className={["min-w-0", CELL_PAD_CLASS, "text-[11px]", rowBg].join(" ")}>
+    <tr className={`${!isLast ? "border-b border-[#d9d9d9]" : ""}`}>
+      <td className={`min-w-0 align-middle border-l-2 border-l-transparent pl-4 pr-2 py-3.5 text-[13px] ${rowBg}`}>
         <div className="flex min-h-0 flex-col justify-center gap-0.5">
           <button
             type="button"
@@ -115,10 +114,10 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
           <p className="truncate text-[10px] leading-tight text-[#4c4f69]">{row.owner}</p>
         </div>
       </td>
-      <td className={`${CELL_PAD_CLASS} ${rowBg} text-center`}>
+      <td className={`align-middle px-2 py-3.5 ${rowBg} text-center`}>
         <ApplicationStatusChip status={row.status} />
       </td>
-      <td className={`${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#1c1b1f]`}>
+      <td className={`align-middle px-2 py-3.5 text-[13px] ${rowBg} text-center`}>
         {row.isoEmail && row.isoEmail !== "—" ? (
           <a
             href={`mailto:${row.isoEmail}`}
@@ -130,7 +129,7 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
           "—"
         )}
       </td>
-      <td className={`${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#1c1b1f]`}>
+      <td className={`align-middle px-2 py-3.5 text-[13px] ${rowBg} text-center`}>
         {row.underwriterEmail && row.underwriterEmail !== "—" ? (
           <a
             href={`mailto:${row.underwriterEmail}`}
@@ -142,7 +141,7 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
           "—"
         )}
       </td>
-      <td className={`${CELL_PAD_CLASS} ${rowBg} text-center`}>
+      <td className={`align-middle px-2 py-3.5 ${rowBg} text-center`}>
         <span
           className={`inline-flex whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${
             row.defaultCount > 0 ? defaultHistoryClasses : "border-transparent bg-transparent text-[rgba(76,79,105,0.65)]"
@@ -151,14 +150,14 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
           {row.defaultHistory}
         </span>
       </td>
-      <td className={`${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#4c4f69]`}>
+      <td className={`align-middle px-2 py-3.5 text-[12px] tabular-nums ${rowBg} text-center text-[#4c4f69]`}>
         <span className="whitespace-nowrap">
           {row.createdTime}
           <span className="mx-1 text-[rgba(76,79,105,0.45)]">·</span>
           {createdDateLabel}
         </span>
       </td>
-      <td className={`pl-2 pr-0 ${CELL_PAD_CLASS} text-[11px] ${rowBg} text-[#4c4f69]`}>
+      <td className={`align-middle pl-2 pr-4 py-3.5 text-[12px] tabular-nums ${rowBg} text-center text-[#4c4f69]`}>
         <span className="whitespace-nowrap">
           {row.updatedTime}
           <span className="mx-1 text-[rgba(76,79,105,0.45)]">·</span>
@@ -184,6 +183,8 @@ export default function DashboardListCard({
   canGoNext,
   onPrevPage,
   onNextPage,
+  pageSize,
+  onPageSizeChange,
 }) {
   const isAccountListView = cardVariant.key !== "applications"
   const statusOptions = isAccountListView ? ACCOUNT_STATUS_OPTIONS : APPLICATION_STATUS_OPTIONS
@@ -250,7 +251,7 @@ export default function DashboardListCard({
       <div className="card-shadow mt-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[#d9d9d9] bg-[#fafafa] shadow-sm">
         <div ref={tableViewportRef} className="min-h-0 flex-1 overflow-auto bg-[#fafafa]">
           <table className="min-w-full table-fixed">
-            <thead className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#fafafa]">
+            <thead className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#efefef]">
               {isAccountListView ? (
                 <tr className="text-left">
                   <th className="w-[1%] px-0 py-2 text-[9px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]" />
@@ -263,14 +264,13 @@ export default function DashboardListCard({
                 </tr>
               ) : (
                 <tr className="text-left">
-                  <th className="w-[1%] px-0 py-2 text-[9px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]" />
-                  <th className={`w-[15%] ${tableHeaderCellClasses}`}>{cardVariant.primaryColumnLabel}</th>
-                  <th className={`w-[14%] ${tableHeaderCellClasses} text-center`}>Status</th>
-                  <th className={`w-[14%] ${tableHeaderCellClasses}`}>ISO</th>
-                  <th className={`w-[14%] ${tableHeaderCellClasses}`}>U/W</th>
+                  <th className={`w-[18%] pl-5 pr-2 py-2 text-[8.5px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]`}>{cardVariant.primaryColumnLabel}</th>
+                  <th className={`w-[13%] ${tableHeaderCellClasses} text-center`}>Status</th>
+                  <th className={`w-[9%] ${tableHeaderCellClasses} text-center`}>ISO</th>
+                  <th className={`w-[9%] ${tableHeaderCellClasses} text-center`}>U/W</th>
                   <th className={`w-[14%] ${tableHeaderCellClasses} text-center`}>Flags</th>
-                  <th className={`w-[14%] ${tableHeaderCellClasses}`}>Created</th>
-                  <th className={`w-[14%] py-2 pl-2 pr-0 text-[8.5px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)]`}>
+                  <th className={`w-[11%] ${tableHeaderCellClasses} text-center`}>Created</th>
+                  <th className={`w-[11%] py-2 pl-2 pr-4 text-[8.5px] font-bold uppercase tracking-wide text-[rgba(76,79,105,0.7)] text-center`}>
                     Updated
                   </th>
                 </tr>
@@ -310,33 +310,48 @@ export default function DashboardListCard({
               </>
             )}
           </p>
-          <div className="flex items-center gap-3 text-[11px] text-[#4c4f69]">
-            <button
-              type="button"
-              onClick={onPrevPage}
-              disabled={!canGoPrev}
-              className="inline-flex items-center rounded p-0.5 text-[#4c4f69] transition hover:bg-[#efefef] disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Previous page"
-            >
-              <span aria-hidden="true" className="material-symbols-rounded text-[18px]">
-                chevron_left
+          <div className="flex items-center gap-4 text-[11px] text-[#4c4f69]">
+            <div className="flex items-center gap-1.5">
+              <span>Rows per page</span>
+              <select
+                value={pageSize}
+                onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                className="h-6 appearance-none rounded border border-[#d9d9d9] bg-[#fafafa] px-1.5 pr-5 text-[11px] font-medium text-[#1c1b1f] focus:border-[#039e94] focus:outline-none"
+                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234c4f69' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 4px center" }}
+              >
+                {[20, 50, 100].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onPrevPage}
+                disabled={!canGoPrev}
+                className="inline-flex items-center rounded p-0.5 text-[#4c4f69] transition hover:bg-[#efefef] disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Previous page"
+              >
+                <span aria-hidden="true" className="material-symbols-rounded text-[18px]">
+                  chevron_left
+                </span>
+              </button>
+              <span>
+                Page <span className="font-semibold text-[#1c1b1f]">{currentPage}</span> of{" "}
+                <span className="font-semibold text-[#1c1b1f]">{totalPages}</span>
               </span>
-            </button>
-            <span>
-              Page <span className="font-semibold text-[#1c1b1f]">{currentPage}</span> of{" "}
-              <span className="font-semibold text-[#1c1b1f]">{totalPages}</span>
-            </span>
-            <button
-              type="button"
-              onClick={onNextPage}
-              disabled={!canGoNext}
-              className="inline-flex items-center rounded p-0.5 text-[#4c4f69] transition hover:bg-[#efefef] disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Next page"
-            >
-              <span aria-hidden="true" className="material-symbols-rounded text-[18px]">
-                chevron_right
-              </span>
-            </button>
+              <button
+                type="button"
+                onClick={onNextPage}
+                disabled={!canGoNext}
+                className="inline-flex items-center rounded p-0.5 text-[#4c4f69] transition hover:bg-[#efefef] disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Next page"
+              >
+                <span aria-hidden="true" className="material-symbols-rounded text-[18px]">
+                  chevron_right
+                </span>
+              </button>
+            </div>
           </div>
         </footer>
       </div>

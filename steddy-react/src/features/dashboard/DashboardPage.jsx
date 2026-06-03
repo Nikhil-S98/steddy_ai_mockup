@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { gsap } from "gsap"
 import DashboardShell from "./components/DashboardShell"
 import DashboardListCard from "./components/DashboardListCard"
@@ -7,7 +7,6 @@ import {
   allApplicationRows,
   brokersRows,
   CARD_VARIANTS,
-  ROWS_PER_PAGE,
   underwriterRows,
 } from "./data/dashboardData"
 
@@ -20,6 +19,7 @@ export default function DashboardPage({
   const tableViewportRef = useRef(null)
   const listCardContainerRef = useRef(null)
   const isCardTransitioningRef = useRef(false)
+  const [pageSize, setPageSize] = useState(20)
 
   const activeRows = useMemo(() => {
     if (activeCard === "brokers") return brokersRows
@@ -36,7 +36,7 @@ export default function DashboardPage({
     rangeEnd,
     canGoPrev,
     canGoNext,
-  } = usePagination(activeRows, ROWS_PER_PAGE)
+  } = usePagination(activeRows, pageSize)
 
   useEffect(() => {
     if (tableViewportRef.current) {
@@ -119,6 +119,8 @@ export default function DashboardPage({
             canGoNext={canGoNext}
             onPrevPage={() => setCurrentPage((page) => Math.max(1, page - 1))}
             onNextPage={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+            pageSize={pageSize}
+            onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1) }}
           />
         </div>
       </DashboardShell>
