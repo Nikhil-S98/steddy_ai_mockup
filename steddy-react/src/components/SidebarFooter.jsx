@@ -12,7 +12,10 @@ export default function SidebarFooter({ collapsed = false, onToggleCollapse }) {
               href="design-system.html"
               target="_blank"
               rel="noreferrer"
-              className="text-[10px] font-medium text-[#9b9bb0] hover:text-[#039e94] transition-colors"
+              className="text-[10px] font-medium"
+              style={{ color: '#9b9bb0' }}
+              onMouseEnter={e => e.currentTarget.style.color = '#039e94'}
+              onMouseLeave={e => e.currentTarget.style.color = '#9b9bb0'}
             >
               Design System
             </a>
