@@ -399,6 +399,38 @@ const TERM_UNITS = [
   { value: "weeks", label: "Weeks", multiplier: 7, paymentLabel: "weekly" },
   { value: "months", label: "Months", multiplier: 30, paymentLabel: "monthly" },
 ]
+
+const AVG_MONTHLY_REVENUE = 14586
+
+function getPaymentPeriods(term, frequency) {
+  if (frequency === "weekly") return Math.ceil(term / 7)
+  if (frequency === "monthly") return Math.ceil(term / 30)
+  return term
+}
+
+function calcFromAddedLeverage(addedLev, factor, term, frequency) {
+  const totalPayback = ((addedLev / 100) * AVG_MONTHLY_REVENUE / 20) * term
+  return {
+    fundingAmount: Math.round(totalPayback / factor),
+    installment: Math.ceil(totalPayback / Math.max(getPaymentPeriods(term, frequency), 1)),
+  }
+}
+
+function calcFromFundingAmount(fundingAmount, factor, term, frequency) {
+  const totalPayback = fundingAmount * factor
+  return {
+    addedLeverage: Math.round(((totalPayback / Math.max(term, 1) * 20) / AVG_MONTHLY_REVENUE) * 100),
+    installment: Math.ceil(totalPayback / Math.max(getPaymentPeriods(term, frequency), 1)),
+  }
+}
+
+function calcFromInstallment(installment, factor, term, frequency) {
+  const totalPayback = installment * Math.max(getPaymentPeriods(term, frequency), 1)
+  return {
+    addedLeverage: Math.round(((totalPayback / Math.max(term, 1) * 20) / AVG_MONTHLY_REVENUE) * 100),
+    fundingAmount: Math.round(totalPayback / factor),
+  }
+}
 const UI_FONT_CLASS = "font-ui-inter"
 const HEADER_BUTTON_CLASS =
   "interactive-pop rounded border border-[#4c4f69] px-3 py-1.5 text-xs font-medium text-[#4c4f69] transition hover:bg-[#efefef]"
@@ -635,22 +667,16 @@ function App() {
   })
   const [editingPaymentIndex, setEditingPaymentIndex] = useState(null)
   const [editingDepositIndex, setEditingDepositIndex] = useState(null)
-  const [calculator, setCalculator] = useState({
-    fundingAmount: DEFAULT_FUNDING_AMOUNT,
-    leverageDelta: 11,
-    termValue: 15,
-    termUnit: "days",
-    factor: 1.35,
+  const [calculator, setCalculator] = useState(() => {
+    const addedLeverage = 20
+    const factor = 1.49
+    const termValue = 60
+    const termUnit = "days"
+    const { fundingAmount, installment } = calcFromAddedLeverage(addedLeverage, factor, termValue, termUnit)
+    return { addedLeverage, fundingAmount, installment, factor, termValue, termUnit }
   })
   const selectedTermUnit = TERM_UNITS.find((unit) => unit.value === calculator.termUnit) ?? TERM_UNITS[0]
   const termDays = calculator.termValue * selectedTermUnit.multiplier
-  const frequencyDivisor = {
-    days: termDays,
-    weeks: termDays / 7,
-    months: termDays / 30,
-  }[calculator.termUnit]
-
-  const paymentAmount = (calculator.fundingAmount * calculator.factor) / Math.max(frequencyDivisor, 1)
   const paybackTotal = calculator.fundingAmount * calculator.factor
   const formatCurrency = (value) =>
     value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
@@ -721,13 +747,13 @@ function App() {
     })
     .filter((row) => parseMoney(row.payout) > 0)
   const v34McaPayoutValue = activeWithdrawals.reduce((sum, row) => sum + row.monthlyPayout, 0)
-  const v34CurrentLeverageValue = calculator.fundingAmount > 0 ? (v34McaPayoutValue / calculator.fundingAmount) * 100 : 0
-  const totalLeverageValue = v34CurrentLeverageValue + calculator.leverageDelta
+  const v34CurrentLeverageValue = (v34McaPayoutValue / AVG_MONTHLY_REVENUE) * 100
+  const totalLeverageValue = v34CurrentLeverageValue + calculator.addedLeverage
   const totalLeverage = Math.round(totalLeverageValue)
   const addedLeverageBarClass = totalLeverageValue > 30 ? "bg-[#d20f39]" : "bg-[#7dd3c7]"
   const currentLeverageSegmentWidth = `${Math.min(Math.max(v34CurrentLeverageValue, 0), 100)}%`
   const addedLeverageSegmentWidth = `${Math.min(
-    Math.max(calculator.leverageDelta, 0),
+    Math.max(calculator.addedLeverage, 0),
     Math.max(100 - v34CurrentLeverageValue, 0),
   )}%`
   const v34McaPayoutLabel = `$${formatCurrency(v34McaPayoutValue)}`
@@ -737,6 +763,21 @@ function App() {
   const activeUnderwritingStep = 1
   const isDarkLikeMode = colorMode === "tealDark"
   const usesV34PositionStyles = true
+
+  const handleCalcLeverageChange = (val) => {
+    const { fundingAmount, installment } = calcFromAddedLeverage(val, calculator.factor, termDays, calculator.termUnit)
+    setCalculator((prev) => ({ ...prev, addedLeverage: val, fundingAmount, installment }))
+  }
+
+  const handleCalcFundingChange = (val) => {
+    const { addedLeverage, installment } = calcFromFundingAmount(val, calculator.factor, termDays, calculator.termUnit)
+    setCalculator((prev) => ({ ...prev, fundingAmount: val, addedLeverage, installment }))
+  }
+
+  const handleCalcInstallmentChange = (val) => {
+    const { addedLeverage, fundingAmount } = calcFromInstallment(val, calculator.factor, termDays, calculator.termUnit)
+    setCalculator((prev) => ({ ...prev, installment: val, addedLeverage, fundingAmount }))
+  }
 
   const resetDraftPosition = () => {
     setDraftPosition({
@@ -1277,9 +1318,19 @@ function App() {
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-[#4c4f69]">
                     Estimated {selectedTermUnit.paymentLabel} payment
                   </p>
-                  <p className="mt-1 text-3xl font-bold leading-none text-[#1c1b1f]">
-                    ${formatCurrency(paymentAmount)}
-                  </p>
+                  <div className="mt-1 flex items-baseline">
+                    <span className="text-3xl font-bold leading-none text-[#1c1b1f]">$</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={formatCurrency(calculator.installment)}
+                      onChange={(event) => {
+                        const val = Number(event.target.value.replace(/[^0-9.]/g, ""))
+                        handleCalcInstallmentChange(Number.isFinite(val) ? val : 0)
+                      }}
+                      className="min-w-0 w-full bg-transparent text-3xl font-bold leading-none text-[#1c1b1f] outline-none"
+                    />
+                  </div>
                   <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
                     <div>
                       <p className="text-[#4c4f69]">Payback</p>
@@ -1303,11 +1354,8 @@ function App() {
                           inputMode="decimal"
                           value={formatCurrency(calculator.fundingAmount)}
                           onChange={(event) => {
-                            const nextFundingAmount = Number(event.target.value.replace(/[^0-9.]/g, ""))
-                            setCalculator((prev) => ({
-                              ...prev,
-                              fundingAmount: Number.isFinite(nextFundingAmount) ? nextFundingAmount : 0,
-                            }))
+                            const val = Number(event.target.value.replace(/[^0-9.]/g, ""))
+                            handleCalcFundingChange(Number.isFinite(val) ? val : 0)
                           }}
                           className="min-w-0 flex-1 bg-transparent px-2 text-[12px] font-medium text-[#1c1b1f] outline-none"
                         />
@@ -1331,12 +1379,9 @@ function App() {
                             type="number"
                             min="0"
                             max="50"
-                            value={calculator.leverageDelta}
+                            value={calculator.addedLeverage}
                             onChange={(event) =>
-                              setCalculator((prev) => ({
-                                ...prev,
-                                leverageDelta: Math.min(Math.max(Number(event.target.value) || 0, 0), 50),
-                              }))
+                              handleCalcLeverageChange(Math.min(Math.max(Number(event.target.value) || 0, 0), 100))
                             }
                             className="w-8 bg-transparent p-0 text-center text-[12px] font-medium text-[#039e94] outline-none"
                           />
@@ -1347,10 +1392,7 @@ function App() {
                           type="button"
                           className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center border-b border-[#d9d9d9] text-[#4c4f69]`}
                           onClick={() =>
-                            setCalculator((prev) => ({
-                              ...prev,
-                              leverageDelta: Math.min(prev.leverageDelta + 1, 50),
-                            }))
+                            handleCalcLeverageChange(Math.min(calculator.addedLeverage + 1, 100))
                           }
                         >
                           <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_up</span>
@@ -1359,10 +1401,7 @@ function App() {
                           type="button"
                           className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center text-[#4c4f69]`}
                           onClick={() =>
-                            setCalculator((prev) => ({
-                              ...prev,
-                              leverageDelta: Math.max(prev.leverageDelta - 1, 0),
-                            }))
+                            handleCalcLeverageChange(Math.max(calculator.addedLeverage - 1, 0))
                           }
                         >
                           <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_down</span>
@@ -2525,7 +2564,7 @@ function App() {
                   <div className="flex items-center justify-between">
                     <span className="text-[#4c4f69]">Payment</span>
                     <span className="font-medium text-[#1c1b1f]">
-                      ${formatCurrency(paymentAmount)} / {selectedTermUnit.label}
+                      ${formatCurrency(calculator.installment)} / {selectedTermUnit.label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
