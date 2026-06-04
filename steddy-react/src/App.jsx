@@ -1628,19 +1628,6 @@ function App() {
                       </span>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedPositionChip(null)
-                      setTransactionsSearchQuery("")
-                      setTransactionsAccountFilter("all")
-                      setTransactionsMonthFilter("all")
-                      setTransactionsDirectionFilter("all")
-                    }}
-                    className="interactive-pop shrink-0 text-sm font-normal text-[#039e94] transition hover:text-[#2566d9]"
-                  >
-                    View all transactions
-                  </button>
                 </div>
               </div>
 
