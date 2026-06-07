@@ -1328,7 +1328,7 @@ function App() {
                         const val = Number(event.target.value.replace(/[^0-9.]/g, ""))
                         handleCalcInstallmentChange(Number.isFinite(val) ? val : 0)
                       }}
-                      className="min-w-0 w-full bg-transparent text-3xl font-bold leading-none text-[#1c1b1f] outline-none"
+                      className="min-w-0 w-full bg-[#efefef] text-3xl font-bold leading-none text-[#1c1b1f] outline-none"
                     />
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
@@ -1426,30 +1426,36 @@ function App() {
                           min="1"
                           max="120"
                           value={calculator.termValue}
-                          onChange={(event) =>
-                            setCalculator((prev) => ({
-                              ...prev,
-                              termValue: Math.min(Math.max(Number(event.target.value) || 1, 1), 120),
-                            }))
-                          }
+                          onChange={(event) => {
+                            const newTermValue = Math.min(Math.max(Number(event.target.value) || 1, 1), 120)
+                            const newTermDays = newTermValue * selectedTermUnit.multiplier
+                            const { addedLeverage, installment } = calcFromFundingAmount(calculator.fundingAmount, calculator.factor, newTermDays, calculator.termUnit)
+                            setCalculator((prev) => ({ ...prev, termValue: newTermValue, addedLeverage, installment }))
+                          }}
                           className="min-w-0 flex-1 bg-transparent px-2 text-center text-[12px] font-medium text-[#1c1b1f] outline-none"
                         />
                         <div className={`${FIELD_INNER_SQUARE_CLASS} grid w-6 border-l border-[#d9d9d9] bg-[#efefef]`}>
                           <button
                             type="button"
                             className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center border-b border-[#d9d9d9] text-[#4c4f69]`}
-                            onClick={() =>
-                              setCalculator((prev) => ({ ...prev, termValue: Math.min(prev.termValue + 1, 120) }))
-                            }
+                            onClick={() => {
+                              const newTermValue = Math.min(calculator.termValue + 1, 120)
+                              const newTermDays = newTermValue * selectedTermUnit.multiplier
+                              const { addedLeverage, installment } = calcFromFundingAmount(calculator.fundingAmount, calculator.factor, newTermDays, calculator.termUnit)
+                              setCalculator((prev) => ({ ...prev, termValue: newTermValue, addedLeverage, installment }))
+                            }}
                           >
                             <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_up</span>
                           </button>
                           <button
                             type="button"
                             className={`${FIELD_INNER_SQUARE_CLASS} grid place-items-center text-[#4c4f69]`}
-                            onClick={() =>
-                              setCalculator((prev) => ({ ...prev, termValue: Math.max(prev.termValue - 1, 1) }))
-                            }
+                            onClick={() => {
+                              const newTermValue = Math.max(calculator.termValue - 1, 1)
+                              const newTermDays = newTermValue * selectedTermUnit.multiplier
+                              const { addedLeverage, installment } = calcFromFundingAmount(calculator.fundingAmount, calculator.factor, newTermDays, calculator.termUnit)
+                              setCalculator((prev) => ({ ...prev, termValue: newTermValue, addedLeverage, installment }))
+                            }}
                           >
                             <span className="material-symbols-rounded text-[14px] leading-none">keyboard_arrow_down</span>
                           </button>
@@ -1512,7 +1518,11 @@ function App() {
                           <button
                             key={unit.value}
                             type="button"
-                            onClick={() => setCalculator((prev) => ({ ...prev, termUnit: unit.value }))}
+                            onClick={() => {
+                              const newTermDays = calculator.termValue * unit.multiplier
+                              const { addedLeverage, installment } = calcFromFundingAmount(calculator.fundingAmount, calculator.factor, newTermDays, unit.value)
+                              setCalculator((prev) => ({ ...prev, termUnit: unit.value, addedLeverage, installment }))
+                            }}
                             className={`${FIELD_INNER_SQUARE_CLASS} h-9 border-r border-[#d9d9d9] text-[11px] font-medium last:border-r-0 ${
                               isSelected ? "bg-[#efefef] text-[#1c1b1f]" : "text-[#4c4f69]"
                             }`}
