@@ -2,8 +2,8 @@ export const defaultHistoryClasses = "border-amber-200 bg-amber-50 text-amber-70
 
 const applicationRows = [
   {
-    company: "Pinecrest Logistics LLC",
-    owner: "Marcus Webb",
+    company: "Ironside Supply Group LLC",
+    owner: "Derek Fontaine",
     isoEmail: "ryan@steddyfunds.com",
     isoName: "Steddy Funds",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -16,8 +16,8 @@ const applicationRows = [
     updatedTime: "11:24 AM",
   },
   {
-    company: "DELTA GENERAL SERVICES CORP",
-    owner: "Carlos Rivera",
+    company: "COASTAL FREIGHT SOLUTIONS CORP",
+    owner: "Maria Okonkwo",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "—",
@@ -30,8 +30,8 @@ const applicationRows = [
     updatedTime: "11:22 AM",
   },
   {
-    company: "B & B Machine INC",
-    owner: "Kevin Harmon",
+    company: "R & J Auto Service INC",
+    owner: "Victor Huang",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -44,8 +44,8 @@ const applicationRows = [
     updatedTime: "11:10 AM",
   },
   {
-    company: "Apex Trucking And Repair INC",
-    owner: "Sandra Torres",
+    company: "Riverside Catering And Events INC",
+    owner: "Denise Alvarez",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -58,8 +58,8 @@ const applicationRows = [
     updatedTime: "10:52 AM",
   },
   {
-    company: "Nextech Solutions Wireless",
-    owner: "Priya Patel",
+    company: "Summit Wireless Technologies",
+    owner: "Anita Sharma",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -72,8 +72,8 @@ const applicationRows = [
     updatedTime: "10:50 AM",
   },
   {
-    company: "Crest Properties LLC",
-    owner: "Thomas Grant",
+    company: "Harbor Bay Realty LLC",
+    owner: "Gerald Thornton",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -86,8 +86,8 @@ const applicationRows = [
     updatedTime: "10:49 AM",
   },
   {
-    company: "Laura Vance DBA ...",
-    owner: "Laura Vance",
+    company: "Rachel Kim DBA ...",
+    owner: "Rachel Kim",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -100,8 +100,8 @@ const applicationRows = [
     updatedTime: "10:47 AM",
   },
   {
-    company: "Michael Holt DDS",
-    owner: "Michael Holt",
+    company: "James Cho DMD",
+    owner: "James Cho",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -114,8 +114,8 @@ const applicationRows = [
     updatedTime: "10:46 AM",
   },
   {
-    company: "Coverage Plus Inc",
-    owner: "Brian Mitchell",
+    company: "ShieldGuard Insurance Inc",
+    owner: "Patrick O'Brien",
     isoEmail: "ryan@steddyfunds.com",
     isoName: "Steddy Funds",
     underwriterEmail: "ryan@steddyfunds.com",
@@ -128,8 +128,8 @@ const applicationRows = [
     updatedTime: "10:44 AM",
   },
   {
-    company: "Verdant USA LLC",
-    owner: "Eduardo Castillo",
+    company: "Emerald Coast Ventures LLC",
+    owner: "Sofia Mendez",
     isoEmail: "admin@steddy.com",
     isoName: "",
     underwriterEmail: "ryan@steddyfunds.com",
