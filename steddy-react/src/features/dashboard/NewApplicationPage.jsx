@@ -6,7 +6,7 @@ const REQUIRED_BANK_FILES = ["Bank Statement - Jan.pdf", "Bank Statement - Feb.p
 const STATUS_ICONS = {
   uploaded: { name: "upload", className: "text-[#4e6aa1]" },
   processing: { name: "sync", className: "text-[#8a6723]" },
-  complete: { name: "check_circle", className: "text-[#3277FF]" },
+  complete: { name: "check_circle", className: "text-[#039e94]" },
 }
 
 const EMPTY_FORM_VALUES = {
@@ -337,7 +337,7 @@ export default function NewApplicationPage({ isOpen, onClose, onCreateApplicatio
             disabled={!canCreateApplication}
             onClick={onCreateApplication}
             className={`rounded-md px-4 py-1.5 text-sm font-semibold text-[#fafafa] ${
-              canCreateApplication ? "bg-[#3277FF] hover:opacity-95" : "cursor-not-allowed bg-[#adb8f3]"
+              canCreateApplication ? "bg-[#039e94] hover:opacity-95" : "cursor-not-allowed bg-[#7dd3c7]"
             }`}
           >
             Create application
