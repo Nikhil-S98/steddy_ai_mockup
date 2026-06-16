@@ -508,6 +508,11 @@ const LEGACY_VERSION_PATH = {
   "/v7": "/v3.5",
 }
 
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, "")
+const withBasePath = (path) => `${BASE_PATH}${path}`
+const stripBasePath = (pathname) =>
+  BASE_PATH && pathname.startsWith(BASE_PATH) ? pathname.slice(BASE_PATH.length) || "/" : pathname
+
 const getApplicationPath = () => "/v3.5"
 const getViewFromPath = (pathname) => {
   if (pathname.endsWith("/dashboard/new-application")) return "dashboard"
@@ -966,9 +971,9 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const nextPath = LEGACY_VERSION_PATH[window.location.pathname]
+    const nextPath = LEGACY_VERSION_PATH[stripBasePath(window.location.pathname)]
     if (nextPath) {
-      window.history.replaceState({}, "", nextPath)
+      window.history.replaceState({}, "", withBasePath(nextPath))
     }
   }, [])
 
@@ -1033,8 +1038,8 @@ function App() {
 
   const handleBackToDashboard = () => {
     runPageSlideTransition(() => {
-      if (window.location.pathname !== "/dashboard") {
-        window.history.pushState({}, "", "/dashboard")
+      if (stripBasePath(window.location.pathname) !== "/dashboard") {
+        window.history.pushState({}, "", withBasePath("/dashboard"))
       }
       setActiveView("dashboard")
     }, "backward")
@@ -1042,15 +1047,15 @@ function App() {
 
   const handleOpenNewApplication = () => {
     const nextPath = "/dashboard/new-application"
-    if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, "", nextPath)
+    if (stripBasePath(window.location.pathname) !== nextPath) {
+      window.history.pushState({}, "", withBasePath(nextPath))
     }
     setIsNewApplicationOpen(true)
   }
 
   const handleCloseNewApplication = () => {
-    if (window.location.pathname !== "/dashboard") {
-      window.history.pushState({}, "", "/dashboard")
+    if (stripBasePath(window.location.pathname) !== "/dashboard") {
+      window.history.pushState({}, "", withBasePath("/dashboard"))
     }
     setIsNewApplicationOpen(false)
   }
@@ -1065,8 +1070,8 @@ function App() {
     }
     runPageSlideTransition(() => {
       const nextPath = getApplicationPath()
-      if (window.location.pathname !== nextPath) {
-        window.history.pushState({}, "", nextPath)
+      if (stripBasePath(window.location.pathname) !== nextPath) {
+        window.history.pushState({}, "", withBasePath(nextPath))
       }
       setActiveApplicationId(String(applicationId))
       setActiveView("application")
