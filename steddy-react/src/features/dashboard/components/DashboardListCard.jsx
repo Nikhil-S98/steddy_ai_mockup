@@ -106,7 +106,7 @@ function ApplicationRow({ row, rowIndex, isLast, onOpenApplication }) {
         <div className="flex min-h-0 flex-col justify-center gap-0.5">
           <button
             type="button"
-            onClick={() => onOpenApplication("111123")}
+            onClick={() => onOpenApplication("111123", row)}
             className="block max-w-full cursor-pointer truncate text-left font-medium text-[#1c1b1f] underline-offset-2 transition hover:underline"
           >
             {row.company}

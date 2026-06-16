@@ -1055,7 +1055,14 @@ function App() {
     setIsNewApplicationOpen(false)
   }
 
-  const handleOpenApplication = (applicationId = "777") => {
+  const handleOpenApplication = (applicationId = "777", rowInfo = null) => {
+    if (rowInfo) {
+      setApplicationInfo((prev) => ({
+        ...prev,
+        companyName: rowInfo.company ?? prev.companyName,
+        ownerName: rowInfo.owner ?? prev.ownerName,
+      }))
+    }
     runPageSlideTransition(() => {
       const nextPath = getApplicationPath()
       if (window.location.pathname !== nextPath) {
@@ -1066,7 +1073,21 @@ function App() {
     })
   }
 
-  const handleCreateApplication = () => {
+  const handleCreateApplication = (formValues) => {
+    if (formValues) {
+      setApplicationInfo((prev) => ({
+        ...prev,
+        companyName: formValues.companyName || prev.companyName,
+        ownerName: formValues.ownerName || prev.ownerName,
+        ein: formValues.ein || prev.ein,
+        email: formValues.email || prev.email,
+        phoneNumber: formValues.phone || prev.phoneNumber,
+        addressLine1: formValues.addressLine1 || prev.addressLine1,
+        city: formValues.city || prev.city,
+        stateCode: formValues.stateCode || prev.stateCode,
+        postalCode: formValues.postalCode || prev.postalCode,
+      }))
+    }
     handleOpenApplication("777")
   }
 

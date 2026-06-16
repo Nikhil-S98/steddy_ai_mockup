@@ -335,7 +335,7 @@ export default function NewApplicationPage({ isOpen, onClose, onCreateApplicatio
           <button
             type="button"
             disabled={!canCreateApplication}
-            onClick={onCreateApplication}
+            onClick={() => onCreateApplication(formValues)}
             className={`rounded-md px-4 py-1.5 text-sm font-semibold text-[#fafafa] ${
               canCreateApplication ? "bg-[#039e94] hover:opacity-95" : "cursor-not-allowed bg-[#7dd3c7]"
             }`}
